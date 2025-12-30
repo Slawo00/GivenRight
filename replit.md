@@ -123,14 +123,14 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**STEP B4 - Contextual Scenario Enrichment ✅**
-- ChatGPT-powered explanation personalization
-- READ-ONLY layer (no decision changes allowed)
-- 3-5 concrete example categories per option
-- Situation-specific language adaptation
-- Icon-based visual hints
-- In-memory caching for performance
-- Graceful fallback if API fails
+**STEP B4 - Contextual Scenario Enrichment ✅ (FINAL)**
+- ChatGPT-powered explanation personalization via gpt-4o-mini
+- READ-ONLY layer - preserves all engine data exactly (ordering, risk_level, expectation_frame)
+- NO synthetic scores or fabricated metrics - pure enrichment only
+- 3-5 concrete example categories per option with icons/hints
+- First option from engine marked as "Recommended" (green badge)
+- In-memory caching (context+result hash key)
+- Graceful fallback if API fails - shows base explanations without examples
 
 ## User Preferences
 - German language for communication
@@ -201,3 +201,6 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP B4 - useEnrichmentState Zustand store
 - 2024-12-30: STEP B4 - EnrichedDirectionCard with example categories
 - 2024-12-30: STEP B4 - EnrichedDecisionScreen integration
+- 2024-12-30: STEP B4 FIX - Removed synthetic scores, preserved engine ordering
+- 2024-12-30: STEP B4 FIX - EnrichedDecisionResult now READ-ONLY (decision_risk_level, expectation_frame)
+- 2024-12-30: STEP B4 FIX - First option marked "Recommended" via badge, not computed score
