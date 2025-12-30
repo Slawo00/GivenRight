@@ -1,27 +1,28 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DebugPanel } from '@/components/DebugPanel';
+import { InputCollectionFlow } from '@/components/InputCollectionFlow';
 import { DecisionExplanationScreen } from '@/components/DecisionExplanationScreen';
 import { ObjectPatternSelectionScreen } from '@/components/ObjectPatternSelectionScreen';
 import { PatternExplanationScreen } from '@/components/PatternExplanationScreen';
 import { CommercePreviewScreen } from '@/components/CommercePreviewScreen';
 import { useDecisionState } from '@/store/useDecisionState';
+import { useInputCollectionState } from '@/store/useInputCollectionState';
 import type { ObjectPattern } from '@/services/supabase/objectPatternService';
+import type { DecisionResult } from '@/services/decisionEngine';
 
 export default function HomeScreen() {
-  const { step, advanceStep, advanceToCommerce, runTestScenario, selectPattern, selectedPattern, resetDecision } = useDecisionState();
+  const { step, advanceStep, advanceToCommerce, selectPattern, selectedPattern, resetDecision, setDecisionResultFromEngine } = useDecisionState();
+  const { step: inputStep, goToStep, resetCollection } = useInputCollectionState();
 
-  const handleStartDemo = () => {
-    runTestScenario({
-      relationship: {
-        type: 'partner',
-        closeness: 5,
-        emotionalStyle: ['emotional'],
-        surpriseTolerance: 'high',
-      },
-      occasion: 'birthday',
-      budget: '100_250',
-    });
+  const handleStartDecision = () => {
+    resetCollection();
+    goToStep('relationship_occasion');
+  };
+
+  const handleInputComplete = (decisionResult: DecisionResult) => {
+    setDecisionResultFromEngine(decisionResult);
+    advanceStep('decision_ready');
   };
 
   const handleDirectionSelected = () => {
@@ -35,6 +36,20 @@ export default function HomeScreen() {
   const handlePatternExplanationContinue = () => {
     advanceToCommerce();
   };
+
+  const handleStartOver = () => {
+    resetDecision();
+    resetCollection();
+  };
+
+  if (inputStep !== 'idle' && inputStep !== 'intent_locked') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <InputCollectionFlow onComplete={handleInputComplete} />
+        <DebugPanel />
+      </SafeAreaView>
+    );
+  }
 
   if (step === 'decision_ready') {
     return (
@@ -101,7 +116,7 @@ export default function HomeScreen() {
               ? 'Journey complete! Gift found.' 
               : 'Ready for next steps.'}
           </Text>
-          <Pressable style={styles.resetButton} onPress={resetDecision}>
+          <Pressable style={styles.resetButton} onPress={handleStartOver}>
             <Text style={styles.resetButtonText}>Start Over</Text>
           </Pressable>
         </View>
@@ -124,14 +139,10 @@ export default function HomeScreen() {
             styles.startButton,
             pressed && styles.startButtonPressed
           ]}
-          onPress={handleStartDemo}
+          onPress={handleStartDecision}
         >
           <Text style={styles.startButtonText}>Start Decision</Text>
         </Pressable>
-        
-        <Text style={styles.demoNote}>
-          Demo: Partner Birthday Gift
-        </Text>
       </View>
       <DebugPanel />
     </SafeAreaView>
@@ -187,11 +198,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
-  },
-  demoNote: {
-    marginTop: 16,
-    fontSize: 13,
-    color: '#9CA3AF',
   },
   nextStep: {
     fontSize: 14,

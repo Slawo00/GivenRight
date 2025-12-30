@@ -123,15 +123,16 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**STEP B2 - Deterministic Decision Core ✅**
-- 8-Phase Decision Engine (uncertainty → explainability)
-- Pure functions, no side effects
-- SAFE / EMOTIONAL / BOLD derived, never user-selected
-- Fully deterministic: identical input → identical output
-- Pattern eligibility filtering with hard/soft rules
-- Risk-weighted scoring with historical boost
-- Confidence derivation respects expectation frame
-- Explainability binding from rules (no generation)
+**STEP B0 - Structured Input & Intent Lock ✅**
+- 4-Screen grouped input flow (max screens, no questionnaire feel)
+- Screen 1: Relationship & Occasion
+- Screen 2: The Person (Personality & Surprise tolerance)
+- Screen 3: Boundaries & Budget
+- Screen 4: Practical Constraints
+- Intent Lock after Screen 4 (context frozen)
+- Decision Engine triggered immediately after lock
+- No SAFE/EMOTIONAL/BOLD preview before intent lock
+- User sentiment goal: "That was quick and easy"
 
 ## User Preferences
 - German language for communication
@@ -191,3 +192,8 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP B2 - Phase functions (uncertainty, socialExpectation, riskProfiling, personalityFit, patternFiltering, scoring, confidenceDerivation)
 - 2024-12-30: STEP B2 - ExplanationBuilder (rule-based, no generation)
 - 2024-12-30: STEP B2 - Decision Engine Orchestrator
+- 2024-12-30: STEP B0 - Structured Input & Intent Lock
+- 2024-12-30: STEP B0 - useInputCollectionState Zustand store
+- 2024-12-30: STEP B0 - 4 Input Screens (Relationship, Person, Boundaries, Practical)
+- 2024-12-30: STEP B0 - InputCollectionFlow component
+- 2024-12-30: STEP B0 - Integration with Decision Engine

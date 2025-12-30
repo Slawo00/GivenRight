@@ -9,6 +9,7 @@ import {
   type DecisionParameters 
 } from "../services/supabase";
 import type { ObjectPattern } from "../services/supabase/objectPatternService";
+import type { DecisionResult as EngineDecisionResult, ConfidenceType } from "../services/decisionEngine/types";
 
 interface TestScenarioInput {
   relationship: RelationshipProfile;
@@ -44,6 +45,7 @@ interface DecisionState {
   advanceToCommerce: () => void;
   completeWithExecution: () => void;
   resetDecision: () => void;
+  setDecisionResultFromEngine: (engineResult: EngineDecisionResult) => void;
 }
 
 const initialState = {
@@ -144,4 +146,53 @@ export const useDecisionState = create<DecisionState>((set, get) => ({
       configuredParameters: state.configuredParameters,
       configuredExplanations: state.configuredExplanations,
     })),
+
+  setDecisionResultFromEngine: (engineResult: EngineDecisionResult) => {
+    const mapConfidenceToDirection = (ct: ConfidenceType): DecisionDirection => {
+      switch (ct) {
+        case 'SAFE': return 'safe';
+        case 'EMOTIONAL': return 'emotional';
+        case 'BOLD': return 'bold';
+        default: return 'safe';
+      }
+    };
+
+    const mapRiskLevel = (ct: ConfidenceType): 'low' | 'medium' | 'high' => {
+      switch (ct) {
+        case 'SAFE': return 'low';
+        case 'EMOTIONAL': return 'medium';
+        case 'BOLD': return 'high';
+        default: return 'low';
+      }
+    };
+
+    const scores = engineResult.options.map(option => ({
+      direction: mapConfidenceToDirection(option.confidence_type),
+      score: 70 + Math.floor(Math.random() * 20),
+      risk: mapRiskLevel(option.confidence_type),
+      recommended: option.confidence_type === 'SAFE',
+    }));
+
+    const explanationByDirection: Record<DecisionDirection, DecisionExplanation> = {
+      safe: { whyThisWorks: '', risks: '', emotionalSignal: '' },
+      emotional: { whyThisWorks: '', risks: '', emotionalSignal: '' },
+      bold: { whyThisWorks: '', risks: '', emotionalSignal: '' },
+    };
+
+    for (const option of engineResult.options) {
+      const dir = mapConfidenceToDirection(option.confidence_type);
+      explanationByDirection[dir] = {
+        whyThisWorks: option.explanation.why_this_works,
+        risks: option.explanation.things_to_consider.join(' '),
+        emotionalSignal: option.explanation.emotional_signal,
+      };
+    }
+
+    const decisionResult: DecisionResult = {
+      scores,
+      explanationByDirection,
+    };
+
+    set({ decisionResult, step: 'decision_ready' });
+  },
 }));

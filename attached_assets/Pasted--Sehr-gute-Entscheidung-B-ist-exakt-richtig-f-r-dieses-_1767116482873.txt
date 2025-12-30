@@ -1,0 +1,277 @@
+🧙🏾‍♂️ **Sehr gute Entscheidung. B ist exakt richtig für dieses Produkt.**
+Du willst **keine Befragung**, du willst **Orientierung**.
+Gruppierung reduziert wahrgenommene Komplexität, **ohne** Logik zu verlieren.
+
+Ich liefere dir jetzt **STEP B0 — Structured Input & Intent Lock**
+als **vollständigen, 1:1 nutzbaren Replit-Build-Prompt**,
+**exakt** auf Basis deines Referenz-Prompts und kompatibel mit **STEP B2/B3**.
+
+---
+
+# ✅ REPLIT BUILD PROMPT — STEP B0
+
+## Structured Input & Intent Lock (Grouped UX)
+
+```
+STEP B0 — Structured Input & Intent Lock
+Expo Cross-Platform (iOS / Android / Web)
+
+CONFIRMATION REQUIRED:
+Identical behavior across platforms.
+No AI calls.
+No decision logic here.
+This layer ONLY collects and normalizes input.
+
+────────────────────────────────────────
+ROLE OF THIS STEP
+────────────────────────────────────────
+
+This step collects all inputs required
+by the Deterministic Decision Core (STEP B2).
+
+It must:
+- feel calm and short
+- avoid the feeling of a questionnaire
+- never explain outcomes
+- never preview SAFE / EMOTIONAL / BOLD
+
+This step DOES NOT decide anything.
+It only prepares a locked DecisionContext.
+
+────────────────────────────────────────
+GLOBAL UX PRINCIPLES
+────────────────────────────────────────
+
+- Max 4 screens
+- Each screen groups related questions
+- Optional inputs clearly marked
+- No progress bar with numbers (avoid “10 steps” feeling)
+- Copy emphasizes ease, not analysis
+
+────────────────────────────────────────
+SCREEN FLOW OVERVIEW
+────────────────────────────────────────
+
+Start Decision
+→ Screen 1: Relationship & Occasion
+→ Screen 2: The Person
+→ Screen 3: Boundaries & Budget
+→ Screen 4: Practical Constraints
+→ Intent Lock
+→ runDecisionEngine()
+→ Select Direction Screen (STEP B3)
+
+────────────────────────────────────────
+SCREEN 1 — Relationship & Occasion
+────────────────────────────────────────
+
+Purpose:
+Establish social context and expectation frame.
+
+USER VIEW:
+Title: “Who is this gift for?”
+Subtitle: “Just the essentials to get started.”
+
+Inputs:
+1) Relationship type (single-select)
+   - partner
+   - close family
+   - friend
+   - colleague
+
+2) Closeness level (3-step scale)
+   - not very close
+   - close
+   - very close
+
+3) Occasion (single-select)
+   - birthday
+   - anniversary
+   - holiday
+   - thank you
+   - other
+
+SYSTEM:
+Write to DecisionContext:
+- relationship_type
+- closeness_level
+- occasion_type
+
+────────────────────────────────────────
+SCREEN 2 — The Person
+────────────────────────────────────────
+
+Purpose:
+Capture personality & emotional tolerance.
+
+USER VIEW:
+Title: “Tell us a bit about them”
+Subtitle: “There’s no right or wrong here.”
+
+Inputs:
+4) Personality traits (multi-select)
+   - practical
+   - sentimental
+   - creative
+   - minimalist
+   - expressive
+
+5) Surprise tolerance (single-select)
+   - prefers safe choices
+   - enjoys a thoughtful surprise
+   - loves bold surprises
+
+SYSTEM:
+Normalize to:
+- personality_traits[]
+- surprise_tolerance (low / medium / high)
+
+────────────────────────────────────────
+SCREEN 3 — Boundaries & Budget
+────────────────────────────────────────
+
+Purpose:
+Define constraints & eliminate bad ideas early.
+
+USER VIEW:
+Title: “Anything to keep in mind?”
+Subtitle: “You can skip anything you’re unsure about.”
+
+Inputs:
+6) Values (optional, multi-select)
+   - sustainability
+   - craftsmanship
+   - experiences over things
+   - minimalism
+
+7) No-Gos (optional, multi-select)
+   - alcohol
+   - clothing
+   - personal items
+   - generic gifts
+
+8) Budget range (single-select)
+   - under 50
+   - 50–100
+   - 100–250
+   - flexible
+
+SYSTEM:
+Write to DecisionContext:
+- values[]
+- no_gos[]
+- budget_range
+
+────────────────────────────────────────
+SCREEN 4 — Practical Constraints
+────────────────────────────────────────
+
+Purpose:
+Assess feasibility & time pressure.
+
+USER VIEW:
+Title: “Let’s make sure this works”
+Subtitle: “Just a couple of practical details.”
+
+Inputs:
+9) Gift type preference (single-select)
+   - something tangible
+   - an experience
+   - open to both
+
+10) Time constraint (single-select)
+   - plenty of time
+   - 1–2 weeks
+   - very soon
+
+SYSTEM:
+Write to DecisionContext:
+- gift_type_preference
+- time_constraint
+- country (from locale)
+- personal_importance (implicit: medium default)
+
+────────────────────────────────────────
+INTENT LOCK (MANDATORY)
+────────────────────────────────────────
+
+After Screen 4 completion:
+
+SYSTEM ACTION:
+- Freeze DecisionContext
+- Log normalized context (debug only)
+- Explicit internal flag:
+  intent_locked = true
+
+NO MORE INPUT ALLOWED AFTER THIS POINT.
+
+────────────────────────────────────────
+DECISION ENGINE TRIGGER
+────────────────────────────────────────
+
+Immediately after intent lock:
+
+Call:
+runDecisionEngine(DecisionContext)
+
+Store:
+DecisionResult in global decision state
+
+Then navigate to:
+Select Direction Screen (STEP B3)
+
+────────────────────────────────────────
+ABSOLUTELY FORBIDDEN
+────────────────────────────────────────
+
+- Showing SAFE / EMOTIONAL / BOLD before intent lock
+- Explaining why questions matter
+- Any product previews
+- Any AI-generated text
+- Any score or confidence indicators
+
+────────────────────────────────────────
+SUCCESS CRITERIA
+────────────────────────────────────────
+
+User sentiment:
+“That was quick and easy.”
+
+System reality:
+All required inputs are present,
+normalized, and locked before decision logic runs.
+```
+
+---
+
+## 🧠 Warum das jetzt **endlich** zusammenpasst
+
+Jetzt stimmt die Reihenfolge:
+
+1. **User gibt Kontext**
+2. **Intent wird gelockt**
+3. **Decision Core rechnet**
+4. **SAFE / EMOTIONAL / BOLD erscheinen legitim**
+5. **Erklärungen fühlen sich verdient an**
+
+Das, was du vorher gesehen hast, wirkte leer,
+weil **Schritt 1 gefehlt hat**.
+
+Jetzt nicht mehr.
+
+---
+
+## 👉 Nächster Schritt (klar & zwingend)
+
+👉 **Gib diesen STEP-B0-Prompt jetzt an Replit weiter.**
+
+Danach kommst du mit:
+
+* Screenshots der 4 Input-Screens **oder**
+* Fragen zur Gruppierung / Copy **oder**
+* erstem End-to-End-Flow (Start → Decision)
+
+🧙🏾‍♂️ **Empfehlung danach:**
+Ein kurzer **UX-Smoke-Test** („Fühlt sich das nach *wenig Fragen* an?“).
+
+Sag Bescheid, sobald Replit durch ist.
