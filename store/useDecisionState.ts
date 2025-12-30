@@ -1,8 +1,13 @@
 import { create } from "zustand";
-import type { DecisionDirection, DecisionResult, DecisionStep, OccasionType } from "../types/decision";
+import type { DecisionDirection, DecisionResult, DecisionStep, OccasionType, DecisionExplanation } from "../types/decision";
 import type { RelationshipProfile } from "../types/relationship";
 import type { BudgetRange } from "../types/common";
-import { runMockDecisionEngine } from "../engine/mockDecisionEngine";
+import { runConfiguredDecisionEngine } from "../engine/mockDecisionEngine";
+import { 
+  getDefaultParameters, 
+  getDefaultExplanations,
+  type DecisionParameters 
+} from "../services/supabase";
 
 interface TestScenarioInput {
   relationship: RelationshipProfile;
@@ -19,6 +24,9 @@ interface DecisionState {
   selectedDirection?: DecisionDirection;
 
   step: DecisionStep;
+  
+  configuredParameters?: DecisionParameters;
+  configuredExplanations?: Record<DecisionDirection, DecisionExplanation>;
 
   setRelationship: (r: RelationshipProfile) => void;
   setOccasion: (o: OccasionType) => void;
@@ -29,6 +37,7 @@ interface DecisionState {
   advanceStep: (s: DecisionStep) => void;
   runDecisionSimulation: () => void;
   runTestScenario: (input: TestScenarioInput) => void;
+  setConfig: (params: DecisionParameters, explanations: Record<DecisionDirection, DecisionExplanation>) => void;
   resetDecision: () => void;
 }
 
@@ -39,9 +48,11 @@ const initialState = {
   decisionResult: undefined,
   selectedDirection: undefined,
   step: "idle" as DecisionStep,
+  configuredParameters: undefined,
+  configuredExplanations: undefined,
 };
 
-export const useDecisionState = create<DecisionState>((set) => ({
+export const useDecisionState = create<DecisionState>((set, get) => ({
   ...initialState,
 
   setRelationship: (relationship) =>
@@ -62,16 +73,24 @@ export const useDecisionState = create<DecisionState>((set) => ({
   advanceStep: (step) =>
     set({ step }),
 
+  setConfig: (configuredParameters, configuredExplanations) =>
+    set({ configuredParameters, configuredExplanations }),
+
   runDecisionSimulation: () =>
     set((state) => {
       if (!state.relationship || !state.budget || !state.occasion) {
         return state;
       }
 
-      const result = runMockDecisionEngine({
+      const parameters = state.configuredParameters ?? getDefaultParameters();
+      const explanations = state.configuredExplanations ?? getDefaultExplanations();
+
+      const result = runConfiguredDecisionEngine({
         relationship: state.relationship,
         budget: state.budget,
         occasion: state.occasion,
+        parameters,
+        explanations,
       });
 
       return {
@@ -82,8 +101,15 @@ export const useDecisionState = create<DecisionState>((set) => ({
     }),
 
   runTestScenario: (input) =>
-    set(() => {
-      const result = runMockDecisionEngine(input);
+    set((state) => {
+      const parameters = state.configuredParameters ?? getDefaultParameters();
+      const explanations = state.configuredExplanations ?? getDefaultExplanations();
+
+      const result = runConfiguredDecisionEngine({
+        ...input,
+        parameters,
+        explanations,
+      });
 
       return {
         relationship: input.relationship,
@@ -92,9 +118,15 @@ export const useDecisionState = create<DecisionState>((set) => ({
         decisionResult: result,
         selectedDirection: undefined,
         step: "decision_ready",
+        configuredParameters: state.configuredParameters,
+        configuredExplanations: state.configuredExplanations,
       };
     }),
 
   resetDecision: () =>
-    set(initialState),
+    set((state) => ({
+      ...initialState,
+      configuredParameters: state.configuredParameters,
+      configuredExplanations: state.configuredExplanations,
+    })),
 }));

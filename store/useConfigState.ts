@@ -8,6 +8,7 @@ import {
   type ObjectPattern
 } from "../services/supabase";
 import type { DecisionDirection, DecisionExplanation } from "../types/decision";
+import { useDecisionState } from "./useDecisionState";
 
 type ConnectionStatus = "disconnected" | "connecting" | "connected" | "fallback";
 
@@ -46,6 +47,8 @@ export const useConfigState = create<ConfigState>((set, get) => ({
         getObjectPatterns("emotional", get().locale),
         getObjectPatterns("bold", get().locale),
       ]);
+      
+      useDecisionState.getState().setConfig(parameters, explanations);
       
       set({
         parameters,

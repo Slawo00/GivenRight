@@ -22,6 +22,7 @@ The app helps users make gift decisions based on relationships, occasions, and p
 /store                 # Global state management
   useAppState.ts       # App-level state (appReady, debugMode)
   useDecisionState.ts  # Decision flow state machine + runTestScenario
+  useConfigState.ts    # Supabase config loading state
 
 /engine                # Decision logic
   mockDecisionEngine.ts  # Deterministic mock engine for testing
@@ -33,6 +34,13 @@ The app helps users make gift decisions based on relationships, occasions, and p
 /database              # Database schemas
   schema.sql           # Table definitions with RLS policies
   seed.sql             # Initial data (ui_texts, decision_parameters)
+
+/services/supabase     # Supabase data access layer
+  index.ts             # Barrel export
+  uiTextService.ts     # UI text fetching with caching
+  decisionParameterService.ts  # Decision parameters from DB
+  decisionExplanationService.ts # Explanations from DB
+  objectPatternService.ts      # Gift patterns from DB
 
 /types                 # TypeScript type definitions
   common.ts            # Shared types (ID, BudgetRange, LoadingState)
@@ -115,12 +123,13 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**PHASE 0 - STEP 0.4.A (Supabase Configuration) ⏳**
-- Supabase client installed and configured
-- SQL schema with 4 configuration tables
-- RLS policies for read-only access
-- Seed data matching mock engine scoring rules
-- Awaiting Supabase credentials
+**PHASE 0 - STEP 0.4.B (Supabase Read Integration) ⏳**
+- Supabase data access layer (/services/supabase/)
+- Config-driven decision engine (parameters from DB)
+- useConfigState for connection status tracking
+- Debug Panel shows Supabase connection status
+- Fallback mode when Supabase unavailable
+- Credentials configured, awaiting table creation in Supabase
 
 ## User Preferences
 - German language for communication
@@ -142,3 +151,7 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.4.A - Supabase client configuration
 - 2024-12-30: STEP 0.4.A - SQL schema (ui_texts, decision_parameters, etc.)
 - 2024-12-30: STEP 0.4.A - Seed data for initial configuration
+- 2024-12-30: STEP 0.4.B - Supabase data access layer (services)
+- 2024-12-30: STEP 0.4.B - Config-driven decision engine
+- 2024-12-30: STEP 0.4.B - useConfigState for config loading
+- 2024-12-30: STEP 0.4.B - Debug Panel with Supabase status badge
