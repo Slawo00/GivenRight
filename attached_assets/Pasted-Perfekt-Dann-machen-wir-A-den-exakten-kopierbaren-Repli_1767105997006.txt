@@ -1,0 +1,247 @@
+Perfekt. Dann machen wir **A – den exakten, kopierbaren Replit-Prompt für STEP 0.4.B**.
+Das ist jetzt **kein Konzept**, sondern **eine Arbeitsanweisung**, die Replit 1:1 ausführen soll.
+
+---
+
+# ✅ **REPLIT PROMPT – STEP 0.4.B**
+
+### *Supabase Read Integration & Config-Driven Decision Engine*
+
+*(Expo / iOS / Android / Web – single codebase)*
+
+---
+
+## 🔒 CONTEXT (UNVERÄNDERLICH)
+
+We are building **GivenRight**, a cross-platform app using:
+
+* **Expo (React Native)**
+* **Single codebase** for iOS / Android / Web
+* **Supabase as the single source of truth**
+* **No hardcoded copy, weights, or explanations**
+
+This step is **READ-ONLY integration** with Supabase.
+**NO new features, NO UI redesign, NO write operations.**
+
+---
+
+## 🎯 OBJECTIVE OF STEP 0.4.B
+
+Replace all hardcoded decision logic inputs with **live data from Supabase**, while keeping:
+
+* Existing UI
+* Existing mock decision flow
+* Existing deterministic behavior
+
+After this step:
+
+> The app behaves exactly the same —
+> but **every number, text, and explanation comes from Supabase**.
+
+---
+
+## 🧱 TASK 1 — CREATE SUPABASE DATA ACCESS LAYER
+
+### Create folder:
+
+```
+/services/supabase/
+```
+
+### Implement the following services:
+
+#### 1️⃣ `uiTextService.ts`
+
+```ts
+getUIText(key: string, locale: string): Promise<string>
+```
+
+* Reads from table: `ui_texts`
+* Fallback order:
+
+  1. requested locale
+  2. "en"
+  3. key itself (last resort)
+* Must cache results in memory per session
+
+---
+
+#### 2️⃣ `decisionParameterService.ts`
+
+```ts
+getDecisionParameters(): Promise<DecisionParameters>
+```
+
+* Reads from table: `decision_parameters`
+* Returns a normalized object, e.g.:
+
+```ts
+{
+  safe_base_weight: number,
+  emotional_base_weight: number,
+  bold_base_weight: number,
+  occasion_multipliers: Record<string, number>,
+  risk_penalties: Record<string, number>
+}
+```
+
+❗ No values may be hardcoded in the engine after this step.
+
+---
+
+#### 3️⃣ `decisionExplanationService.ts`
+
+```ts
+getExplanation(direction: "safe" | "emotional" | "bold"): Promise<DecisionExplanation>
+```
+
+* Reads from table: `decision_explanations`
+* Returns:
+
+```ts
+{
+  whyThisWorks: string,
+  risks: string,
+  emotionalSignal: string
+}
+```
+
+---
+
+#### 4️⃣ `objectPatternService.ts`
+
+```ts
+getObjectPatterns(direction: "safe" | "emotional" | "bold"): Promise<ObjectPattern[]>
+```
+
+* Reads from table: `object_patterns`
+* Returns pattern name + example object labels
+* **NO marketplaces, NO brands**
+
+---
+
+## 🧠 TASK 2 — CONVERT MOCK ENGINE TO CONFIG-DRIVEN ENGINE
+
+### File to refactor:
+
+```
+/engine/runDecisionSimulation.ts
+```
+
+### Required changes:
+
+#### BEFORE (example – forbidden):
+
+```ts
+emotionalScore += 10
+```
+
+#### AFTER (required):
+
+```ts
+emotionalScore += decisionParameters.emotional_base_weight
+```
+
+---
+
+### Occasion logic must use Supabase config:
+
+Example:
+
+```ts
+const occasionBoost = decisionParameters.occasion_multipliers[occasion] ?? 0
+emotionalScore += occasionBoost
+```
+
+📌 The engine logic **must not change**, only the **data source**.
+
+---
+
+## 🧪 TASK 3 — UPDATE DEBUG PANEL (CRITICAL)
+
+The Debug Panel must now show:
+
+### ✅ NEW DEBUG OUTPUTS
+
+* Loaded `decision_parameters` (JSON preview)
+* Loaded `decision_explanations`
+* Loaded `object_patterns`
+* Active locale
+* Supabase connection status
+
+Add a badge:
+
+* 🟢 “Supabase Live”
+* 🔴 “Fallback Mode” (if query fails)
+
+---
+
+## 🌍 TASK 4 — UI TEXT REPLACEMENT (MINIMAL)
+
+Replace only:
+
+* Screen titles
+* Primary CTA labels
+* Question prompts
+
+From:
+
+```tsx
+<Text>Choose your relationship</Text>
+```
+
+To:
+
+```tsx
+<Text>{uiText("choose_relationship_title")}</Text>
+```
+
+⚠️ Do NOT refactor all copy yet — only core flow.
+
+---
+
+## 🧪 TASK 5 — VALIDATION CHECKLIST (MANDATORY)
+
+Replit must verify:
+
+* [ ] App runs on **Expo Go (iOS & Android)**
+* [ ] App runs on **Web**
+* [ ] Turning off Supabase → app still runs (fallback)
+* [ ] Changing weights in Supabase changes scores instantly
+* [ ] No hardcoded decision numbers remain
+
+---
+
+## 🚫 EXPLICITLY FORBIDDEN IN STEP 0.4.B
+
+* ❌ Writing to Supabase
+* ❌ User authentication
+* ❌ Feedback storage
+* ❌ Amazon / affiliate logic
+* ❌ Prompt execution logic
+* ❌ Learning mechanisms
+
+---
+
+## 🏁 SUCCESS CRITERIA
+
+STEP 0.4.B is complete when:
+
+> **Product behavior is fully driven by Supabase,
+> while UX and flow remain unchanged.**
+
+---
+
+## 📌 FINAL INSTRUCTION TO REPLIT
+
+> Implement exactly the tasks above.
+> Do not anticipate future steps.
+> Ask for confirmation if anything is ambiguous.
+
+---
+
+Wenn Replit damit fertig ist, machen wir **STEP 0.5**
+→ *Decision Explanation Layer (User-Facing Transparency)*
+→ *und danach: Marketplace / Amazon Resolution.*
+
+👉 **Sobald Replit antwortet, poste mir das Abschluss-Protokoll – dann entscheide ich den nächsten optimalen Schritt.**
