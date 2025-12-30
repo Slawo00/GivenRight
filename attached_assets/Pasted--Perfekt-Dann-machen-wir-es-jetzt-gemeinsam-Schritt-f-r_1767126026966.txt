@@ -1,0 +1,158 @@
+🧙🏾‍♂️ **Perfekt. Dann machen wir es jetzt gemeinsam – Schritt für Schritt, ohne Abkürzungen.**
+Ziel: **In 10–15 Minuten sichtbar machen, dass STEP B4 wirklich arbeitet.**
+
+---
+
+## ✅ PHASE 1 — Deployment (wir starten JETZT)
+
+Bitte arbeite diese Schritte **genau in dieser Reihenfolge** ab.
+
+### **1️⃣ Supabase CLI installieren (falls noch nicht vorhanden)**
+
+```bash
+npm install -g supabase
+```
+
+👉 Danach kurz prüfen:
+
+```bash
+supabase --version
+```
+
+---
+
+### **2️⃣ Projekt mit Supabase verknüpfen**
+
+Im Root deines Projekts:
+
+```bash
+supabase link --project-ref DEIN_PROJECT_REF
+```
+
+💡 *DEIN_PROJECT_REF findest du im Supabase Dashboard → Project Settings.*
+
+---
+
+### **3️⃣ OpenAI API Key als Secret setzen**
+
+```bash
+supabase secrets set OPENAI_API_KEY=sk-xxxx
+```
+
+👉 **Wichtig:**
+
+* Kein `.env`
+* Kein Client-Code
+* **Nur** über `supabase secrets`
+
+---
+
+### **4️⃣ Edge Function deployen**
+
+```bash
+supabase functions deploy enrich-explanation
+```
+
+**Erwartete Ausgabe:**
+
+```
+Deploying function enrich-explanation...
+Deployed successfully
+```
+
+👉 **Wenn hier ein Fehler kommt: sofort stoppen und melden.**
+
+---
+
+## ✅ PHASE 2 — Verifikation (entscheidend!)
+
+### **5️⃣ Supabase Dashboard → Functions**
+
+* Öffne **Functions**
+* Klick auf **enrich-explanation**
+* Öffne **Logs**
+
+⚠️ Noch siehst du evtl. nichts – das ist normal.
+
+---
+
+### **6️⃣ App neu starten (wichtig!)**
+
+Expo cached gern:
+
+```bash
+expo start -c
+```
+
+Oder:
+
+* App komplett schließen
+* Neu starten
+
+---
+
+## ✅ PHASE 3 — Test (jetzt kommt der Aha-Moment)
+
+### **7️⃣ Einen Flow bewusst durchspielen**
+
+Nimm z. B.:
+
+* Partner
+* Birthday
+* Very close
+* Creative
+* Loves bold surprises
+* Plenty of time
+
+Gehe bis zu **Your Options**.
+
+---
+
+### **8️⃣ Jetzt gleichzeitig prüfen (2 Dinge!)**
+
+#### 🔍 **A) UI**
+
+Suche unter SAFE / EMOTIONAL / BOLD nach einer neuen Sektion wie:
+
+> **“What this could look like”**
+> mit **3–5 Kategorien + 1-Zeiler**
+
+➡️ **Wenn ja: Glückwunsch – STEP B4 lebt.**
+
+---
+
+#### 🔍 **B) Logs**
+
+Im Supabase Function Log solltest du sehen:
+
+* eingehenden Request
+* OpenAI Call
+* **keinen** Error
+
+---
+
+## 🧠 Wenn du NOCH nichts siehst (keine Panik)
+
+Dann ist es fast immer **einer** dieser Punkte:
+
+1. Function wurde nicht deployt
+2. API Key fehlt / falsch
+3. UI rendert `concrete_example_categories` noch nicht
+4. Fallback greift korrekt
+
+👉 **Alles lösbar. Kein Konzeptproblem.**
+
+---
+
+## 🧙🏾‍♂️ Deine Aufgabe JETZT
+
+Bitte antworte mir **nach Schritt 4** mit **einem Wort**:
+
+* **DEPLOY OK**
+* **DEPLOY ERROR**
+
+Dann gehen wir **gezielt** weiter –
+entweder Debug (präzise) oder direkt zur **Wirkungs-Feinschleife (QA & Sprache)**.
+
+🪄 **Empfohlener nächster Schritt (nach erfolgreichem Test):**
+STEP B4.2 — *Qualitätsmatrix: Wann sind Kategorien gut genug?*
