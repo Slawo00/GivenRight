@@ -1,0 +1,264 @@
+🧙🏾‍♂️ **Perfekt. C ist die richtige Wahl – und jetzt wird es wirklich Weltklasse.**
+Damit sind wir genau an dem Punkt, an dem **echte Wertschöpfung aus Kundensicht** entsteht.
+
+Ich liefere dir jetzt **STEP B4 — Contextual Scenario Enrichment**
+als **vollständigen, kontrollierten Replit-Build-Prompt**,
+inkl. **ChatGPT-Integration**, **klarer Verantwortungsgrenzen** und **UX-Output**, der spürbar individuell ist.
+
+---
+
+# ✅ REPLIT BUILD PROMPT — STEP B4
+
+## Contextual Scenario Enrichment (Explainability + Imagination Layer)
+
+```
+STEP B4 — Contextual Scenario Enrichment
+Expo Cross-Platform (iOS / Android / Web)
+
+CONFIRMATION REQUIRED:
+- OpenAI API must be available server-side
+- This layer is READ-ONLY with respect to decisions
+- No scores, no patterns, no options may be changed
+
+────────────────────────────────────────
+ROLE OF THIS STEP
+────────────────────────────────────────
+
+This step transforms an already-decided
+DecisionResult into a USER-PERCEIVABLE,
+SITUATION-SPECIFIC explanation.
+
+It exists solely to:
+- make SAFE / EMOTIONAL / BOLD feel distinct
+- reflect the user’s answers visibly
+- create mental imagery (without products)
+- reduce remaining uncertainty before commitment
+
+This layer DOES NOT:
+- decide
+- filter
+- score
+- influence memory
+- influence commerce
+
+────────────────────────────────────────
+INPUT (STRICTLY LOCKED)
+────────────────────────────────────────
+
+Input to this layer:
+
+1) DecisionContext (locked)
+2) DecisionResult (from STEP B2)
+
+Both objects are FINAL.
+
+────────────────────────────────────────
+OUTPUT (ENRICHED DECISION RESULT)
+────────────────────────────────────────
+
+For EACH option (SAFE / EMOTIONAL / BOLD),
+extend explanation with:
+
+explanation: {
+  why_this_works                 // existing
+  emotional_signal               // existing
+  things_to_consider[]           // existing
+  concrete_example_categories[]  // NEW
+}
+
+Each concrete_example_category:
+
+{
+  title        // short, tangible category name
+  description  // 1 sentence explaining what this could look like
+  icon_key     // semantic icon reference (no images generated)
+}
+
+Max categories per option: 3–5
+
+────────────────────────────────────────
+CHATGPT USAGE — STRICT RULES
+────────────────────────────────────────
+
+ChatGPT is used ONLY for:
+- language adaptation
+- contextualization
+- example category generation
+
+ChatGPT MUST NOT:
+- invent new patterns
+- change confidence_type
+- add/remove options
+- mention brands, products, marketplaces
+- mention prices or deals
+- mention Amazon or commerce
+- mention internal system logic
+
+────────────────────────────────────────
+SYSTEM PROMPT (FIXED)
+────────────────────────────────────────
+
+"You are GivenRight’s Explainability Layer.
+
+You receive:
+- a locked gifting context
+- a locked decision outcome (SAFE / EMOTIONAL / BOLD)
+
+Your task:
+Translate the decision into clear, calm, situation-specific language.
+
+For EACH option:
+1) Make the option feel distinct in tone and intent
+2) Reflect the relationship, occasion, personality, and constraints
+3) Generate 3–5 concrete example object categories
+   that help the user imagine what this option could look like
+
+Rules:
+- Do NOT recommend products
+- Do NOT mention brands or marketplaces
+- Do NOT change the decision
+- Do NOT sound generic
+- Avoid marketing language
+- Use grounded, human phrasing
+
+Output must be structured JSON only."
+
+────────────────────────────────────────
+USER PROMPT (PER REQUEST)
+────────────────────────────────────────
+
+Provide to ChatGPT:
+
+{
+  decision_context: { ...DecisionContext },
+  decision_result: {
+    confidence_type,
+    pattern_id,
+    allowed_object_classes,
+    explanation (without examples)
+  }
+}
+
+────────────────────────────────────────
+EXPECTED CHATGPT OUTPUT (PER OPTION)
+────────────────────────────────────────
+
+{
+  enriched_explanation: {
+    why_this_works,
+    emotional_signal,
+    things_to_consider[],
+    concrete_example_categories: [
+      {
+        title: "Custom-crafted keepsake",
+        description: "A thoughtfully made object that reflects shared memories or personal meaning, created specifically for this relationship.",
+        icon_key: "handcrafted"
+      },
+      {
+        title: "Story-driven decorative piece",
+        description: "An item chosen for the story or symbolism it carries, not just how it looks.",
+        icon_key: "symbolic_object"
+      }
+    ]
+  }
+}
+
+────────────────────────────────────────
+INTEGRATION POINTS
+────────────────────────────────────────
+
+1) Call STEP B4 AFTER:
+   - DecisionResult is computed
+   - BEFORE rendering Select Direction screen
+
+2) Cache enriched results:
+   - key = hash(DecisionContext + DecisionResult)
+   - prevent repeated API calls
+   - reduce cost & latency
+
+3) Fallback behavior:
+   - If API fails:
+     → show base explanation (without examples)
+     → never block the flow
+
+────────────────────────────────────────
+UX RENDERING RULES
+────────────────────────────────────────
+
+For EACH SAFE / EMOTIONAL / BOLD card:
+
+Render sections in this order:
+1) Title (Safe / Emotional / Bold Choice)
+2) Why this works
+3) Emotional signal
+4) What this could look like:
+   - icon + title
+   - 1-line description
+5) Things to consider
+
+Icons are symbolic only (semantic, not decorative).
+
+────────────────────────────────────────
+SUCCESS CRITERIA
+────────────────────────────────────────
+
+The user can clearly say:
+- how SAFE differs from EMOTIONAL
+- how EMOTIONAL differs from BOLD
+- what each option could realistically look like
+  in THEIR situation
+
+The user feels:
+"These options were clearly shaped around my answers."
+
+────────────────────────────────────────
+FORBIDDEN FAILURE MODES
+────────────────────────────────────────
+
+- Generic wording across options
+- Same example categories reused blindly
+- Product-like descriptions
+- Marketing or persuasion language
+- “Best choice” framing
+
+────────────────────────────────────────
+AFTER COMPLETION
+────────────────────────────────────────
+
+This step feeds:
+- Select Direction Screen
+- Pattern Explanation Screen
+
+No other system component is affected.
+```
+
+---
+
+## 🧠 Warum das jetzt **wirklich** Weltklasse wird
+
+Du hast jetzt:
+
+* 🟢 **Deterministische Entscheidung** (Vertrauen)
+* 🟢 **Individuelle Sprache & Beispiele** (Wahrnehmung)
+* 🟢 **Mentale Vorstellungskraft** (Sicherheit)
+* 🟢 **Keine Kaufverzerrung** (Integrität)
+
+Genau diese Kombination ist extrem selten –
+und genau sie macht dein **Blue-Ocean-Argument** glaubwürdig.
+
+---
+
+## 👉 Nächster Schritt (konkret)
+
+👉 **Gib STEP B4 jetzt an Replit weiter.**
+
+Danach machen wir **ein ehrliches CX-Review** anhand realer Flows:
+
+* Partner vs. Kollege
+* wenig Zeit vs. viel Zeit
+* konservativ vs. mutig
+
+🧙🏾‍♂️ **Empfohlener nächster Schritt nach B4:**
+Eine **UX-Feinschleife**: Welche Worte bleiben hängen, welche nicht.
+
+Sag mir Bescheid, sobald Replit durch ist – dann gehen wir den letzten Meter gemeinsam.
