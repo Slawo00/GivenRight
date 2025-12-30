@@ -28,6 +28,11 @@ The app helps users make gift decisions based on relationships, occasions, and p
 
 /config                # Configuration
   env.ts               # Environment variables
+  supabase.ts          # Supabase client configuration
+
+/database              # Database schemas
+  schema.sql           # Table definitions with RLS policies
+  seed.sql             # Initial data (ui_texts, decision_parameters)
 
 /types                 # TypeScript type definitions
   common.ts            # Shared types (ID, BudgetRange, LoadingState)
@@ -95,13 +100,27 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - Decision scores (safe/emotional/bold)
 - Selected direction
 
+### Supabase Configuration (STEP 0.4.A)
+
+**Database Tables:**
+- `ui_texts`: Multi-language UI texts (key, language, value)
+- `decision_parameters`: Scoring parameters for decision engine
+- `decision_explanations`: Explanations per direction (safe/emotional/bold)
+- `object_patterns`: Gift pattern categories
+
+**Environment Variables Required:**
+- `EXPO_PUBLIC_SUPABASE_URL`: Supabase project URL
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key
+
+**RLS Policies:** Read-only for anon + authenticated users
+
 ## Current Phase
-**PHASE 0 - STEP 0.3 (Mock Decision Engine) ✅**
-- Deterministic mock engine for testing without API
-- Scoring based on relationship, closeness, surprise tolerance, budget, occasion
-- runTestScenario action for atomic test execution
-- DebugPanel with test scenarios (Partner Birthday, Colleague Christmas)
-- Score visualization with recommendations and explanations
+**PHASE 0 - STEP 0.4.A (Supabase Configuration) ⏳**
+- Supabase client installed and configured
+- SQL schema with 4 configuration tables
+- RLS policies for read-only access
+- Seed data matching mock engine scoring rules
+- Awaiting Supabase credentials
 
 ## User Preferences
 - German language for communication
@@ -120,3 +139,6 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.3 - Mock decision engine created
 - 2024-12-30: STEP 0.3 - runTestScenario action (deterministic)
 - 2024-12-30: STEP 0.3 - DebugPanel with test scenarios & score visualization
+- 2024-12-30: STEP 0.4.A - Supabase client configuration
+- 2024-12-30: STEP 0.4.A - SQL schema (ui_texts, decision_parameters, etc.)
+- 2024-12-30: STEP 0.4.A - Seed data for initial configuration
