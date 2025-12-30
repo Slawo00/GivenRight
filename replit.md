@@ -21,7 +21,10 @@ The app helps users make gift decisions based on relationships, occasions, and p
 
 /store                 # Global state management
   useAppState.ts       # App-level state (appReady, debugMode)
-  useDecisionState.ts  # Decision flow state machine
+  useDecisionState.ts  # Decision flow state machine + runTestScenario
+
+/engine                # Decision logic
+  mockDecisionEngine.ts  # Deterministic mock engine for testing
 
 /config                # Configuration
   env.ts               # Environment variables
@@ -55,7 +58,18 @@ The app helps users make gift decisions based on relationships, occasions, and p
 - Inputs: `relationship`, `occasion`, `budget`
 - Outputs: `decisionResult`, `selectedDirection`
 - Flow control: `step` (idle → collecting_inputs → decision_ready → direction_selected → completed)
-- Actions: `setRelationship`, `setOccasion`, `setBudget`, `setDecisionResult`, `selectDirection`, `resetDecision`
+- Actions: `setRelationship`, `setOccasion`, `setBudget`, `setDecisionResult`, `selectDirection`, `runTestScenario`, `runDecisionSimulation`, `resetDecision`
+
+### Mock Decision Engine (STEP 0.3)
+
+**Scoring Rules (engine/mockDecisionEngine.ts):**
+- **Base scores**: safe=50, emotional=50, bold=50
+- **Relationship modifiers**: partner (+15 emotional/bold), colleague (+20 safe, -10 bold), friend (+10 emotional)
+- **Closeness**: High (4-5) boosts emotional/bold by 10-20; Low (1-2) boosts safe by 10-15
+- **Surprise tolerance**: low (+15 safe), high (+15 bold)
+- **Budget**: under_50 (+10 safe), 250_plus (+10 bold, +5 emotional)
+- **Occasion**: birthday (+10 emotional), valentines (+15 emotional, +10 bold), wedding (+10 safe, +5 emotional), christmas (+5 safe)
+- **Risk**: bold=high, emotional=medium, safe=low
 
 ### Canonical Types
 
@@ -82,12 +96,12 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - Selected direction
 
 ## Current Phase
-**PHASE 0 - STEP 0.2 (Canonical Types & Decision State) ✅**
-- Canonical decision types defined
-- Relationship profile types
-- Budget range types
-- Decision state machine (Zustand)
-- Debug panel with decision state visibility
+**PHASE 0 - STEP 0.3 (Mock Decision Engine) ✅**
+- Deterministic mock engine for testing without API
+- Scoring based on relationship, closeness, surprise tolerance, budget, occasion
+- runTestScenario action for atomic test execution
+- DebugPanel with test scenarios (Partner Birthday, Colleague Christmas)
+- Score visualization with recommendations and explanations
 
 ## User Preferences
 - German language for communication
@@ -103,3 +117,6 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.2 - Canonical decision types
 - 2024-12-30: STEP 0.2 - Decision state machine
 - 2024-12-30: STEP 0.2 - Enhanced DebugPanel
+- 2024-12-30: STEP 0.3 - Mock decision engine created
+- 2024-12-30: STEP 0.3 - runTestScenario action (deterministic)
+- 2024-12-30: STEP 0.3 - DebugPanel with test scenarios & score visualization
