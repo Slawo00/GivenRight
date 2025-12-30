@@ -123,15 +123,16 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**PHASE 0 - STEP 0.6.1 (Pattern Explanation - Confidence Lock) ✅**
-- PatternExplanationScreen as a CONFIDENCE LOCK before commerce
-- Shows: Why This Works, Why This Fits Your Relationship, Emotional Signal, Things to Consider
-- Calm, reflective, non-commercial design
-- CTA: "Show concrete examples" → leads to STEP 0.7 (Commerce)
-- Database schema extended with relationship_fit and things_to_consider fields
-- seed.sql with rich educational content per pattern
-- Decision flow: pattern_explanation step added between object_class_selection and completed
-- Full flow: Home → Start Decision → See Explanations → Select Direction → Object Patterns → Pattern Explanation → Ready for Commerce
+**PHASE 0 - STEP 0.7 (Commerce Execution Layer) ✅**
+- CommercePreviewScreen as Amazon affiliate execution layer
+- ProductResolverService with mock data (9 patterns × 5 products)
+- ProductCard component with neutral presentation
+- Trust disclosure: "As an Amazon Associate, we earn from qualifying purchases"
+- UX rules enforced: NO "Buy now", NO "Best deal", NO urgency
+- External browser linking via expo-web-browser
+- Offline/error handling with calm fallback message
+- Decision flow: commerce_preview step, completed_with_execution final state
+- Full flow: Home → Start Decision → See Explanations → Select Direction → Object Patterns → Pattern Explanation → Commerce Preview → Complete
 
 ## User Preferences
 - German language for communication
@@ -175,3 +176,8 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.6.1 - Extended schema: relationship_fit, things_to_consider
 - 2024-12-30: STEP 0.6.1 - Rich educational seed data for all 9 patterns
 - 2024-12-30: STEP 0.6.1 - pattern_explanation step in decision flow
+- 2024-12-30: STEP 0.7 - Product type definitions (types/product.ts)
+- 2024-12-30: STEP 0.7 - ProductResolverService with mock data
+- 2024-12-30: STEP 0.7 - ProductCard component (neutral presentation)
+- 2024-12-30: STEP 0.7 - CommercePreviewScreen with trust disclosure
+- 2024-12-30: STEP 0.7 - commerce_preview and completed_with_execution steps

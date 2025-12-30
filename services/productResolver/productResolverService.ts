@@ -3,6 +3,54 @@ import { BudgetRange } from "../../types/common";
 
 const AFFILIATE_TAG = "givenright-20";
 
+const MOCK_ASINS: Record<string, string> = {
+  "se-001": "B09V3KXJPB",
+  "se-002": "B07VGRJDFY",
+  "se-003": "B08YNXN9L3",
+  "se-004": "B0C5SXGRP3",
+  "se-005": "B07PXGQC1Q",
+  "hp-001": "B08FHK24SR",
+  "hp-002": "B07L3XZBLM",
+  "hp-003": "B07VL9DPQB",
+  "hp-004": "B08KGV7CZ5",
+  "hp-005": "B07WFRG59W",
+  "cc-001": "B07RQKFSHX",
+  "cc-002": "B08NWLQF7J",
+  "cc-003": "B07NQG8S4K",
+  "cc-004": "B07F8YYQQ3",
+  "cc-005": "B08N5D6VXW",
+  "sa-001": "B07YDQMKNQ",
+  "sa-002": "B08FMVN5YJ",
+  "sa-003": "B07YX4HJ7Z",
+  "sa-004": "B07DCNTKX4",
+  "sa-005": "B07QZ4YG9W",
+  "es-001": "B08GYKNCCP",
+  "es-002": "B07VG47FQY",
+  "es-003": "B08LGXM6W3",
+  "es-004": "B01LZS2QYU",
+  "es-005": "B07DFCRTX5",
+  "vt-001": "B07WFRG59W",
+  "vt-002": "B07L3XZBLM",
+  "vt-003": "B08W93S8RR",
+  "vt-004": "B07YDQMKNQ",
+  "vt-005": "B08KGV7CZ5",
+  "so-001": "B08HZ3RNQZ",
+  "so-002": "B07NQ8PJNY",
+  "so-003": "B08GJZQ6ZB",
+  "so-004": "B07LDZVQQ1",
+  "so-005": "B08N5G8G5Y",
+  "eu-001": "B08HQNSSPR",
+  "eu-002": "B0BXMVZ7J2",
+  "eu-003": "B09V3KXJPB",
+  "eu-004": "B07PXGQC1Q",
+  "eu-005": "B0C5SXGRP3",
+  "uc-001": "B08N5D6VXW",
+  "uc-002": "B08HZ3RNQZ",
+  "uc-003": "B07DFCRTX5",
+  "uc-004": "B08LGXM6W3",
+  "uc-005": "B08GYKNCCP",
+};
+
 const BUDGET_RANGES: Record<BudgetRange, { min: number; max: number }> = {
   under_50: { min: 10, max: 49 },
   "50_100": { min: 50, max: 100 },
@@ -483,7 +531,8 @@ const MOCK_PRODUCTS: Record<string, Product[]> = {
 
 function buildAffiliateUrl(productId: string, country: string): string {
   const domain = AMAZON_DOMAINS[country] || AMAZON_DOMAINS.US;
-  return `https://www.${domain}/dp/${productId}?tag=${AFFILIATE_TAG}`;
+  const asin = MOCK_ASINS[productId] || "B09V3KXJPB";
+  return `https://www.${domain}/dp/${asin}?tag=${AFFILIATE_TAG}`;
 }
 
 function filterByBudget(products: Product[], budgetRange: BudgetRange): Product[] {
