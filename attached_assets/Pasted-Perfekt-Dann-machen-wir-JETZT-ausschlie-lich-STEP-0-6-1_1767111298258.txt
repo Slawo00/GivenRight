@@ -1,0 +1,189 @@
+Perfekt.
+Dann machen wir **JETZT ausschließlich STEP 0.6.1** – sauber, vollständig und **1:1 an Replit übergebbar**.
+
+Ich gebe dir **einen einzigen, vollständigen Replit-Prompt**, keinen Kommentar-Text, keine Theorie.
+Das ist der **Build-Prompt**.
+
+---
+
+# ✅ REPLIT BUILD PROMPT — STEP 0.6.1
+
+**Pattern Explanation Screen (Confidence Lock)**
+
+```
+STEP 0.6.1 — Pattern Explanation Screen
+Expo Cross-Platform (iOS / Android / Web)
+
+IMPORTANT:
+This must be 100% Expo-compatible.
+Works on iOS, Android, and Web from ONE codebase.
+No native code. No platform-specific hacks.
+
+GOAL:
+Create a calm, educational screen that DEEPENS user confidence
+after selecting a gift pattern and BEFORE any products are shown.
+
+This screen must feel:
+- thoughtful
+- reassuring
+- non-commercial
+- psychologically grounding
+
+────────────────────────────────────────
+INPUT (from Decision State)
+────────────────────────────────────────
+
+- selectedDirection: "safe" | "emotional" | "bold"
+- selectedPattern: string
+- relationship context
+- occasion context
+
+All inputs are already available in the global decision state.
+
+────────────────────────────────────────
+DATA SOURCE (Supabase-first)
+────────────────────────────────────────
+
+Primary source:
+Supabase table: object_patterns
+
+Required fields:
+- pattern_key (string)
+- title (string)
+- description (string)
+- emotional_intent (string)
+- relationship_fit (string)
+- things_to_consider (string[])
+- icon (string / emoji)
+
+Rules:
+- Fetch content dynamically from Supabase
+- If Supabase is unavailable, use local fallback content
+- NO hardcoded explanatory text in the component
+
+────────────────────────────────────────
+SCREEN
+────────────────────────────────────────
+
+Screen name:
+PatternExplanationScreen
+
+Route:
+app/decision/pattern-explanation.tsx
+
+────────────────────────────────────────
+UI STRUCTURE
+────────────────────────────────────────
+
+1. Header
+   - Pattern icon (emoji)
+   - Pattern title
+   - Calm subtitle: "Why this kind of gift works"
+
+2. Section: WHY THIS WORKS
+   - Text from: description
+   - Short, reflective paragraph
+   - No selling language
+
+3. Section: WHY THIS FITS YOUR RELATIONSHIP
+   - Text from: relationship_fit
+   - Explicitly references relationship & occasion
+   - Makes the choice feel intentional
+
+4. Section: WHAT THIS SIGNALS EMOTIONALLY
+   - Text from: emotional_intent
+   - One or two sentences
+   - Explains the social/emotional signal
+
+5. Section: THINGS TO CONSIDER
+   - Bullet list from: things_to_consider
+   - Calm warnings (quality, timing, tone)
+   - Never discouraging
+
+6. Confidence Reinforcement Line (static):
+   "If this feels aligned with how you want to show care,
+   you’re on the right path."
+
+7. CTA BUTTON (single, primary)
+   Label:
+   "Show concrete examples"
+
+   Action:
+   - Navigate to STEP 0.7 (Commerce Preview)
+   - Do NOT show products here
+   - Do NOT trigger any purchase logic
+
+────────────────────────────────────────
+UX & PSYCHOLOGICAL RULES
+────────────────────────────────────────
+
+- NO prices
+- NO product names
+- NO brands
+- NO shops
+- NO urgency ("now", "limited", "don’t miss")
+- NO scores
+- NO technical language
+
+This is a CONFIDENCE LOCK screen, not a marketplace.
+
+────────────────────────────────────────
+TECHNICAL REQUIREMENTS
+────────────────────────────────────────
+
+- Expo Router navigation
+- Fully typed (TypeScript)
+- Uses existing decision state
+- Supabase content loading with fallback
+- Works offline
+- Identical behavior on iOS / Android / Web
+
+────────────────────────────────────────
+SUCCESS CRITERIA
+────────────────────────────────────────
+
+The user should feel:
+“I know why this gift direction is right.
+Now I’m ready to see examples.”
+
+After completion:
+Decision flow continues to STEP 0.7.
+```
+
+---
+
+## 🔒 WICHTIG (Architektur-Check)
+
+Mit STEP 0.6.1 hast du jetzt:
+
+* ❌ kein Shopping
+* ❌ keine Ablenkung
+* ❌ keine Conversion-Psychologie
+
+sondern:
+
+* ✅ Vertrauen
+* ✅ Klarheit
+* ✅ Entscheidungssicherheit
+
+**Das ist exakt der Punkt, an dem GivenRight anders ist als jede andere Gift-App.**
+
+---
+
+## 🔜 Was danach kommt (nur zur Orientierung)
+
+**Nach erfolgreichem STEP 0.6.1:**
+
+1. STEP 0.7 — Commerce Execution Layer
+   (Amazon Affiliate als *Execution*, nicht Entscheidung)
+
+2. STEP 0.8 — Gift Memory & Non-Repetition
+   (echter Moat)
+
+Aber **JETZT nur 0.6.1 bauen**.
+
+---
+
+👉 **Gib diesen Prompt an Replit weiter.**
+Wenn Replit fertig ist, schick mir das Abschluss-Protokoll oder Screenshots –
+ich prüfe sofort, ob der Confidence-Lock wirklich sitzt.

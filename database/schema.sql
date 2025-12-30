@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS object_patterns (
   title TEXT NOT NULL,
   description TEXT,
   emotional_intent TEXT,
+  relationship_fit TEXT,
+  things_to_consider TEXT[],
   icon TEXT DEFAULT '🎁',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(pattern_key, direction, language)

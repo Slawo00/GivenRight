@@ -196,43 +196,73 @@ ON CONFLICT (direction, language) DO UPDATE SET
 
 ----------------------------------------------------
 -- OBJECT PATTERNS (Gift Pattern Categories)
+-- Extended with relationship_fit and things_to_consider for STEP 0.6.1
 ----------------------------------------------------
-INSERT INTO object_patterns (pattern_key, direction, language, title, description, emotional_intent, icon) VALUES
+INSERT INTO object_patterns (pattern_key, direction, language, title, description, emotional_intent, relationship_fit, things_to_consider, icon) VALUES
 -- Safe Patterns
 ('daily_accessory', 'safe', 'en', 'Daily Accessory', 
- 'Something they''ll reach for every single day. Reliable, beautiful, and unmistakably thoughtful.',
- 'Shows you pay attention to their daily life', '⌚'),
+ 'Something they''ll reach for every single day. Reliable, beautiful, and unmistakably thoughtful. This type of gift integrates seamlessly into their existing life without demanding change.',
+ 'Shows you pay attention to their daily life and value their comfort.',
+ 'Perfect for relationships where you know their routines well. Works especially for partners, close friends, and family members whose daily patterns you observe naturally.',
+ ARRAY['Choose quality over flash - this will be used daily', 'Consider their existing accessories to avoid redundancy', 'Think about their personal style - subtle or statement?', 'Durability matters more than trends'],
+ '⌚'),
 ('practical_luxury', 'safe', 'en', 'Practical Luxury', 
- 'A premium version of something they already use. Elevates the ordinary into something special.',
- 'Tells them they deserve the best', '✨'),
+ 'A premium version of something they already use. Elevates the ordinary into something special. You''re not changing their life - you''re making the life they have feel more valuable.',
+ 'Tells them they deserve the best version of what they already enjoy.',
+ 'Ideal when you understand their habits but want to show you believe they deserve better. Strong choice for parents, partners, or anyone who puts others first.',
+ ARRAY['Identify what they use often but wouldn''t upgrade themselves', 'Premium means quality, not necessarily expensive', 'Avoid anything that implies criticism of their current choices', 'Consider the learning curve - familiarity matters'],
+ '✨'),
 ('ritual_object', 'safe', 'en', 'Ritual Object', 
- 'Something that becomes part of their daily routine. Coffee, tea, morning light, evening calm.',
- 'Creates a moment of daily joy', '☕'),
+ 'Something that becomes part of their daily routine. Coffee, tea, morning light, evening calm. You''re giving them a moment of peace they''ll associate with your thoughtfulness.',
+ 'Creates a moment of daily joy and a small ritual of comfort.',
+ 'Works beautifully for people who value their quiet moments. Strong choice for parents, partners, or friends who need more calm in their lives.',
+ ARRAY['Think about their existing routines - morning person or evening?', 'Choose something that enhances rather than adds complexity', 'Consider the sensory experience - how it feels, smells, sounds', 'Simplicity often lands better than elaborate ritual objects'],
+ '☕'),
 
 -- Emotional Patterns
 ('shared_experience', 'emotional', 'en', 'Shared Experience', 
- 'Not a thing, but a moment together. Something that becomes a memory you''ll both carry.',
- 'Says ''I want more moments with you''', '🎭'),
+ 'Not a thing, but a moment together. Something that becomes a memory you''ll both carry. You''re investing in your relationship itself, not in an object.',
+ 'Says ''I want more moments with you'' and values connection over possession.',
+ 'Best for relationships where presence matters more than presents. Strong choice for partners, close friends, or family members you don''t see enough.',
+ ARRAY['Choose something neither of you has done before', 'Consider their comfort zone - challenge gently, don''t overwhelm', 'Plan around their schedule, not just yours', 'Leave room for spontaneity within the experience'],
+ '🎭'),
 ('symbolic_object', 'emotional', 'en', 'Symbolic Object', 
- 'Something that represents your connection. An inside joke, a shared story, a meaningful reference.',
- 'Shows the depth of your understanding', '💫'),
+ 'Something that represents your connection. An inside joke, a shared story, a meaningful reference. Only you two understand its full significance.',
+ 'Shows the depth of your understanding and the uniqueness of your bond.',
+ 'Perfect for relationships with shared history and private meaning. Strong choice for partners, long-time friends, or anyone who values sentiment over spectacle.',
+ ARRAY['The symbol should reference something positive you''ve shared', 'Subtlety is powerful - others don''t need to understand', 'Consider how they''ll display or use it', 'Avoid references that might be painful or complicated'],
+ '💫'),
 ('personal_artifact', 'emotional', 'en', 'Personal Artifact', 
- 'A piece of their identity. Something that says ''I see who you really are.''',
- 'Validates who they are becoming', '🎨'),
+ 'A piece of their identity. Something that says ''I see who you really are.'' This gift validates something important about them that others might overlook.',
+ 'Validates who they are becoming and honors their authentic self.',
+ 'Works for people in transition or growth. Strong choice for anyone pursuing something meaningful - a hobby, career change, or personal development.',
+ ARRAY['Focus on who they''re becoming, not who they were', 'Avoid assumptions - listen to what they actually say they want', 'Consider whether this aligns with their own self-image', 'The gift should empower, not define them'],
+ '🎨'),
 
 -- Bold Patterns
 ('bespoke_creation', 'bold', 'en', 'Bespoke Creation', 
- 'Something made specifically for them. One of a kind, impossible to replicate, entirely theirs.',
- 'Declares they are irreplaceable', '💎'),
+ 'Something made specifically for them. One of a kind, impossible to replicate, entirely theirs. This is not a product - it''s a declaration that they are singular.',
+ 'Declares they are irreplaceable and worth the effort of custom creation.',
+ 'Best for people who value uniqueness and effort over convenience. Strong choice for partners, close family, or anyone who feels undervalued by mass-market gifts.',
+ ARRAY['Research artisans and makers carefully', 'Allow plenty of time - bespoke takes longer', 'Provide clear input without micromanaging', 'Consider how they''ll feel about the visibility of such a gift'],
+ '💎'),
 ('statement_piece', 'bold', 'en', 'Statement Piece', 
- 'Something that makes people ask ''Where did you get that?'' A gift that starts conversations.',
- 'Elevates how they see themselves', '🌟'),
+ 'Something that makes people ask ''Where did you get that?'' A gift that starts conversations and elevates how they present themselves to the world.',
+ 'Elevates how they see themselves and how others see them.',
+ 'Works for confident people who enjoy being noticed. Strong choice for partners, friends, or family members who embrace bold self-expression.',
+ ARRAY['Know their comfort level with attention', 'Consider where and how they''ll use it', 'Bold doesn''t mean flashy - it can mean singular', 'Make sure it aligns with their personal brand'],
+ '🌟'),
 ('transformative_experience', 'bold', 'en', 'Transformative Experience', 
- 'Something that changes them. A skill, a journey, a perspective they didn''t have before.',
- 'Invests in who they''re becoming', '🚀')
+ 'Something that changes them. A skill, a journey, a perspective they didn''t have before. You''re investing in who they might become, not who they are today.',
+ 'Invests in who they''re becoming and believes in their potential.',
+ 'Perfect for people open to growth and new challenges. Strong choice for partners, close friends, or anyone who has expressed a desire to learn or change.',
+ ARRAY['Listen for what they''ve said they want to try', 'Don''t project your own growth wishes onto them', 'Consider the time and energy commitment required', 'Frame it as an opportunity, not an assignment'],
+ '🚀')
 
 ON CONFLICT (pattern_key, direction, language) DO UPDATE SET 
   title = EXCLUDED.title,
   description = EXCLUDED.description,
   emotional_intent = EXCLUDED.emotional_intent,
+  relationship_fit = EXCLUDED.relationship_fit,
+  things_to_consider = EXCLUDED.things_to_consider,
   icon = EXCLUDED.icon;

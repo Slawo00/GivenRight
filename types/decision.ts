@@ -37,4 +37,5 @@ export type DecisionStep =
   | "decision_ready"
   | "direction_selected"
   | "object_class_selection"
+  | "pattern_explanation"
   | "completed";
