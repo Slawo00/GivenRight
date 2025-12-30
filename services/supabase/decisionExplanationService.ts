@@ -39,7 +39,7 @@ export async function getExplanation(
   try {
     const { data, error } = await supabase
       .from("decision_explanations")
-      .select("title, body, risk_note")
+      .select("title, body, emotional_signal, risk_note")
       .eq("direction", direction)
       .eq("language", locale)
       .single();
@@ -48,7 +48,7 @@ export async function getExplanation(
       const explanation: DecisionExplanation = {
         whyThisWorks: data.body || defaultExplanations[direction].whyThisWorks,
         risks: data.risk_note || defaultExplanations[direction].risks,
-        emotionalSignal: data.title || defaultExplanations[direction].emotionalSignal,
+        emotionalSignal: data.emotional_signal || defaultExplanations[direction].emotionalSignal,
       };
       cache.set(cacheKey, explanation);
       return explanation;

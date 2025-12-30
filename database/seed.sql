@@ -172,22 +172,26 @@ ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 ----------------------------------------------------
 -- DECISION EXPLANATIONS
 ----------------------------------------------------
-INSERT INTO decision_explanations (direction, language, title, body, risk_note) VALUES
+INSERT INTO decision_explanations (direction, language, title, body, emotional_signal, risk_note) VALUES
 ('safe', 'en', 'The Safe Choice', 
  'This gift is universally appreciated and unlikely to miss the mark. It shows thoughtfulness while staying within comfortable boundaries.',
+ 'You care about them and want to make them happy without overstepping.',
  'Minimal risk of disappointment, but may feel less personal.'),
 
 ('emotional', 'en', 'The Emotional Choice',
  'This gift creates a deeper connection and shows you truly understand the recipient. It carries more meaning and personal significance.',
+ 'You see them, you know them, and this gift proves it.',
  'Requires knowing the person well. May not land if relationship understanding is off.'),
 
 ('bold', 'en', 'The Bold Choice',
  'This gift makes a statement and creates a memorable moment. It shows confidence in your relationship and willingness to take a chance.',
+ 'You are not afraid to surprise them and create an unforgettable moment.',
  'Higher risk, higher reward. Best for strong relationships with adventurous recipients.')
 
 ON CONFLICT (direction, language) DO UPDATE SET 
   title = EXCLUDED.title,
   body = EXCLUDED.body,
+  emotional_signal = EXCLUDED.emotional_signal,
   risk_note = EXCLUDED.risk_note;
 
 ----------------------------------------------------

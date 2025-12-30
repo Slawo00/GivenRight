@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS decision_explanations (
   language TEXT NOT NULL DEFAULT 'en',
   title TEXT NOT NULL,
   body TEXT NOT NULL,
+  emotional_signal TEXT,
   risk_note TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(direction, language)

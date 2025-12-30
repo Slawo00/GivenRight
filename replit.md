@@ -123,14 +123,15 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**PHASE 0 - STEP 0.4.B (Supabase Read Integration) ✅**
-- Supabase data access layer (/services/supabase/)
-- Fully config-driven decision engine (ALL parameters from DB)
-- DecisionParameters covers: all relationships, occasions, budgets, closeness, surprise
-- useConfigState for connection status tracking
-- Debug Panel shows Supabase connection status
-- Fallback mode when Supabase unavailable (graceful degradation)
-- Credentials configured, awaiting table creation in Supabase
+**PHASE 0 - STEP 0.5 (User-Facing Decision Transparency) ✅**
+- DecisionExplanationScreen with 3 direction cards (Safe/Emotional/Bold)
+- DirectionCard component showing Why/Signal/Risk sections
+- No scores or technical jargon - calm, premium design
+- "This feels right" CTA button per card
+- Database schema and seed updated with emotional_signal field
+- Config loading moved to app root layout (independent of debug panel)
+- User-facing "Start Decision" button on home screen
+- Full flow: Home → Start Decision → See Explanations → Select Direction
 
 ## User Preferences
 - German language for communication
@@ -159,3 +160,8 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.4.B - Fully config-driven engine (no hardcoded values)
 - 2024-12-30: STEP 0.4.B - Expanded DecisionParameters for all types
 - 2024-12-30: STEP 0.4.B - Updated seed.sql with complete parameter set
+- 2024-12-30: STEP 0.5 - DecisionExplanationScreen created
+- 2024-12-30: STEP 0.5 - DirectionCard component (Why/Signal/Risk)
+- 2024-12-30: STEP 0.5 - emotional_signal field added to schema/seed
+- 2024-12-30: STEP 0.5 - Config loading moved to app root layout
+- 2024-12-30: STEP 0.5 - User-facing "Start Decision" button

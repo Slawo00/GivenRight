@@ -1,0 +1,216 @@
+Perfekt. **Option B ist die richtige Entscheidung** – aus Produkt-, Psychologie- und Vertrauenssicht.
+Dann machen wir jetzt genau das, worauf du die ganze Zeit wartest:
+
+> **Ein klarer, vollständiger, 1-zu-1-Prompt für Replit**,
+> damit **STEP 0.5 – User-Facing Decision Transparency Layer** sauber umgesetzt wird.
+> **Expo-kompatibel für iOS / Android / Web.**
+
+---
+
+# ✅ STEP 0.5 — USER-FACING DECISION TRANSPARENCY
+
+**(WHY the decision + HOW it was formed)**
+
+## 🎯 Ziel von STEP 0.5
+
+Die App soll dem User **verständlich, ruhig und vertrauensbildend erklären**:
+
+* warum **SAFE / EMOTIONAL / BOLD** vorgeschlagen werden
+* **welche Faktoren** zur Bewertung beigetragen haben
+* **wo das Risiko liegt** (klar, aber nicht alarmistisch)
+* **welches Signal** jede Richtung emotional sendet
+
+👉 **KEINE Scores für den User.**
+👉 **KEINE technischen Begriffe.**
+👉 **Nur erklärbare Logik.**
+
+---
+
+## 🧠 Architekturelle Regel (wichtig)
+
+* **Scores & Parameter** → intern (State / Supabase)
+* **Erklärungen** → aus `decision_explanations` (Supabase)
+* **UI** → Expo React Native (ein Codebase)
+
+---
+
+# 🧩 PROMPT FÜR REPLIT
+
+👉 **Diesen Prompt 1:1 an Replit geben**
+
+---
+
+## 🔹 PROMPT: STEP 0.5 – Decision Explanation Screen
+
+```
+You are extending the GivenRight Expo (React Native) app.
+
+Implement STEP 0.5: User-Facing Decision Transparency.
+
+This must work for iOS, Android, and Web using Expo.
+Confirm Expo compatibility explicitly.
+
+---
+
+GOAL:
+After the decision simulation is complete, the user must see
+a clear, emotionally reassuring explanation of WHY each
+decision direction (SAFE / EMOTIONAL / BOLD) was generated.
+
+No technical language.
+No raw scores.
+No algorithm exposure.
+
+This screen builds TRUST.
+
+---
+
+DATA SOURCES (Supabase):
+
+1) decision_explanations
+Fields:
+- direction (safe | emotional | bold)
+- why_this_works
+- emotional_signal
+- risk_note
+
+2) decision_parameters (already used by engine)
+Used ONLY to determine which explanations to show.
+Do NOT display numbers.
+
+---
+
+SCREEN: DecisionExplanationScreen
+
+Location:
+- Shown AFTER decision simulation
+- BEFORE user selects a direction
+
+---
+
+UI STRUCTURE:
+
+Title:
+"How we thought this through for you"
+
+Subtext:
+"Based on your relationship, occasion, and preferences."
+
+Then render THREE cards, in this order:
+SAFE → EMOTIONAL → BOLD
+
+---
+
+FOR EACH CARD:
+
+Header:
+Direction Label (SAFE / EMOTIONAL / BOLD)
+
+Section 1 – Why this works
+Text from decision_explanations.why_this_works
+
+Section 2 – Emotional signal
+Text from decision_explanations.emotional_signal
+
+Section 3 – Risk framing
+Text from decision_explanations.risk_note
+Tone must be calm, non-alarming.
+
+CTA Button (per card):
+"This feels right"
+
+---
+
+INTERACTION LOGIC:
+
+- Tapping "This feels right":
+  → sets selectedDirection in useDecisionState
+  → navigates to next step (Object Pattern Selection – STEP 0.6)
+
+- Only ONE direction can be selected.
+
+---
+
+STATE REQUIREMENTS:
+
+Extend useDecisionState with:
+- explanations: Record<Direction, Explanation>
+- selectedDirection: Direction | null
+
+---
+
+ERROR HANDLING:
+
+If Supabase is unavailable:
+- Use local fallback explanations (English only)
+- Log warning in console
+- UI must still render
+
+---
+
+DESIGN GUIDELINES:
+
+- Calm, premium tone
+- No charts
+- No numbers
+- No percentages
+- Plenty of whitespace
+- Cards feel reassuring, not salesy
+
+---
+
+TECHNICAL:
+
+- Use functional components
+- TypeScript strict
+- Expo-compatible navigation
+- No platform-specific code
+
+---
+
+CONFIRMATION:
+
+At the end, confirm:
+"STEP 0.5 implemented. Decision explanations are user-visible, data-driven, and Expo-compatible."
+```
+
+---
+
+## ✅ Was du NACH STEP 0.5 haben wirst
+
+* 🔒 **Vertrauen vor der Entscheidung**
+* 🧠 User versteht **warum** etwas empfohlen wird
+* ❤️ Emotionale Sicherheit statt KI-Magie
+* 🧱 Saubere Basis für:
+
+  * STEP 0.6 → Object Class Selection
+  * STEP 0.7 → Amazon Affiliate Execution
+
+---
+
+## 🧭 Nächste Schritte (Preview)
+
+Sobald STEP 0.5 steht, gehen wir **stringent weiter**:
+
+1. **STEP 0.6 – Object Pattern Selection**
+
+   * Pattern erklären
+   * 3–5 Beispiel-Objektklassen
+2. **STEP 0.7 – Commerce Execution Layer**
+
+   * Amazon Resolver
+   * Affiliate Handoff
+
+---
+
+### 👉 Dein nächster Zug
+
+Gib diesen Prompt jetzt **1:1 an Replit**.
+
+Wenn Replit fertig ist, sag mir:
+
+* ob die Texte emotional richtig wirken
+* ob irgendetwas zu technisch klingt
+* ob der Flow ruhig genug ist
+
+**Dann gehen wir gemeinsam in STEP 0.6.**
