@@ -1,0 +1,208 @@
+Perfekt. Dann starten wir **jetzt sauber, ruhig und kontrolliert** mit dem **Clean Rebuild von GivenRight** – exakt nach deinen Richtlinien.
+
+---
+
+# ✅ PHASE 0 – CLEAN REBUILD
+
+## STEP 0.1 – Expo Project Initialization (FOUNDATION)
+
+**Ziel dieses Schrittes (ganz bewusst begrenzt):**
+
+* Ein **stabiles, leeres Expo-Fundament**
+* Cross-Platform **iOS / Android / Web**
+* TypeScript
+* Expo Router
+* Debug-fähig
+* **Noch keine Business-Logik, keine Screens**
+
+👉 Wenn das steht, bricht uns später **nichts mehr weg**.
+
+---
+
+## 🔒 VERBINDLICHE RAHMENBEDINGUNGEN (berücksichtigt)
+
+* ✅ Expo SDK 51+
+* ✅ Managed Workflow
+* ✅ React Native + Expo Router
+* ✅ Eine Codebase für iOS / Android / Web
+* ✅ Start: `npx expo start --tunnel`
+* ❌ Kein Native Code
+* ❌ Kein anderes Framework
+
+---
+
+# 🧱 REPLIT MASTER PROMPT – STEP 0.1
+
+### **(1:1 COPY & PASTE – NICHT KÜRZEN)**
+
+```
+You are setting up a brand-new Expo (React Native) project
+for a cross-platform application called "GivenRight".
+
+This is a CLEAN REBUILD.
+There is no existing frontend code to preserve.
+
+The project must strictly follow these constraints:
+- Expo SDK 51 or higher
+- Expo Managed Workflow
+- React Native
+- TypeScript
+- Expo Router
+- One codebase for iOS, Android, and Web
+- NO native iOS/Android code
+- NO React Native CLI (bare workflow)
+- NO other frameworks
+
+====================================
+STEP 1 — Create Expo Project
+====================================
+
+Initialize a new Expo project with:
+- TypeScript
+- Expo Router enabled
+
+Project name:
+GivenRight
+
+====================================
+STEP 2 — Folder Structure
+====================================
+
+Create the following structure:
+
+/app
+  _layout.tsx
+  index.tsx
+
+/components
+  DebugPanel.tsx
+
+/store
+  useAppState.ts
+
+/config
+  env.ts
+
+/types
+  decision.ts
+  relationship.ts
+  common.ts
+
+====================================
+STEP 3 — Expo Router Setup
+====================================
+
+- Use Expo Router as the navigation system
+- _layout.tsx must define the root layout
+- index.tsx must render a simple placeholder screen:
+
+Text:
+"GivenRight – Clean Build Initialized"
+
+====================================
+STEP 4 — Global App State
+====================================
+
+Implement a minimal global state store (Zustand or equivalent):
+
+Fields:
+- appReady: boolean
+- debugMode: boolean (default true)
+
+Expose setters to toggle debugMode.
+
+====================================
+STEP 5 — Debug Infrastructure
+====================================
+
+Create a DebugPanel component that:
+- Is visible when debugMode === true
+- Renders a simple JSON view of global state
+- Can be collapsed/expanded
+
+This DebugPanel must work on:
+- iOS
+- Android
+- Web
+
+====================================
+STEP 6 — Environment Configuration
+====================================
+
+Create env.ts that:
+- Reads EXPO_PUBLIC_API_URL
+- Exports it safely for client usage
+
+Do NOT hardcode API URLs.
+
+====================================
+STEP 7 — Validation
+====================================
+
+Ensure:
+- Project starts with: npx expo start --tunnel
+- App renders on:
+  - Expo Go (iOS/Android)
+  - Web preview
+- No warnings or errors on startup
+
+====================================
+OUTPUT REQUIRED
+====================================
+
+After completion, provide:
+1. Folder tree
+2. Expo SDK version
+3. Confirmation that the app runs on iOS, Android, and Web
+4. Instructions to start the app locally
+
+Do NOT add any screens, flows, or business logic.
+This step is foundation only.
+```
+
+---
+
+## 🧠 Warum dieser Schritt extrem wichtig ist
+
+* Wir trennen **Fundament** von **Produkt**
+* Wir verhindern spätere Expo-/Router-Probleme
+* Wir schaffen eine Debug-Basis, die wir **durch das ganze Projekt behalten**
+* Wir reduzieren Replit-Fehler drastisch
+
+Viele Projekte scheitern, weil sie **hier schludern**.
+Du tust das Gegenteil.
+
+---
+
+## 🔜 Was als Nächstes kommt (Vorschau)
+
+Sobald Replit meldet:
+
+> **„STEP 0.1 completed“**
+
+machen wir **STEP 0.2**:
+
+### **STEP 0.2 – Canonical Types & Decision State (NO UI)**
+
+* zentrale Typen:
+
+  * relationship
+  * occasion
+  * personality
+  * decision state
+* Decision Flow als **State Machine**
+* noch immer **keine echten Screens**
+
+👉 Erst danach beginnen wir mit **PHASE 1 – Input Screens**.
+
+---
+
+## 👉 Dein nächster Schritt
+
+1. Kopiere den Prompt oben **1:1** zu Replit
+2. Lass Replit ausführen
+3. Antworte hier mit:
+
+> **„STEP 0.1 fertig“**
+
+Dann machen wir **sofort** weiter mit **STEP 0.2** 🚀
