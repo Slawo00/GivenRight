@@ -123,16 +123,14 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**STEP B0 - Structured Input & Intent Lock ✅**
-- 4-Screen grouped input flow (max screens, no questionnaire feel)
-- Screen 1: Relationship & Occasion
-- Screen 2: The Person (Personality & Surprise tolerance)
-- Screen 3: Boundaries & Budget
-- Screen 4: Practical Constraints
-- Intent Lock after Screen 4 (context frozen)
-- Decision Engine triggered immediately after lock
-- No SAFE/EMOTIONAL/BOLD preview before intent lock
-- User sentiment goal: "That was quick and easy"
+**STEP B4 - Contextual Scenario Enrichment ✅**
+- ChatGPT-powered explanation personalization
+- READ-ONLY layer (no decision changes allowed)
+- 3-5 concrete example categories per option
+- Situation-specific language adaptation
+- Icon-based visual hints
+- In-memory caching for performance
+- Graceful fallback if API fails
 
 ## User Preferences
 - German language for communication
@@ -197,3 +195,9 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP B0 - 4 Input Screens (Relationship, Person, Boundaries, Practical)
 - 2024-12-30: STEP B0 - InputCollectionFlow component
 - 2024-12-30: STEP B0 - Integration with Decision Engine
+- 2024-12-30: STEP B4 - OpenAI Integration via Replit AI Integrations
+- 2024-12-30: STEP B4 - ScenarioEnrichmentService with ChatGPT
+- 2024-12-30: STEP B4 - Enrichment types (ConcreteExampleCategory)
+- 2024-12-30: STEP B4 - useEnrichmentState Zustand store
+- 2024-12-30: STEP B4 - EnrichedDirectionCard with example categories
+- 2024-12-30: STEP B4 - EnrichedDecisionScreen integration

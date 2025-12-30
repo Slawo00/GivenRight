@@ -23,6 +23,7 @@ interface DecisionState {
   budget?: BudgetRange;
 
   decisionResult?: DecisionResult;
+  engineDecisionResult?: EngineDecisionResult;
   selectedDirection?: DecisionDirection;
   selectedPattern?: ObjectPattern;
 
@@ -53,6 +54,7 @@ const initialState = {
   occasion: undefined,
   budget: undefined,
   decisionResult: undefined,
+  engineDecisionResult: undefined,
   selectedDirection: undefined,
   selectedPattern: undefined,
   step: "idle" as DecisionStep,
@@ -193,6 +195,6 @@ export const useDecisionState = create<DecisionState>((set, get) => ({
       explanationByDirection,
     };
 
-    set({ decisionResult, step: 'decision_ready' });
+    set({ decisionResult, engineDecisionResult: engineResult, step: 'decision_ready' });
   },
 }));

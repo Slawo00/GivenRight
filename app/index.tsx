@@ -2,31 +2,41 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DebugPanel } from '@/components/DebugPanel';
 import { InputCollectionFlow } from '@/components/InputCollectionFlow';
-import { DecisionExplanationScreen } from '@/components/DecisionExplanationScreen';
+import { EnrichedDecisionScreen } from '@/components/EnrichedDecisionScreen';
 import { ObjectPatternSelectionScreen } from '@/components/ObjectPatternSelectionScreen';
 import { PatternExplanationScreen } from '@/components/PatternExplanationScreen';
 import { CommercePreviewScreen } from '@/components/CommercePreviewScreen';
 import { useDecisionState } from '@/store/useDecisionState';
 import { useInputCollectionState } from '@/store/useInputCollectionState';
+import { useEnrichmentState } from '@/store/useEnrichmentState';
 import type { ObjectPattern } from '@/services/supabase/objectPatternService';
-import type { DecisionResult } from '@/services/decisionEngine';
+import type { DecisionResult as EngineDecisionResult, ConfidenceType } from '@/services/decisionEngine/types';
 
 export default function HomeScreen() {
-  const { step, advanceStep, advanceToCommerce, selectPattern, selectedPattern, resetDecision, setDecisionResultFromEngine } = useDecisionState();
+  const { step, engineDecisionResult, advanceStep, advanceToCommerce, selectPattern, selectedPattern, resetDecision, setDecisionResultFromEngine, selectDirection } = useDecisionState();
   const { step: inputStep, goToStep, resetCollection } = useInputCollectionState();
+  const { clearEnrichment } = useEnrichmentState();
 
   const handleStartDecision = () => {
     resetCollection();
+    clearEnrichment();
     goToStep('relationship_occasion');
   };
 
-  const handleInputComplete = (decisionResult: DecisionResult) => {
+  const handleInputComplete = (decisionResult: EngineDecisionResult) => {
     setDecisionResultFromEngine(decisionResult);
     advanceStep('decision_ready');
   };
 
-  const handleDirectionSelected = () => {
+  const handleDirectionSelected = (direction: ConfidenceType) => {
+    selectDirection(direction.toLowerCase() as 'safe' | 'emotional' | 'bold');
     advanceStep('object_class_selection');
+  };
+
+  const handleBackFromDecision = () => {
+    resetDecision();
+    resetCollection();
+    clearEnrichment();
   };
 
   const handlePatternSelected = (pattern: ObjectPattern) => {
@@ -40,6 +50,7 @@ export default function HomeScreen() {
   const handleStartOver = () => {
     resetDecision();
     resetCollection();
+    clearEnrichment();
   };
 
   if (inputStep !== 'idle' && inputStep !== 'intent_locked') {
@@ -51,11 +62,13 @@ export default function HomeScreen() {
     );
   }
 
-  if (step === 'decision_ready') {
+  if (step === 'decision_ready' && engineDecisionResult) {
     return (
       <>
-        <DecisionExplanationScreen 
+        <EnrichedDecisionScreen 
+          decisionResult={engineDecisionResult}
           onDirectionSelected={handleDirectionSelected}
+          onBack={handleBackFromDecision}
         />
         <DebugPanel />
       </>
