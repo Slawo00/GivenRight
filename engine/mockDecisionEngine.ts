@@ -1,6 +1,11 @@
-import type { DecisionResult, DecisionScore, OccasionType } from "../types/decision";
+import type { DecisionResult, DecisionScore, DecisionExplanation, OccasionType, DecisionDirection } from "../types/decision";
 import type { RelationshipProfile } from "../types/relationship";
 import type { BudgetRange } from "../types/common";
+import { 
+  getDefaultParameters, 
+  getDefaultExplanations,
+  type DecisionParameters 
+} from "../services/supabase";
 
 interface DecisionInput {
   relationship: RelationshipProfile;
@@ -8,34 +13,49 @@ interface DecisionInput {
   budget: BudgetRange;
 }
 
-export function runMockDecisionEngine(input: DecisionInput): DecisionResult {
-  const { relationship, budget, occasion } = input;
+interface ConfiguredDecisionInput extends DecisionInput {
+  parameters?: DecisionParameters;
+  explanations?: Record<DecisionDirection, DecisionExplanation>;
+}
 
-  let safeScore = 60;
-  let emotionalScore = 60;
-  let boldScore = 60;
+export function runMockDecisionEngine(input: DecisionInput): DecisionResult {
+  return runConfiguredDecisionEngine({
+    ...input,
+    parameters: getDefaultParameters(),
+    explanations: getDefaultExplanations(),
+  });
+}
+
+export function runConfiguredDecisionEngine(input: ConfiguredDecisionInput): DecisionResult {
+  const { relationship, budget, occasion } = input;
+  const params = input.parameters ?? getDefaultParameters();
+  const explanations = input.explanations ?? getDefaultExplanations();
+
+  let safeScore = params.base.safe;
+  let emotionalScore = params.base.emotional;
+  let boldScore = params.base.bold;
 
   if (occasion === "birthday" || occasion === "anniversary") {
-    emotionalScore += 10;
+    emotionalScore += params.occasion.birthday?.emotional ?? 10;
   }
 
   if (occasion === "christmas") {
-    safeScore += 10;
+    safeScore += params.occasion.christmas?.safe ?? 5;
   }
 
   if (occasion === "valentines") {
-    emotionalScore += 15;
-    boldScore += 10;
+    emotionalScore += params.occasion.valentines?.emotional ?? 15;
+    boldScore += params.occasion.valentines?.bold ?? 10;
   }
 
   if (occasion === "wedding") {
-    emotionalScore += 10;
-    safeScore += 5;
+    safeScore += params.occasion.wedding?.safe ?? 10;
+    emotionalScore += params.occasion.wedding?.emotional ?? 5;
   }
 
   if (relationship.type === "partner") {
-    emotionalScore += 20;
-    boldScore += 10;
+    emotionalScore += params.relationship.partner?.emotional ?? 15;
+    boldScore += params.relationship.partner?.bold ?? 15;
   }
 
   if (relationship.type === "parent") {
@@ -49,39 +69,45 @@ export function runMockDecisionEngine(input: DecisionInput): DecisionResult {
   }
 
   if (relationship.type === "friend") {
-    emotionalScore += 10;
+    emotionalScore += params.relationship.friend?.emotional ?? 10;
     boldScore += 15;
   }
 
   if (relationship.type === "colleague") {
-    safeScore += 20;
+    safeScore += params.relationship.colleague?.safe ?? 20;
+    boldScore += params.relationship.colleague?.bold ?? -10;
     emotionalScore -= 20;
-    boldScore -= 30;
   }
 
   if (relationship.type === "other") {
     safeScore += 10;
   }
 
-  emotionalScore += relationship.closeness * 5;
-  boldScore += relationship.closeness * 3;
+  if (relationship.closeness >= 4) {
+    emotionalScore += params.closeness.high?.emotional ?? 10;
+    boldScore += params.closeness.high?.bold ?? 20;
+  } else if (relationship.closeness <= 2) {
+    safeScore += params.closeness.low?.safe ?? 15;
+    boldScore += params.closeness.low?.bold ?? -10;
+  }
 
   if (relationship.surpriseTolerance === "low") {
+    safeScore += params.surprise.low?.safe ?? 15;
     boldScore -= 40;
-    safeScore += 10;
   }
 
   if (relationship.surpriseTolerance === "high") {
-    boldScore += 15;
+    boldScore += params.surprise.high?.bold ?? 15;
   }
 
   if (budget === "under_50") {
+    safeScore += params.budget.under_50?.safe ?? 10;
     boldScore -= 20;
   }
 
   if (budget === "250_plus") {
-    boldScore += 10;
-    emotionalScore += 5;
+    boldScore += params.budget["250_plus"]?.bold ?? 10;
+    emotionalScore += params.budget["250_plus"]?.emotional ?? 5;
   }
 
   const scores: DecisionScore[] = [
@@ -112,23 +138,7 @@ export function runMockDecisionEngine(input: DecisionInput): DecisionResult {
 
   return {
     scores,
-    explanationByDirection: {
-      safe: {
-        whyThisWorks: "This option minimizes risk and ensures appreciation.",
-        risks: "May feel predictable if emotional depth is expected.",
-        emotionalSignal: "Reliability & stability",
-      },
-      emotional: {
-        whyThisWorks: "Balances emotional meaning with thoughtful intent.",
-        risks: "Requires understanding of personal preferences.",
-        emotionalSignal: "Connection & care",
-      },
-      bold: {
-        whyThisWorks: "Makes a strong statement and creates memorability.",
-        risks: "High emotional risk if preferences are misjudged.",
-        emotionalSignal: "Intensity & confidence",
-      },
-    },
+    explanationByDirection: explanations,
   };
 }
 

@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform } from "react-native";
 import { useAppState } from "@/store/useAppState";
 import { useDecisionState } from "@/store/useDecisionState";
+import { useConfigState } from "@/store/useConfigState";
 
 export function DebugPanel() {
   const [expanded, setExpanded] = useState(false);
   const { debugMode, toggleDebugMode } = useAppState();
   const decisionState = useDecisionState();
+  const configState = useConfigState();
+
+  useEffect(() => {
+    configState.loadConfig();
+  }, []);
 
   if (!debugMode) {
     return null;
@@ -22,6 +28,21 @@ export function DebugPanel() {
 
   const recommendedDir = getRecommendedDirection();
 
+  const getStatusBadge = () => {
+    switch (configState.connectionStatus) {
+      case "connected":
+        return { text: "Supabase Live", color: "#00ff88" };
+      case "connecting":
+        return { text: "Connecting...", color: "#ffaa00" };
+      case "fallback":
+        return { text: "Fallback Mode", color: "#ff6b6b" };
+      default:
+        return { text: "Disconnected", color: "#888888" };
+    }
+  };
+
+  const statusBadge = getStatusBadge();
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -29,9 +50,16 @@ export function DebugPanel() {
         onPress={() => setExpanded(!expanded)}
         activeOpacity={0.7}
       >
-        <Text style={styles.headerText}>
-          {expanded ? "▼" : "▶"} Debug [{decisionState.step}]
-        </Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.headerText}>
+            {expanded ? "▼" : "▶"} Debug [{decisionState.step}]
+          </Text>
+          <View style={[styles.statusBadge, { backgroundColor: statusBadge.color + "22" }]}>
+            <Text style={[styles.statusText, { color: statusBadge.color }]}>
+              {statusBadge.text}
+            </Text>
+          </View>
+        </View>
         <TouchableOpacity style={styles.closeButton} onPress={toggleDebugMode}>
           <Text style={styles.closeText}>✕</Text>
         </TouchableOpacity>
@@ -39,6 +67,30 @@ export function DebugPanel() {
 
       {expanded && (
         <ScrollView style={styles.content}>
+          <Text style={styles.sectionTitle}>Config Status</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Connection:</Text>
+            <Text style={[styles.value, { color: statusBadge.color }]}>{statusBadge.text}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Locale:</Text>
+            <Text style={styles.value}>{configState.locale}</Text>
+          </View>
+          {configState.lastError && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Error:</Text>
+              <Text style={[styles.value, { color: "#ff6b6b" }]}>{configState.lastError}</Text>
+            </View>
+          )}
+          {configState.parameters && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Base Scores:</Text>
+              <Text style={styles.value}>
+                S:{configState.parameters.base.safe} E:{configState.parameters.base.emotional} B:{configState.parameters.base.bold}
+              </Text>
+            </View>
+          )}
+
           <Text style={styles.sectionTitle}>Input State</Text>
           <View style={styles.row}>
             <Text style={styles.label}>Relationship:</Text>
@@ -136,6 +188,13 @@ export function DebugPanel() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            style={styles.reloadButton}
+            onPress={() => configState.loadConfig()}
+          >
+            <Text style={styles.testButtonText}>Reload Config</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={[styles.testButton, styles.resetButton]}
             onPress={() => decisionState.resetDecision()}
           >
@@ -156,7 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a1a1a",
     borderRadius: 8,
     overflow: "hidden",
-    maxHeight: 450,
+    maxHeight: 500,
     ...Platform.select({
       web: {
         boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
@@ -177,10 +236,25 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: "#2a2a2a",
   },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   headerText: {
     color: "#00ff88",
     fontWeight: "bold",
     fontSize: 14,
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+  },
+  statusBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  statusText: {
+    fontSize: 9,
+    fontWeight: "bold",
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
   },
   closeButton: {
@@ -193,7 +267,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 12,
-    maxHeight: 380,
+    maxHeight: 420,
   },
   sectionTitle: {
     color: "#00ff88",
@@ -265,6 +339,13 @@ const styles = StyleSheet.create({
   },
   testButton: {
     backgroundColor: "#3a3a3a",
+    padding: 10,
+    borderRadius: 4,
+    marginTop: 8,
+    alignItems: "center",
+  },
+  reloadButton: {
+    backgroundColor: "#2a4a3a",
     padding: 10,
     borderRadius: 4,
     marginTop: 8,
