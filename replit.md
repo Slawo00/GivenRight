@@ -216,3 +216,5 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP B4.1 - Refined System Prompt (neutral, non-directive, non-promotional)
 - 2024-12-30: STEP B4.1 - Supabase Edge Function for secure OpenAI calls
 - 2024-12-30: STEP B4.1 - Frontend updated to call Edge Function via fetch
+- 2024-12-30: STEP B4.1 - Edge Function deployed with --no-verify-jwt for anon access
+- 2024-12-30: STEP B4.1 - LIVE: Personalized examples showing in UI (Stylish Accessories, Cooking Class, etc.)

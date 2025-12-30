@@ -63,8 +63,6 @@ async function enrichOption(
   }
 
   try {
-    console.log('Enrichment: calling', enrichmentUrl);
-    
     const response = await fetch(enrichmentUrl, {
       method: 'POST',
       headers: {
@@ -97,12 +95,8 @@ async function enrichOption(
       }),
     });
 
-    console.log('Enrichment: response status', response.status);
-
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Enrichment: error response', errorText);
-      throw new Error(`Edge function returned ${response.status}: ${errorText}`);
+      throw new Error(`Edge function returned ${response.status}`);
     }
 
     const data = await response.json();
