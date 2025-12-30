@@ -134,6 +134,12 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - **Weltklasse Prompts**: Context summary format (Partner · Birthday · Very close · Creative...)
 - **Neutral & Human Tone**: calm, grounded, non-promotional language
 
+### Supabase Edge Function (Backend)
+- **Path**: `supabase/functions/enrich-explanation/index.ts`
+- **Purpose**: Secure server-side OpenAI calls (API key not exposed to client)
+- **Deployment**: See `supabase/README.md` for instructions
+- **Required Secret**: `OPENAI_API_KEY` (set via `supabase secrets set`)
+
 ## User Preferences
 - German language for communication
 - Strict Expo Managed Workflow only
@@ -208,3 +214,5 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP B4 FIX - First option marked "Recommended" via badge, not computed score
 - 2024-12-30: STEP B4.1 - Weltklasse Prompts (Context · Occasion · Closeness · Personality summary)
 - 2024-12-30: STEP B4.1 - Refined System Prompt (neutral, non-directive, non-promotional)
+- 2024-12-30: STEP B4.1 - Supabase Edge Function for secure OpenAI calls
+- 2024-12-30: STEP B4.1 - Frontend updated to call Edge Function via fetch
