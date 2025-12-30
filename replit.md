@@ -123,12 +123,13 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**PHASE 0 - STEP 0.4.B (Supabase Read Integration) ⏳**
+**PHASE 0 - STEP 0.4.B (Supabase Read Integration) ✅**
 - Supabase data access layer (/services/supabase/)
-- Config-driven decision engine (parameters from DB)
+- Fully config-driven decision engine (ALL parameters from DB)
+- DecisionParameters covers: all relationships, occasions, budgets, closeness, surprise
 - useConfigState for connection status tracking
 - Debug Panel shows Supabase connection status
-- Fallback mode when Supabase unavailable
+- Fallback mode when Supabase unavailable (graceful degradation)
 - Credentials configured, awaiting table creation in Supabase
 
 ## User Preferences
@@ -155,3 +156,6 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.4.B - Config-driven decision engine
 - 2024-12-30: STEP 0.4.B - useConfigState for config loading
 - 2024-12-30: STEP 0.4.B - Debug Panel with Supabase status badge
+- 2024-12-30: STEP 0.4.B - Fully config-driven engine (no hardcoded values)
+- 2024-12-30: STEP 0.4.B - Expanded DecisionParameters for all types
+- 2024-12-30: STEP 0.4.B - Updated seed.sql with complete parameter set

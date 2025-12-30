@@ -53,7 +53,8 @@ ON CONFLICT (key, language) DO UPDATE SET value = EXCLUDED.value;
 
 ----------------------------------------------------
 -- DECISION PARAMETERS
--- These match the mockDecisionEngine scoring rules
+-- Fully config-driven engine (STEP 0.4.B)
+-- Format: weight.<category>.<type>.<direction>
 ----------------------------------------------------
 INSERT INTO decision_parameters (key, value, description) VALUES
 -- Base Scores
@@ -61,35 +62,110 @@ INSERT INTO decision_parameters (key, value, description) VALUES
 ('base.emotional', 50, 'Base score for emotional direction'),
 ('base.bold', 50, 'Base score for bold direction'),
 
--- Relationship Modifiers
-('weight.relationship.partner.emotional', 15, 'Partner boosts emotional'),
-('weight.relationship.partner.bold', 15, 'Partner boosts bold'),
-('weight.relationship.colleague.safe', 20, 'Colleague boosts safe'),
-('weight.relationship.colleague.bold', -10, 'Colleague reduces bold'),
-('weight.relationship.friend.emotional', 10, 'Friend boosts emotional'),
+-- Relationship Modifiers - Partner
+('weight.relationship.partner.safe', 0, 'Partner: safe modifier'),
+('weight.relationship.partner.emotional', 15, 'Partner: emotional modifier'),
+('weight.relationship.partner.bold', 15, 'Partner: bold modifier'),
 
--- Closeness Modifiers
-('weight.closeness.high.emotional', 10, 'High closeness (4-5) boosts emotional'),
-('weight.closeness.high.bold', 20, 'High closeness (4-5) boosts bold'),
-('weight.closeness.low.safe', 15, 'Low closeness (1-2) boosts safe'),
-('weight.closeness.low.bold', -10, 'Low closeness (1-2) reduces bold'),
+-- Relationship Modifiers - Parent
+('weight.relationship.parent.safe', 15, 'Parent: safe modifier'),
+('weight.relationship.parent.emotional', 10, 'Parent: emotional modifier'),
+('weight.relationship.parent.bold', 0, 'Parent: bold modifier'),
 
--- Surprise Tolerance
-('weight.surprise.low.safe', 15, 'Low surprise tolerance boosts safe'),
-('weight.surprise.high.bold', 15, 'High surprise tolerance boosts bold'),
+-- Relationship Modifiers - Child
+('weight.relationship.child.safe', 0, 'Child: safe modifier'),
+('weight.relationship.child.emotional', 15, 'Child: emotional modifier'),
+('weight.relationship.child.bold', 5, 'Child: bold modifier'),
 
--- Budget Modifiers
-('weight.budget.under_50.safe', 10, 'Low budget boosts safe'),
-('weight.budget.250_plus.bold', 10, 'High budget boosts bold'),
-('weight.budget.250_plus.emotional', 5, 'High budget boosts emotional'),
+-- Relationship Modifiers - Friend
+('weight.relationship.friend.safe', 0, 'Friend: safe modifier'),
+('weight.relationship.friend.emotional', 10, 'Friend: emotional modifier'),
+('weight.relationship.friend.bold', 15, 'Friend: bold modifier'),
 
--- Occasion Modifiers
-('weight.occasion.birthday.emotional', 10, 'Birthday boosts emotional'),
-('weight.occasion.valentines.emotional', 15, 'Valentines boosts emotional'),
-('weight.occasion.valentines.bold', 10, 'Valentines boosts bold'),
-('weight.occasion.wedding.safe', 10, 'Wedding boosts safe'),
-('weight.occasion.wedding.emotional', 5, 'Wedding boosts emotional'),
-('weight.occasion.christmas.safe', 5, 'Christmas boosts safe')
+-- Relationship Modifiers - Colleague
+('weight.relationship.colleague.safe', 20, 'Colleague: safe modifier'),
+('weight.relationship.colleague.emotional', -20, 'Colleague: emotional modifier'),
+('weight.relationship.colleague.bold', -30, 'Colleague: bold modifier'),
+
+-- Relationship Modifiers - Other
+('weight.relationship.other.safe', 10, 'Other: safe modifier'),
+('weight.relationship.other.emotional', 0, 'Other: emotional modifier'),
+('weight.relationship.other.bold', 0, 'Other: bold modifier'),
+
+-- Closeness Modifiers - High (4-5)
+('weight.closeness.high.safe', 0, 'High closeness: safe modifier'),
+('weight.closeness.high.emotional', 10, 'High closeness: emotional modifier'),
+('weight.closeness.high.bold', 20, 'High closeness: bold modifier'),
+
+-- Closeness Modifiers - Low (1-2)
+('weight.closeness.low.safe', 15, 'Low closeness: safe modifier'),
+('weight.closeness.low.emotional', 0, 'Low closeness: emotional modifier'),
+('weight.closeness.low.bold', -10, 'Low closeness: bold modifier'),
+
+-- Surprise Tolerance - Low
+('weight.surprise.low.safe', 15, 'Low surprise: safe modifier'),
+('weight.surprise.low.emotional', 0, 'Low surprise: emotional modifier'),
+('weight.surprise.low.bold', -40, 'Low surprise: bold modifier'),
+
+-- Surprise Tolerance - High
+('weight.surprise.high.safe', 0, 'High surprise: safe modifier'),
+('weight.surprise.high.emotional', 0, 'High surprise: emotional modifier'),
+('weight.surprise.high.bold', 15, 'High surprise: bold modifier'),
+
+-- Budget Modifiers - Under $50
+('weight.budget.under_50.safe', 10, 'Under $50: safe modifier'),
+('weight.budget.under_50.emotional', 0, 'Under $50: emotional modifier'),
+('weight.budget.under_50.bold', -20, 'Under $50: bold modifier'),
+
+-- Budget Modifiers - $50-$100
+('weight.budget.50_100.safe', 0, '$50-$100: safe modifier'),
+('weight.budget.50_100.emotional', 0, '$50-$100: emotional modifier'),
+('weight.budget.50_100.bold', 0, '$50-$100: bold modifier'),
+
+-- Budget Modifiers - $100-$250
+('weight.budget.100_250.safe', 0, '$100-$250: safe modifier'),
+('weight.budget.100_250.emotional', 0, '$100-$250: emotional modifier'),
+('weight.budget.100_250.bold', 0, '$100-$250: bold modifier'),
+
+-- Budget Modifiers - $250+
+('weight.budget.250_plus.safe', 0, '$250+: safe modifier'),
+('weight.budget.250_plus.emotional', 5, '$250+: emotional modifier'),
+('weight.budget.250_plus.bold', 10, '$250+: bold modifier'),
+
+-- Occasion Modifiers - Birthday
+('weight.occasion.birthday.safe', 0, 'Birthday: safe modifier'),
+('weight.occasion.birthday.emotional', 10, 'Birthday: emotional modifier'),
+('weight.occasion.birthday.bold', 0, 'Birthday: bold modifier'),
+
+-- Occasion Modifiers - Anniversary
+('weight.occasion.anniversary.safe', 0, 'Anniversary: safe modifier'),
+('weight.occasion.anniversary.emotional', 10, 'Anniversary: emotional modifier'),
+('weight.occasion.anniversary.bold', 0, 'Anniversary: bold modifier'),
+
+-- Occasion Modifiers - Valentine's
+('weight.occasion.valentines.safe', 0, 'Valentines: safe modifier'),
+('weight.occasion.valentines.emotional', 15, 'Valentines: emotional modifier'),
+('weight.occasion.valentines.bold', 10, 'Valentines: bold modifier'),
+
+-- Occasion Modifiers - Wedding
+('weight.occasion.wedding.safe', 5, 'Wedding: safe modifier'),
+('weight.occasion.wedding.emotional', 10, 'Wedding: emotional modifier'),
+('weight.occasion.wedding.bold', 0, 'Wedding: bold modifier'),
+
+-- Occasion Modifiers - Christmas
+('weight.occasion.christmas.safe', 10, 'Christmas: safe modifier'),
+('weight.occasion.christmas.emotional', 0, 'Christmas: emotional modifier'),
+('weight.occasion.christmas.bold', 0, 'Christmas: bold modifier'),
+
+-- Occasion Modifiers - Graduation
+('weight.occasion.graduation.safe', 5, 'Graduation: safe modifier'),
+('weight.occasion.graduation.emotional', 5, 'Graduation: emotional modifier'),
+('weight.occasion.graduation.bold', 0, 'Graduation: bold modifier'),
+
+-- Occasion Modifiers - Other
+('weight.occasion.other.safe', 0, 'Other: safe modifier'),
+('weight.occasion.other.emotional', 0, 'Other: emotional modifier'),
+('weight.occasion.other.bold', 0, 'Other: bold modifier')
 
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 
