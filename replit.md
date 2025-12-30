@@ -20,15 +20,16 @@ The app helps users make gift decisions based on relationships, occasions, and p
   DebugPanel.tsx       # Debug overlay (dev mode)
 
 /store                 # Global state management
-  useAppState.ts       # Zustand store
+  useAppState.ts       # App-level state (appReady, debugMode)
+  useDecisionState.ts  # Decision flow state machine
 
 /config                # Configuration
   env.ts               # Environment variables
 
 /types                 # TypeScript type definitions
-  common.ts            # Shared types
-  relationship.ts      # Relationship types
-  decision.ts          # Decision flow types
+  common.ts            # Shared types (ID, BudgetRange, LoadingState)
+  relationship.ts      # Relationship types (RelationshipProfile)
+  decision.ts          # Decision types (DecisionDirection, DecisionResult, etc.)
 
 /assets                # Static assets
   /images
@@ -45,23 +46,48 @@ The app helps users make gift decisions based on relationships, occasions, and p
 ## Development
 
 ### Global State (Zustand)
-The app uses Zustand for global state management:
+
+**App State (useAppState.ts):**
 - `appReady`: Boolean indicating app initialization state
 - `debugMode`: Boolean to show/hide debug panel (default: true)
 
+**Decision State (useDecisionState.ts):**
+- Inputs: `relationship`, `occasion`, `budget`
+- Outputs: `decisionResult`, `selectedDirection`
+- Flow control: `step` (idle → collecting_inputs → decision_ready → direction_selected → completed)
+- Actions: `setRelationship`, `setOccasion`, `setBudget`, `setDecisionResult`, `selectDirection`, `resetDecision`
+
+### Canonical Types
+
+**Decision Types:**
+- `DecisionDirection`: "safe" | "emotional" | "bold"
+- `RiskLevel`: "low" | "medium" | "high"
+- `DecisionScore`: direction, score (0-100), risk, recommended
+- `DecisionExplanation`: whyThisWorks, risks, emotionalSignal
+- `DecisionResult`: scores[], explanationByDirection
+
+**Relationship Types:**
+- `RelationshipType`: partner, parent, child, friend, colleague, other
+- `RelationshipProfile`: type, closeness (1-5), emotionalStyle[], surpriseTolerance
+
+**Common Types:**
+- `BudgetRange`: under_50, 50_100, 100_250, 250_plus
+
 ### Debug Panel
 When `debugMode` is true, a collapsible debug panel appears showing:
-- Current app state
-- Platform information
+- Current decision step
+- Relationship type and closeness
+- Budget selection
+- Decision scores (safe/emotional/bold)
+- Selected direction
 
 ## Current Phase
-**PHASE 0 - STEP 0.1 (Foundation)**
-- Clean Expo project setup
-- TypeScript configuration
-- Expo Router navigation
-- Global state with Zustand
-- Debug infrastructure
-- Type definitions
+**PHASE 0 - STEP 0.2 (Canonical Types & Decision State) ✅**
+- Canonical decision types defined
+- Relationship profile types
+- Budget range types
+- Decision state machine (Zustand)
+- Debug panel with decision state visibility
 
 ## User Preferences
 - German language for communication
@@ -70,9 +96,10 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - Single codebase for iOS/Android/Web
 
 ## Recent Changes
-- 2024-12-30: Initial clean build setup
-- 2024-12-30: Added GivenRight logo
-- 2024-12-30: Created folder structure (/store, /config, /types)
-- 2024-12-30: Implemented Zustand global state
-- 2024-12-30: Created DebugPanel component
-- 2024-12-30: Added type definitions
+- 2024-12-30: STEP 0.1 - Initial clean build setup
+- 2024-12-30: STEP 0.1 - Added GivenRight logo
+- 2024-12-30: STEP 0.1 - Created folder structure
+- 2024-12-30: STEP 0.1 - Implemented app state with Zustand
+- 2024-12-30: STEP 0.2 - Canonical decision types
+- 2024-12-30: STEP 0.2 - Decision state machine
+- 2024-12-30: STEP 0.2 - Enhanced DebugPanel
