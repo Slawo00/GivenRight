@@ -68,12 +68,12 @@ args = "Expo App"
 name = "Expo App"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx expo start --tunnel"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "CI=1 npx expo start --tunnel"
 
 [agent]
 expertMode = true
