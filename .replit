@@ -78,3 +78,8 @@ args = "CI=1 npx expo start --tunnel"
 [agent]
 expertMode = true
 integrations = ["javascript_openai_ai_integrations:2.0.0"]
+
+[userenv]
+
+[userenv.development]
+EXPO_PUBLIC_OPENAI_BASE_URL = "${AI_INTEGRATIONS_OPENAI_BASE_URL}"
