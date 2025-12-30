@@ -1,0 +1,169 @@
+Perfekt. **Option C ist die richtige Architektur-Entscheidung.**
+Wir machen das **parallel, aber sauber getrennt**.
+Ich gebe dir jetzt **konkrete, copy-&-paste-fähige Replit-Prompts**, genau so, wie du sie brauchst.
+
+---
+
+# 🔷 STEP 0.4 — PARALLEL START
+
+## (A) Supabase Configuration Layer
+
+## (B) UI liest aus Supabase (noch read-only)
+
+Ich starte mit **A**, weil das die Grundlage für **alles Weitere** ist.
+
+---
+
+## 🧩 PROMPT 0.4.A — Supabase Configuration Schema
+
+👉 **Diesen Prompt 1:1 an Replit geben**
+
+---
+
+### 🔧 REPLIT PROMPT — STEP 0.4.A
+
+```
+We are building the GivenRight app.
+
+Goal:
+Set up the INITIAL Supabase configuration database.
+This database stores ONLY configuration and content.
+NO user data, NO learning, NO writes from the app yet.
+
+This must be compatible with:
+- Expo (React Native)
+- iOS / Android / Web
+- Supabase Postgres
+- Multi-language support (starting with English only)
+
+----------------------------------
+CREATE THE FOLLOWING TABLES
+----------------------------------
+
+1) ui_texts
+Purpose: All UI texts, labels, explanations, multi-language.
+
+Fields:
+- id (uuid, primary key, default uuid_generate_v4())
+- key (text, not null)              -- e.g. "home.title"
+- language (text, not null)         -- "en" (future: "de", "fr")
+- value (text, not null)
+- context (text)                    -- screen or component name
+- created_at (timestamp, default now())
+
+Indexes:
+- unique(key, language)
+
+----------------------------------
+
+2) decision_parameters
+Purpose: All numeric parameters for decision logic.
+
+Fields:
+- id (uuid, primary key)
+- key (text, unique, not null)      -- e.g. "weight.occasion.birthday"
+- value (numeric, not null)
+- description (text)
+
+Example keys:
+- weight.relationship
+- weight.occasion.birthday
+- weight.occasion.valentines
+- threshold.bold_allowed
+- penalty.surprise_disliked
+
+----------------------------------
+
+3) decision_explanations
+Purpose: Text explanations per direction (SAFE / EMOTIONAL / BOLD).
+
+Fields:
+- id (uuid, primary key)
+- direction (text, check in ('safe','emotional','bold'))
+- language (text)
+- title (text)
+- body (text)
+- risk_note (text)
+
+----------------------------------
+
+4) object_patterns
+Purpose: Pattern-level explanations BEFORE products.
+
+Fields:
+- id (uuid, primary key)
+- pattern_key (text)               -- e.g. "shared_experience"
+- direction (text)
+- language (text)
+- title (text)
+- description (text)
+
+----------------------------------
+
+RULES:
+- Enable Row Level Security (RLS)
+- Create READ-ONLY policies for anon + authenticated users
+- No insert/update/delete from client allowed
+- This database is configuration-only in Phase 0
+
+DELIVERABLE:
+- SQL schema
+- RLS policies
+- Short confirmation that this works with Expo iOS/Android/Web
+```
+
+---
+
+## ✅ Erwartetes Ergebnis von Replit
+
+* Supabase Tables erstellt
+* RLS aktiv
+* Keine Schreibrechte vom Client
+* Englisch (`en`) als Startsprache
+* **Expo Cross-Platform kompatibel**
+
+Wenn Replit etwas anderes vorschlägt → **STOP**, dann greifen wir ein.
+
+---
+
+## 🧩 NÄCHSTER PARALLELER SCHRITT (B)
+
+Sobald **0.4.A läuft**, machen wir:
+
+### 🔹 STEP 0.4.B — App liest Konfiguration aus Supabase
+
+Das beinhaltet:
+
+* `ui_texts` → alle Screen-Texte
+* `decision_parameters` → Mock Engine liest **live Werte**
+* kein Hardcoding mehr im Frontend
+
+👉 **WICHTIG:**
+Die Mock Engine bleibt **deterministisch**, aber **parameter-gesteuert**.
+
+---
+
+## 🧠 Warum diese Reihenfolge perfekt ist
+
+* ✅ Logik bleibt stabil
+* ✅ Texte sind austauschbar
+* ✅ Internationalisierung vorbereitet
+* ✅ Kein späteres Refactoring
+* ✅ Expo Web/iOS/Android identisch
+
+Du baust gerade **ein System**, kein UI-Prototyp.
+
+---
+
+## 👉 Dein nächster Schritt
+
+**Mach jetzt bitte Folgendes:**
+
+1. Kopiere den Prompt **STEP 0.4.A** zu Replit
+2. Poste mir danach **exakt das Replit-Feedback** (wie bei STEP 0.1–0.3)
+
+Dann gehe ich **sofort** weiter mit:
+
+➡️ **STEP 0.4.B — Supabase → App Binding Prompt**
+
+Bereit?
