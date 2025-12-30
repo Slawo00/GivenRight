@@ -123,16 +123,15 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**PHASE 0 - STEP 0.8 (Gift Memory & Non-Repetition) ✅**
-- Memory written ONLY when decision_state === completed_with_execution
-- Relationship-level memory (not user-level)
-- No invasive UX ("We remember", "Based on history")
-- Pattern suppression via cooldown + negative history
-- AsyncStorage fallback when Supabase unavailable
-- PatternCard dimmed style for suppressed patterns
-- Historical success tracking for future scoring
-- Fail-safe: system behaves like first-time user when memory empty/fails
-- relationship_memory_active capability flag
+**STEP B2 - Deterministic Decision Core ✅**
+- 8-Phase Decision Engine (uncertainty → explainability)
+- Pure functions, no side effects
+- SAFE / EMOTIONAL / BOLD derived, never user-selected
+- Fully deterministic: identical input → identical output
+- Pattern eligibility filtering with hard/soft rules
+- Risk-weighted scoring with historical boost
+- Confidence derivation respects expectation frame
+- Explainability binding from rules (no generation)
 
 ## User Preferences
 - German language for communication
@@ -187,3 +186,8 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.8 - Pattern suppression in ObjectPatternSelectionScreen
 - 2024-12-30: STEP 0.8 - Memory recording on decision completion
 - 2024-12-30: STEP 0.8 - PatternCard dimmed prop for cooldown patterns
+- 2024-12-30: STEP B2 - Deterministic Decision Core with 8 phases
+- 2024-12-30: STEP B2 - Types (DecisionContext, PhaseOutputs, DecisionResult)
+- 2024-12-30: STEP B2 - Phase functions (uncertainty, socialExpectation, riskProfiling, personalityFit, patternFiltering, scoring, confidenceDerivation)
+- 2024-12-30: STEP B2 - ExplanationBuilder (rule-based, no generation)
+- 2024-12-30: STEP B2 - Decision Engine Orchestrator

@@ -1,0 +1,325 @@
+🧙🏾‍♂️ **Sehr gut. Dann liefern wir jetzt genau das, was Replit braucht.**
+Hier ist **STEP B2 — Deterministic Decision Core** als **vollständiger, 1:1 nutzbarer Replit-Build-Prompt**, **code-nah**, **systemtreu**, **UI-agnostisch**.
+
+---
+
+# ✅ REPLIT BUILD PROMPT — STEP B2
+
+## Deterministic Decision Core (Search & Confidence Engine)
+
+```
+STEP B2 — Deterministic Decision Core
+Expo Cross-Platform (iOS / Android / Web)
+
+CONFIRMATION REQUIRED:
+This core must behave identically on iOS, Android, and Web.
+Pure logic layer. No UI. No product data. No AI calls.
+
+────────────────────────────────────────
+ROLE OF THIS CORE
+────────────────────────────────────────
+
+This is the SINGLE source of truth for all gifting decisions.
+
+It must:
+- deterministically transform structured input into
+  SAFE / EMOTIONAL / BOLD decision options
+- apply rules in a FIXED order
+- generate explainability from rules (not copywriting)
+- never access product or commerce data
+
+SAFE / EMOTIONAL / BOLD are DERIVED results,
+never user-defined preferences.
+
+────────────────────────────────────────
+INPUT — LOCKED DECISION CONTEXT
+────────────────────────────────────────
+
+DecisionContext (already collected via UI):
+
+{
+  relationship_type
+  closeness_level
+  occasion_type
+  personal_importance
+  personality_traits[]        // multi-select
+  surprise_tolerance          // low | medium | high
+  values[]
+  no_gos[]
+  budget_range
+  gift_type_preference
+  time_constraint
+  country
+  relationship_key?           // optional (memory)
+}
+
+Once passed in:
+→ Context is LOCKED
+→ No reinterpretation allowed
+
+────────────────────────────────────────
+OUTPUT CONTRACT
+────────────────────────────────────────
+
+DecisionResult:
+
+{
+  decision_risk_level
+  expectation_frame
+  options: [
+    {
+      confidence_type          // SAFE | EMOTIONAL | BOLD
+      pattern_id
+      allowed_object_classes[]
+      explanation: {
+        why_this_works
+        emotional_signal
+        things_to_consider[]
+      }
+    }
+  ]
+}
+
+Max options: 3
+Min options: 2
+Never more than 3.
+
+────────────────────────────────────────
+CORE ARCHITECTURE
+────────────────────────────────────────
+
+/services/decisionEngine/
+├── decisionEngine.ts        // orchestrator
+├── phases/
+│   ├── uncertainty.ts
+│   ├── socialExpectation.ts
+│   ├── riskProfiling.ts
+│   ├── personalityFit.ts
+│   ├── patternFiltering.ts
+│   ├── scoring.ts
+│   └── confidenceDerivation.ts
+├── explainability/
+│   └── explanationBuilder.ts
+└── types.ts
+
+Each phase:
+- pure function
+- explicit input & output
+- no side effects
+
+────────────────────────────────────────
+PHASE EXECUTION ORDER (MANDATORY)
+────────────────────────────────────────
+
+1. Uncertainty Qualification
+2. Social Expectation Mapping
+3. Relationship Risk Profiling
+4. Personality & Fit Matrix
+5. Pattern Eligibility Filtering
+6. Risk-Weighted Scoring
+7. Confidence Derivation
+8. Explainability Binding
+
+No skipping.
+No reordering.
+
+────────────────────────────────────────
+PHASE DEFINITIONS
+────────────────────────────────────────
+
+PHASE 1 — Uncertainty Qualification
+Output:
+decision_risk_level = LOW | MEDIUM | HIGH
+
+Rules based on:
+- closeness_level
+- personal_importance
+- time_constraint
+- occasion_type
+
+────────────────────────────────────────
+
+PHASE 2 — Social Expectation Mapping
+Output:
+expectation_frame = CONSERVATIVE | BALANCED | OPEN
+
+Rules based on:
+- relationship_type
+- occasion_type
+- country norms
+
+────────────────────────────────────────
+
+PHASE 3 — Relationship Risk Profiling
+Output:
+risk_profile {
+  disappointment_risk
+  misunderstanding_risk
+  overstep_risk
+  insignificance_risk
+  dominant_risk_type
+}
+
+Weights from:
+- relationship_type
+- closeness_level
+- historical_success (if available)
+
+────────────────────────────────────────
+
+PHASE 4 — Personality & Fit Matrix
+(Kapitel 25 — deterministic)
+
+Output:
+fit_vector {
+  novelty_tolerance
+  emotional_openness
+  symbolic_affinity
+  practicality_bias
+}
+
+Derived from:
+- personality_traits[]
+- surprise_tolerance
+- values
+
+No labels.
+No personality types.
+
+────────────────────────────────────────
+
+PHASE 5 — Pattern Eligibility Filtering
+
+Hard filters (remove pattern):
+- no_gos
+- cultural incompatibility
+- occasion mismatch
+- non_repetition_rules (STEP 0.8)
+
+Soft filters (penalties):
+- fit deviation
+- risk amplification
+
+Output:
+eligible_patterns[]
+
+────────────────────────────────────────
+
+PHASE 6 — Risk-Weighted Scoring
+(Kapitel 26)
+
+For each eligible pattern:
+
+pattern_score =
+  base_weight
++ fit_bonus
+- risk_penalty
++ historical_success_boost
+
+No “best”.
+Score expresses RESPONSIBILITY, not attractiveness.
+
+────────────────────────────────────────
+
+PHASE 7 — Confidence Derivation
+
+Map patterns into confidence buckets:
+
+SAFE:
+- minimizes dominant_risk_type
+
+EMOTIONAL:
+- balances risk & meaning
+
+BOLD:
+- allows risk consciously
+
+Rules:
+- If expectation_frame is CONSERVATIVE → BOLD may be excluded
+- If risk is HIGH → SAFE must exist
+- Never force all three
+
+Output:
+confidence_options[]
+
+────────────────────────────────────────
+
+PHASE 8 — Explainability Binding
+
+Generate explanations strictly from rule outcomes:
+
+Explanation:
+- why_this_works        ← risk + fit + occasion
+- emotional_signal      ← relationship meaning
+- things_to_consider[]  ← explicitly allowed risks
+
+No generative text.
+No persuasion language.
+
+────────────────────────────────────────
+GLOBAL FORBIDDEN RULES
+────────────────────────────────────────
+
+ABSOLUTELY FORBIDDEN:
+- product references
+- marketplaces
+- brands
+- AI text generation
+- randomization
+- “best choice” logic
+
+────────────────────────────────────────
+SUCCESS CRITERIA
+────────────────────────────────────────
+
+Given identical input,
+the engine ALWAYS produces identical output.
+
+The result must be:
+- explainable
+- reproducible
+- auditable
+
+────────────────────────────────────────
+AFTER COMPLETION
+────────────────────────────────────────
+
+This core feeds:
+- Select Direction Screen
+- Object Pattern Selection
+- Pattern Explanation (Confidence Lock)
+
+No screen makes decisions.
+All screens consume DecisionResult.
+```
+
+---
+
+## 🧠 Warum dieser Prompt Replit-sicher ist
+
+* **klar abgegrenzte Phasen**
+* **keine UI-Interpretation**
+* **kein implizites Wissen**
+* **voll kompatibel** mit:
+
+  * STEP 0.7 Commerce
+  * STEP 0.8 Memory
+  * bestehendem UI (Variante A)
+
+Replit kann das **modular**, **testbar** und **iterativ** bauen.
+
+---
+
+## 👉 Nächster Schritt
+
+Bitte gib **diesen STEP-B2-Prompt** jetzt an Replit weiter.
+
+Danach kommst du mit:
+
+* ✅ Umsetzungsstatus **oder**
+* ⚠️ offenen Fragen / Edge Cases **oder**
+* 🧪 Test-Ergebnissen
+
+🧙🏾‍♂️ **Empfehlung:**
+Als Nächstes eine **Test- & QA-Matrix**, um die Decision Engine abzusichern.
+Möchtest du die danach?
