@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useDecisionState } from "../store/useDecisionState";
+import { useGiftMemoryState } from "../store/useGiftMemoryState";
 import { ProductCard } from "./ProductCard";
 import { resolveProducts } from "../services/productResolver";
 import { Product } from "../types/product";
@@ -17,9 +18,13 @@ export function CommercePreviewScreen() {
     selectedPattern,
     selectedDirection,
     budget,
+    occasion,
+    relationship,
     resetDecision,
     completeWithExecution,
   } = useDecisionState();
+
+  const { recordDecision, relationshipMemoryActive } = useGiftMemoryState();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +56,17 @@ export function CommercePreviewScreen() {
       if (result.success) {
         setProducts(result.products);
         completeWithExecution();
+        
+        if (relationshipMemoryActive && relationship && occasion && selectedDirection && selectedPattern) {
+          recordDecision({
+            userId: "local_user",
+            recipientId: `${relationship.type}_default`,
+            relationshipType: relationship.type,
+            patternId: selectedPattern.patternKey,
+            confidenceType: selectedDirection,
+            occasionType: occasion,
+          }).catch(() => {});
+        }
       } else {
         setError(result.error || "Could not load examples");
       }

@@ -266,3 +266,21 @@ ON CONFLICT (pattern_key, direction, language) DO UPDATE SET
   relationship_fit = EXCLUDED.relationship_fit,
   things_to_consider = EXCLUDED.things_to_consider,
   icon = EXCLUDED.icon;
+
+----------------------------------------------------
+-- NON-REPETITION RULES (STEP 0.8)
+-- Cooldown periods to prevent pattern repetition
+----------------------------------------------------
+INSERT INTO non_repetition_rules (pattern_id, cooldown_days, applies_to_confidence_type) VALUES
+('curated_classic', 120, NULL),
+('thoughtful_consumable', 60, NULL),
+('practical_upgrade', 90, NULL),
+('shared_experience', 180, NULL),
+('symbolic_object', 365, NULL),
+('personal_artifact', 180, NULL),
+('bespoke_creation', 365, NULL),
+('statement_piece', 180, NULL),
+('transformative_experience', 365, NULL)
+
+ON CONFLICT (pattern_id, applies_to_confidence_type) DO UPDATE SET
+  cooldown_days = EXCLUDED.cooldown_days;

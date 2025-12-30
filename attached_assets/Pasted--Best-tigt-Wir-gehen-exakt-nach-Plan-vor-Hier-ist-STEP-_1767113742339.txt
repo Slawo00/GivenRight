@@ -1,0 +1,220 @@
+🧙🏾‍♂️ **Bestätigt. Wir gehen exakt nach Plan vor.**
+Hier ist **STEP 0.8 — Gift Memory & Non-Repetition (Option B)** als **vollständiger, 1:1 nutzbarer Replit-Build-Prompt**.
+Kein Overengineering. Kein Vertrauensbruch. **Moat-fähig ab v1.**
+
+---
+
+# ✅ REPLIT BUILD PROMPT — STEP 0.8
+
+## Gift Memory & Non-Repetition
+
+**Deterministic Learning Layer (Trust-Preserving)**
+Expo Cross-Platform (iOS / Android / Web)
+
+```
+STEP 0.8 — Gift Memory & Non-Repetition
+Expo Cross-Platform (iOS / Android / Web)
+
+CONFIRMATION REQUIRED:
+Identical behavior across iOS, Android, and Web.
+No native modules. No platform-specific code.
+
+────────────────────────────────────────
+ROLE OF THIS STEP
+────────────────────────────────────────
+
+This step introduces RELATIONSHIP MEMORY.
+It must:
+- reduce repetition
+- increase precision over time
+- lower cognitive load
+- NEVER feel invasive
+
+Memory is NOT personalization.
+Memory is DECISION STABILITY.
+
+────────────────────────────────────────
+TRIGGERS (WHEN MEMORY IS WRITTEN)
+────────────────────────────────────────
+
+Write memory ONLY when:
+- decision_state === completed_with_execution
+- a concrete option (SAFE / EMOTIONAL / BOLD) was chosen
+
+Never write memory:
+- during exploration
+- during comparison
+- during explanation
+
+────────────────────────────────────────
+MEMORY SCOPE (OPTION B)
+────────────────────────────────────────
+
+Memory is stored on RELATIONSHIP level, not user level.
+
+Relationship key:
+- user_id
+- recipient_id
+- relationship_type
+
+────────────────────────────────────────
+DATA MODEL (SUPABASE)
+────────────────────────────────────────
+
+Primary tables (existing / extend if needed):
+
+1. gift_memory
+   {
+     id
+     user_id
+     recipient_id
+     relationship_type
+     pattern_id
+     confidence_type      // SAFE | EMOTIONAL | BOLD
+     occasion_type
+     success_signal       // pending | positive | neutral | negative
+     created_at
+   }
+
+2. historical_success
+   {
+     id
+     relationship_key
+     pattern_id
+     confidence_type
+     success_weight       // float
+     last_used_at
+   }
+
+3. non_repetition_rules
+   {
+     id
+     pattern_id
+     cooldown_days
+     applies_to_confidence_type // optional
+   }
+
+────────────────────────────────────────
+WRITE LOGIC
+────────────────────────────────────────
+
+On decision completion:
+
+1. Create gift_memory entry
+2. Update or insert historical_success
+   - increment success_weight (initial neutral)
+   - update last_used_at
+
+NO product data.
+NO ASINs.
+NO brands.
+
+────────────────────────────────────────
+READ LOGIC (USED IN FUTURE SEARCH)
+────────────────────────────────────────
+
+Before generating new options:
+
+1. Suppress patterns:
+   - recently used patterns (cooldown active)
+   - patterns with negative historical weight
+
+2. Downweight confidence types:
+   - if same confidence_type chosen repeatedly
+   - unless explicitly re-selected by user
+
+3. Prefer:
+   - historically successful patterns
+   - variation across SAFE / EMOTIONAL / BOLD
+
+────────────────────────────────────────
+FEEDBACK BINDING (PREP FOR STEP 0.9)
+────────────────────────────────────────
+
+Expose a silent hook:
+- gift_memory.success_signal = pending
+
+Later feedback (👍 😐 👎) will:
+- adjust historical_success.success_weight
+- never rewrite past decisions
+- only influence future scoring
+
+────────────────────────────────────────
+UX RULES (CRITICAL)
+────────────────────────────────────────
+
+ABSOLUTELY FORBIDDEN:
+- “We remember everything”
+- “Based on your history”
+- visible tracking language
+
+ALLOWED:
+- subtle improvement
+- fewer repeats
+- calmer decisions
+- no explanation required
+
+────────────────────────────────────────
+FAIL-SAFE RULES
+────────────────────────────────────────
+
+If memory fails or is empty:
+- system behaves like first-time user
+- no degraded UX
+- no warnings
+
+────────────────────────────────────────
+SUCCESS CRITERIA
+────────────────────────────────────────
+
+The user feels:
+"It feels easier every time."
+Not:
+"It feels tracked."
+
+────────────────────────────────────────
+AFTER COMPLETION
+────────────────────────────────────────
+
+Mark system capability:
+relationship_memory_active = true
+
+Prepare for:
+STEP 0.9 — Feedback & Outcome Reinforcement
+```
+
+---
+
+## 🧠 WARUM DAS DER RICHTIGE SCHNITT IST
+
+* **Memory greift erst nach Verantwortung** (Execution)
+* **Kein Produkt-Lock-in** → vertrauensstabil
+* **Beziehungs-Moat** statt Feature-Moat
+* **Deterministisch & auditierbar** (Investor-ready)
+
+Das System lernt **leise**, nicht sichtbar. Genau das macht es mächtig.
+
+---
+
+## 🔜 Danach (wie vereinbart)
+
+**Phase B — Complete Search & Decision Flow**
+Wir rekonstruieren und implementieren:
+
+* vollständige Suchlogik **ab Seite 21**
+* Personality Rules & Fit Matrix (Kap. 25)
+* Deterministic Decision Core (Kap. 26)
+* Mapping: Supabase → Regeln → Scores → Erklärungen
+* App-Flow **vor** SAFE / EMOTIONAL / BOLD
+
+---
+
+👉 **Nächster Schritt (empfohlen):**
+Gib diesen **STEP-0.8-Prompt** jetzt an Replit weiter.
+Sobald fertig, schick mir:
+
+* Abschluss-Protokoll **oder**
+* Schema-Diff **oder**
+* Auffälligkeiten
+
+Dann starten wir **ohne Umwege** mit dem **vollständigen Search- & Decision-Flow**.

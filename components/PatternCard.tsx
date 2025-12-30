@@ -4,11 +4,12 @@ import type { ObjectPattern } from '@/services/supabase/objectPatternService';
 interface PatternCardProps {
   pattern: ObjectPattern;
   onSelect: () => void;
+  dimmed?: boolean;
 }
 
-export function PatternCard({ pattern, onSelect }: PatternCardProps) {
+export function PatternCard({ pattern, onSelect, dimmed = false }: PatternCardProps) {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, dimmed && styles.cardDimmed]}>
       <View style={styles.iconContainer}>
         <Text style={styles.icon}>{pattern.icon}</Text>
       </View>
@@ -43,6 +44,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderWidth: 1,
     borderColor: '#E5E7EB',
+  },
+  cardDimmed: {
+    opacity: 0.6,
+    borderColor: '#D1D5DB',
+    borderStyle: 'dashed',
   },
   iconContainer: {
     width: 56,

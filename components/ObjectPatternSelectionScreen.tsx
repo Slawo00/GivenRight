@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-nat
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PatternCard } from './PatternCard';
 import { useDecisionState } from '@/store/useDecisionState';
+import { useGiftMemoryState } from '@/store/useGiftMemoryState';
 import { getObjectPatterns, getDefaultPatterns, type ObjectPattern } from '@/services/supabase/objectPatternService';
 import type { DecisionDirection } from '@/types/decision';
 
@@ -23,9 +24,20 @@ interface ObjectPatternSelectionScreenProps {
 }
 
 export function ObjectPatternSelectionScreen({ onPatternSelected }: ObjectPatternSelectionScreenProps) {
-  const { selectedDirection } = useDecisionState();
+  const { selectedDirection, relationship } = useDecisionState();
+  const { isPatternSuppressed, getPatternBoost, setCurrentRelationship, relationshipMemoryActive } = useGiftMemoryState();
   const [patterns, setPatterns] = useState<ObjectPattern[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (relationship && relationshipMemoryActive) {
+      setCurrentRelationship({
+        userId: "local_user",
+        recipientId: `${relationship.type}_default`,
+        relationshipType: relationship.type,
+      });
+    }
+  }, [relationship, relationshipMemoryActive]);
 
   useEffect(() => {
     async function loadPatterns() {
@@ -77,13 +89,25 @@ export function ObjectPatternSelectionScreen({ onPatternSelected }: ObjectPatter
         </View>
 
         <View style={styles.patternsContainer}>
-          {patterns.map((pattern) => (
-            <PatternCard
-              key={pattern.patternKey}
-              pattern={pattern}
-              onSelect={() => onPatternSelected(pattern)}
-            />
-          ))}
+          {patterns
+            .map((pattern) => ({
+              pattern,
+              suppressed: isPatternSuppressed(pattern.patternKey),
+              boost: getPatternBoost(pattern.patternKey),
+            }))
+            .sort((a, b) => {
+              if (a.suppressed && !b.suppressed) return 1;
+              if (!a.suppressed && b.suppressed) return -1;
+              return b.boost - a.boost;
+            })
+            .map(({ pattern, suppressed }) => (
+              <PatternCard
+                key={pattern.patternKey}
+                pattern={pattern}
+                onSelect={() => onPatternSelected(pattern)}
+                dimmed={suppressed}
+              />
+            ))}
         </View>
 
         <View style={styles.footer}>

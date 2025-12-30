@@ -121,3 +121,90 @@ CREATE INDEX IF NOT EXISTS idx_ui_texts_key_lang ON ui_texts(key, language);
 CREATE INDEX IF NOT EXISTS idx_decision_params_key ON decision_parameters(key);
 CREATE INDEX IF NOT EXISTS idx_explanations_direction ON decision_explanations(direction, language);
 CREATE INDEX IF NOT EXISTS idx_patterns_key ON object_patterns(pattern_key, direction);
+
+----------------------------------------------------
+-- STEP 0.8 - Gift Memory & Non-Repetition
+----------------------------------------------------
+
+----------------------------------------------------
+-- 5) gift_memory
+-- Purpose: Record of completed gift decisions per relationship.
+-- Written ONLY when decision_state === completed_with_execution.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS gift_memory (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id TEXT NOT NULL,
+  recipient_id TEXT NOT NULL,
+  relationship_type TEXT NOT NULL,
+  pattern_id TEXT NOT NULL,
+  confidence_type TEXT NOT NULL CHECK (confidence_type IN ('safe', 'emotional', 'bold')),
+  occasion_type TEXT NOT NULL,
+  success_signal TEXT NOT NULL DEFAULT 'pending' CHECK (success_signal IN ('pending', 'positive', 'neutral', 'negative')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON TABLE gift_memory IS 'Records of completed gift decisions per relationship';
+COMMENT ON COLUMN gift_memory.success_signal IS 'Feedback status: pending until user provides feedback';
+
+----------------------------------------------------
+-- 6) historical_success
+-- Purpose: Aggregated success weights per pattern and relationship.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS historical_success (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  relationship_key TEXT NOT NULL,
+  pattern_id TEXT NOT NULL,
+  confidence_type TEXT NOT NULL CHECK (confidence_type IN ('safe', 'emotional', 'bold')),
+  success_weight NUMERIC NOT NULL DEFAULT 0.5,
+  last_used_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(relationship_key, pattern_id)
+);
+
+COMMENT ON TABLE historical_success IS 'Aggregated success patterns per relationship';
+COMMENT ON COLUMN historical_success.success_weight IS 'Weight from 0.0 (negative) to 1.0 (positive), starts at 0.5 (neutral)';
+
+----------------------------------------------------
+-- 7) non_repetition_rules
+-- Purpose: Cooldown rules to prevent pattern repetition.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS non_repetition_rules (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  pattern_id TEXT NOT NULL,
+  cooldown_days INTEGER NOT NULL DEFAULT 90,
+  applies_to_confidence_type TEXT CHECK (applies_to_confidence_type IN ('safe', 'emotional', 'bold')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(pattern_id, applies_to_confidence_type)
+);
+
+COMMENT ON TABLE non_repetition_rules IS 'Cooldown rules to prevent pattern repetition';
+COMMENT ON COLUMN non_repetition_rules.cooldown_days IS 'Days before same pattern can be recommended again';
+
+----------------------------------------------------
+-- RLS for memory tables
+----------------------------------------------------
+ALTER TABLE gift_memory ENABLE ROW LEVEL SECURITY;
+ALTER TABLE historical_success ENABLE ROW LEVEL SECURITY;
+ALTER TABLE non_repetition_rules ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "gift_memory_user_access" ON gift_memory
+  FOR ALL
+  TO authenticated
+  USING (user_id = auth.uid()::text);
+
+CREATE POLICY "historical_success_user_access" ON historical_success
+  FOR ALL
+  TO authenticated
+  USING (relationship_key LIKE auth.uid()::text || ':%');
+
+CREATE POLICY "non_repetition_rules_read_only" ON non_repetition_rules
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+----------------------------------------------------
+-- INDEXES for memory tables
+----------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_gift_memory_user ON gift_memory(user_id, recipient_id);
+CREATE INDEX IF NOT EXISTS idx_gift_memory_relationship ON gift_memory(user_id, recipient_id, relationship_type);
+CREATE INDEX IF NOT EXISTS idx_historical_success_key ON historical_success(relationship_key);
+CREATE INDEX IF NOT EXISTS idx_non_repetition_pattern ON non_repetition_rules(pattern_id);
