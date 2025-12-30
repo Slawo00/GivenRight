@@ -1,15 +1,16 @@
-import type { ID } from './common';
-
 export type RelationshipType =
-  | 'partner'
-  | 'family'
-  | 'friend'
-  | 'colleague'
-  | 'acquaintance';
+  | "partner"
+  | "parent"
+  | "child"
+  | "friend"
+  | "colleague"
+  | "other";
 
-export interface Relationship {
-  id: ID;
+export type SurpriseTolerance = "low" | "medium" | "high";
+
+export interface RelationshipProfile {
   type: RelationshipType;
-  name: string;
-  description?: string;
+  closeness: number;
+  emotionalStyle: string[];
+  surpriseTolerance: SurpriseTolerance;
 }

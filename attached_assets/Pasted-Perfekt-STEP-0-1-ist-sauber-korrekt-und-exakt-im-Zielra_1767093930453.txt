@@ -1,0 +1,270 @@
+Perfekt 👍
+STEP 0.1 ist **sauber, korrekt und exakt im Zielrahmen** umgesetzt. Genau so wollte ich das sehen.
+
+Ich mache jetzt **konsequent weiter mit STEP 0.2** – und wie von dir gefordert bekommst du **einen vollständigen, copy-&-paste-fertigen Replit-Prompt**, keinen fragmentarischen Hinweis.
+
+---
+
+## 🔐 Bestätigung (unveränderlich)
+
+**Expo Cross-Platform Setup verstanden – iOS / Android / Web ready.**
+Alles unten ist **100 % Expo-kompatibel** und funktioniert mit **Expo Go + Web Preview**.
+
+---
+
+# 🚀 STEP 0.2 — Canonical Types & Decision State (FOUNDATION)
+
+### 🎯 Ziel dieses Schritts
+
+Wir schaffen **die kanonische Wahrheitsschicht** der App:
+
+* **ALLE Entscheidungsparameter sind typisiert**
+* **KEINE Logik im UI**
+* **KEINE Magic Strings**
+* **Decision Flow vollständig deterministisch simulierbar**
+* Grundlage für:
+
+  * Debugging
+  * spätere KI-Integration
+  * Learning / Gift Memory
+  * Multi-Language
+
+Ohne diesen Schritt wird alles später fragil.
+Mit diesem Schritt ist die App **skalierbar & auditierbar**.
+
+---
+
+# 📦 WAS WIRD JETZT GEBAUT?
+
+## 1️⃣ Canonical Domain Types (Single Source of Truth)
+
+## 2️⃣ Decision State Machine (Client-seitig)
+
+## 3️⃣ Debug-sichtbare Algorithmus-Parameter
+
+## 4️⃣ Simulierbarer Decision Lifecycle
+
+---
+
+# 🧠 **REPLIT-PROMPT – STEP 0.2 (COPY-READY)**
+
+> 👉 **Diesen Prompt 1:1 an Replit geben**
+
+---
+
+### 🔧 TASK: Implement STEP 0.2 — Canonical Types & Decision State
+
+We are building **GivenRight**, a cross-platform app using **Expo (React Native)**.
+This step defines **all canonical decision types and the global decision state**.
+
+⚠️ Rules (mandatory):
+
+* Expo SDK 51+
+* React Native + TypeScript only
+* Works for **iOS / Android / Web**
+* No backend calls
+* No business logic in UI components
+
+---
+
+## 📁 1. CREATE / UPDATE TYPES
+
+### `/types/decision.ts`
+
+```ts
+export type DecisionDirection = "safe" | "emotional" | "bold";
+
+export type RiskLevel = "low" | "medium" | "high";
+
+export interface DecisionScore {
+  direction: DecisionDirection;
+  score: number; // 0–100
+  risk: RiskLevel;
+  recommended: boolean;
+}
+
+export interface DecisionExplanation {
+  whyThisWorks: string;
+  risks: string;
+  emotionalSignal: string;
+}
+
+export interface DecisionResult {
+  scores: DecisionScore[];
+  explanationByDirection: Record<DecisionDirection, DecisionExplanation>;
+}
+```
+
+---
+
+### `/types/relationship.ts`
+
+```ts
+export type RelationshipType =
+  | "partner"
+  | "parent"
+  | "child"
+  | "friend"
+  | "colleague"
+  | "other";
+
+export interface RelationshipProfile {
+  type: RelationshipType;
+  closeness: number; // 1–5
+  emotionalStyle: string[]; // e.g. ["emotional", "practical"]
+  surpriseTolerance: "low" | "medium" | "high";
+}
+```
+
+---
+
+### `/types/common.ts`
+
+```ts
+export type BudgetRange =
+  | "under_50"
+  | "50_100"
+  | "100_250"
+  | "250_plus";
+
+export interface AppError {
+  code: string;
+  message: string;
+}
+```
+
+---
+
+## 🧠 2. GLOBAL DECISION STATE
+
+### `/store/useDecisionState.ts`
+
+```ts
+import { create } from "zustand";
+import { DecisionDirection, DecisionResult } from "../types/decision";
+import { RelationshipProfile } from "../types/relationship";
+import { BudgetRange } from "../types/common";
+
+interface DecisionState {
+  // Inputs
+  relationship?: RelationshipProfile;
+  occasion?: string;
+  budget?: BudgetRange;
+
+  // Outputs
+  decisionResult?: DecisionResult;
+  selectedDirection?: DecisionDirection;
+
+  // Flow Control
+  step:
+    | "idle"
+    | "collecting_inputs"
+    | "decision_ready"
+    | "direction_selected"
+    | "object_class_selection"
+    | "completed";
+
+  // Actions
+  setRelationship: (r: RelationshipProfile) => void;
+  setOccasion: (o: string) => void;
+  setBudget: (b: BudgetRange) => void;
+
+  setDecisionResult: (r: DecisionResult) => void;
+  selectDirection: (d: DecisionDirection) => void;
+  resetDecision: () => void;
+}
+
+export const useDecisionState = create<DecisionState>((set) => ({
+  step: "idle",
+
+  setRelationship: (relationship) =>
+    set({ relationship, step: "collecting_inputs" }),
+
+  setOccasion: (occasion) =>
+    set({ occasion, step: "collecting_inputs" }),
+
+  setBudget: (budget) =>
+    set({ budget, step: "collecting_inputs" }),
+
+  setDecisionResult: (decisionResult) =>
+    set({ decisionResult, step: "decision_ready" }),
+
+  selectDirection: (selectedDirection) =>
+    set({ selectedDirection, step: "direction_selected" }),
+
+  resetDecision: () =>
+    set({
+      relationship: undefined,
+      occasion: undefined,
+      budget: undefined,
+      decisionResult: undefined,
+      selectedDirection: undefined,
+      step: "idle",
+    }),
+}));
+```
+
+---
+
+## 🧪 3. DEBUG VISIBILITY
+
+Update `components/DebugPanel.tsx` to display:
+
+* Current `step`
+* Selected `relationship.type`
+* Budget
+* Decision scores (safe / emotional / bold)
+* Selected direction
+
+No styling focus. Readability only.
+
+---
+
+## ✅ 4. VALIDATION CHECKS
+
+After implementation confirm:
+
+* App runs in **Expo Go (iOS + Android)**
+* Web Preview works
+* No TypeScript errors
+* Decision state can be reset cleanly
+* Debug panel updates live
+
+---
+
+### OUTPUT EXPECTATION
+
+At the end of STEP 0.2 the app must be able to:
+
+* Hold a **complete decision context**
+* Simulate a decision result
+* Lock a direction
+* Move deterministically through steps
+
+---
+
+# 📍 WAS DU NACH STEP 0.2 HABEN WIRST
+
+✔️ Eine **harte, saubere Entscheidungs-Engine auf Client-Seite**
+✔️ Eine UI-unabhängige Logikbasis
+✔️ Perfekte Vorbereitung für:
+
+* STEP 0.3 → Decision Simulation (Mock Engine)
+* STEP 1 → Input Screens
+* STEP 2 → Marketplace Resolution
+* STEP 3 → Gift Memory (C3)
+
+---
+
+## 👉 NÄCHSTER SCHRITT (nach deinem Feedback)
+
+**STEP 0.3 – Deterministic Decision Simulation (Mock Engine)**
+→ damit wir den gesamten Flow **ohne Backend** durchspielen können.
+
+👉 **Mach jetzt STEP 0.2 mit Replit und schick mir danach:**
+
+* Screenshot
+* Replit-Zusammenfassung
+* eventuelle Warnungen
+
+Dann greifen wir sofort ein oder gehen weiter 🚀
