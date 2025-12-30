@@ -1,0 +1,291 @@
+🧙🏾‍♂️ **Bestätigt. STEP B2 startet jetzt.**
+Ich nutze den von dir gelieferten Prompt **explizit als Referenz-Spezifikation** und übersetze ihn **1:1 in einen deterministischen, produktionsfähigen Decision Core** – ohne Dialog-Artefakte, ohne UI, ohne Commerce.
+
+---
+
+# STEP B2 — Deterministic Decision Core
+
+**From Concept → Rules → Scores → Explainability**
+
+> Ziel:
+> Eine **auditierbare Entscheidungsmaschine**, die
+>
+> * alle Phasen strikt einhält
+> * SAFE / EMOTIONAL / BOLD **ableitet**, nicht auswählbar macht
+> * vollständig ohne Produktdaten funktioniert
+> * Explainability **regelbasiert** erzeugt
+
+---
+
+## 0. Architektur-Leitplanken (unverhandelbar)
+
+* **Keine probabilistischen Entscheidungen**
+* **Keine Generierung**
+* **Keine UI-Abhängigkeit**
+* **Keine Memory-Pflicht** (Memory wirkt nur modulierend)
+* **Feste Phasenreihenfolge** (kein Skippen)
+
+Decision Core = **Pure Function + erklärbare Seiteneffekte**
+
+---
+
+## 1. Normalized Input Object (Intent Lock)
+
+Aus PHASE 1 deines Referenz-Prompts entsteht **ein einziges Objekt**:
+
+```ts
+DecisionContext {
+  relationship_type
+  closeness_level
+  occasion_type
+  personal_importance
+  personality_traits[]          // multi-select
+  surprise_tolerance            // low | medium | high
+  values[]
+  no_gos[]
+  budget_range
+  gift_type_preference
+  time_constraint
+  country
+  relationship_key?             // optional (Memory)
+}
+```
+
+➡️ **Nach diesem Punkt ist alles gelockt.**
+Keine Interpretation mehr, nur Regeln.
+
+---
+
+## 2. Phase Engine (fixe Reihenfolge)
+
+### Phase 1 — Uncertainty Qualification
+
+**Output:** `decision_risk_level`
+
+**Regeln (Beispiele):**
+
+* hohe Nähe + hohe Bedeutung → Risiko ↑
+* wenig Zeit + hohe Erwartung → Risiko ↑
+* niedrige Bedeutung → Risiko ↓
+
+```ts
+decision_risk_level = LOW | MEDIUM | HIGH
+```
+
+➡️ LOW kann Phasen verkürzen, **nie überspringen**.
+
+---
+
+### Phase 2 — Social Expectation Mapping
+
+**Output:** `expectation_frame`
+
+Indikatoren:
+
+* occasion_formality
+* cultural_norms
+* relationship_expectation
+
+```ts
+expectation_frame = CONSERVATIVE | BALANCED | OPEN
+```
+
+➡️ Definiert **Abweichungstoleranz**, nicht Kreativität.
+
+---
+
+### Phase 3 — Relationship Risk Profiling
+
+**Output:** `risk_profile`
+
+```ts
+risk_profile {
+  disappointment_risk
+  misunderstanding_risk
+  overstep_risk
+  insignificance_risk
+}
+```
+
+Gewichtung aus:
+
+* relationship_type
+* closeness
+* historical_success (falls vorhanden)
+
+➡️ **dominant_risk_type** wird festgelegt.
+
+---
+
+### Phase 4 — Personality & Fit Matrix
+
+*(Kapitel 25, strikt umgesetzt)*
+
+**Kein Typing. Kein Labeling.**
+
+```ts
+fit_vector {
+  novelty_tolerance
+  emotional_openness
+  symbolic_affinity
+  practicality_bias
+}
+```
+
+Mapping:
+
+* personality_traits[]
+* surprise_tolerance
+* values
+
+➡️ Fit wirkt **einschränkend**, nicht kreativ.
+
+---
+
+### Phase 5 — Pattern Eligibility Filtering
+
+**Hard Filters (Elimination):**
+
+* no_gos
+* cultural exclusion
+* occasion incompatibility
+* non_repetition_rules (STEP 0.8)
+
+**Soft Filters (Penalty):**
+
+* fit deviation
+* risk amplification
+* personality mismatch
+
+```ts
+eligible_patterns[]
+```
+
+➡️ Viele Patterns verschwinden **unsichtbar**.
+
+---
+
+### Phase 6 — Risk-Weighted Scoring
+
+*(Kapitel 26)*
+
+Für jedes verbleibende Pattern:
+
+```ts
+pattern_score =
+  base_weight
++ fit_bonus
+- risk_penalty
++ historical_success_boost
+```
+
+**Wichtig:**
+
+* kein „Best“
+* nur **Verantwortbarkeit**
+
+---
+
+## 3. Confidence Derivation (SAFE / EMOTIONAL / BOLD)
+
+Jetzt erst wird gerahmt:
+
+```ts
+SAFE:
+  minimizes dominant_risk_type
+
+EMOTIONAL:
+  balances risk + meaning
+
+BOLD:
+  allows risk consciously
+```
+
+**Regeln:**
+
+* max. 3 Optionen
+* manchmal nur 2 (wenn Frame es erzwingt)
+* nie mehr
+
+➡️ Optionen sind **Entscheidungshaltungen**, keine Produkte.
+
+---
+
+## 4. Explainability Binding (regelbasiert)
+
+Für jede Option wird erzeugt:
+
+```ts
+Explanation {
+  why_this_works        // aus risk + fit + occasion
+  emotional_signal      // Bedeutungsebene
+  things_to_consider[]  // explizit erlaubte Risiken
+  underlying_pattern
+}
+```
+
+➡️ **Keine Textidee. Nur Regelableitung.**
+
+---
+
+## 5. Output Contract (an UI / STEP 0.x)
+
+```ts
+DecisionResult {
+  options: [
+    {
+      confidence_type
+      pattern_id
+      explanation
+      allowed_object_classes[]
+    }
+  ]
+}
+```
+
+➡️ **Ab hier übernimmt euer bestehender Flow.**
+
+---
+
+## 6. Warum das exakt zu deinem Referenz-Prompt passt
+
+Dein Prompt war:
+
+* dialogisch
+* testbar
+* streng
+
+Dieser Core ist:
+
+* nicht-dialogisch
+* produktionsfähig
+* genauso streng
+
+👉 **Gleiche Logik, andere Repräsentation.**
+
+---
+
+## 🧠 Status nach STEP B2
+
+Ihr habt jetzt:
+
+* eine vollständige Such- & Entscheidungslogik
+* deterministisch
+* erklärbar
+* memory-kompatibel
+* commerce-agnostisch
+
+👉 Das ist das **Herz** von GivenRight.
+
+---
+
+## 👉 Nächster Schritt
+
+Bevor wir in **STEP B3 — App-Flow & Screen Mapping** gehen, eine kurze Gate-Frage:
+
+> **Möchtest du STEP B3**
+>
+> * **A)** strikt am bestehenden UI andocken (minimaler Umbau)
+> * **B)** oder den Flow **radikal vom Decision Core her neu ordnen**, falls nötig?
+
+Sag mir **A oder B**, dann machen wir weiter.
