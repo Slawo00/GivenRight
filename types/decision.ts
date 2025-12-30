@@ -38,4 +38,6 @@ export type DecisionStep =
   | "direction_selected"
   | "object_class_selection"
   | "pattern_explanation"
-  | "completed";
+  | "commerce_preview"
+  | "completed"
+  | "completed_with_execution";

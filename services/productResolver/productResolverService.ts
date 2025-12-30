@@ -1,0 +1,537 @@
+import { Product, ProductResolverInput, ProductResolverResult, AMAZON_DOMAINS } from "../../types/product";
+import { BudgetRange } from "../../types/common";
+
+const AFFILIATE_TAG = "givenright-20";
+
+const BUDGET_RANGES: Record<BudgetRange, { min: number; max: number }> = {
+  under_50: { min: 10, max: 49 },
+  "50_100": { min: 50, max: 100 },
+  "100_250": { min: 100, max: 250 },
+  "250_plus": { min: 250, max: 500 },
+};
+
+const MOCK_PRODUCTS: Record<string, Product[]> = {
+  shared_experience: [
+    {
+      id: "se-001",
+      title: "Cooking Class Voucher Set",
+      imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
+      price: 89,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 1284,
+      affiliateUrl: "",
+    },
+    {
+      id: "se-002",
+      title: "Pottery Workshop Gift Card",
+      imageUrl: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=400",
+      price: 75,
+      currency: "USD",
+      rating: 4.5,
+      reviewCount: 892,
+      affiliateUrl: "",
+    },
+    {
+      id: "se-003",
+      title: "Escape Room Adventure Voucher",
+      imageUrl: "https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=400",
+      price: 65,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2156,
+      affiliateUrl: "",
+    },
+    {
+      id: "se-004",
+      title: "Wine Tasting Experience",
+      imageUrl: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400",
+      price: 95,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1543,
+      affiliateUrl: "",
+    },
+    {
+      id: "se-005",
+      title: "Spa Day for Two",
+      imageUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400",
+      price: 149,
+      currency: "USD",
+      rating: 4.9,
+      reviewCount: 3421,
+      affiliateUrl: "",
+    },
+  ],
+  handwritten_personal: [
+    {
+      id: "hp-001",
+      title: "Premium Leather Journal",
+      imageUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400",
+      price: 45,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2341,
+      affiliateUrl: "",
+    },
+    {
+      id: "hp-002",
+      title: "Personalized Photo Book",
+      imageUrl: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400",
+      price: 39,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1876,
+      affiliateUrl: "",
+    },
+    {
+      id: "hp-003",
+      title: "Custom Engraved Pen Set",
+      imageUrl: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400",
+      price: 55,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 1234,
+      affiliateUrl: "",
+    },
+    {
+      id: "hp-004",
+      title: "Letter Writing Kit",
+      imageUrl: "https://images.unsplash.com/photo-1579751626657-72bc17010498?w=400",
+      price: 35,
+      currency: "USD",
+      rating: 4.5,
+      reviewCount: 987,
+      affiliateUrl: "",
+    },
+    {
+      id: "hp-005",
+      title: "Memory Box with Cards",
+      imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400",
+      price: 42,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 1567,
+      affiliateUrl: "",
+    },
+  ],
+  curated_comfort: [
+    {
+      id: "cc-001",
+      title: "Luxury Cashmere Blanket",
+      imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400",
+      price: 129,
+      currency: "USD",
+      rating: 4.9,
+      reviewCount: 3456,
+      affiliateUrl: "",
+    },
+    {
+      id: "cc-002",
+      title: "Premium Candle Gift Set",
+      imageUrl: "https://images.unsplash.com/photo-1602607325572-ec09b8a53c9d?w=400",
+      price: 65,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 2134,
+      affiliateUrl: "",
+    },
+    {
+      id: "cc-003",
+      title: "Gourmet Tea Collection",
+      imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
+      price: 48,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1789,
+      affiliateUrl: "",
+    },
+    {
+      id: "cc-004",
+      title: "Silk Pillowcase Set",
+      imageUrl: "https://images.unsplash.com/photo-1584536514445-4f70b1f8a94e?w=400",
+      price: 79,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2567,
+      affiliateUrl: "",
+    },
+    {
+      id: "cc-005",
+      title: "Aromatherapy Diffuser Kit",
+      imageUrl: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400",
+      price: 55,
+      currency: "USD",
+      rating: 4.5,
+      reviewCount: 1432,
+      affiliateUrl: "",
+    },
+  ],
+  symbolic_anchor: [
+    {
+      id: "sa-001",
+      title: "Personalized Star Map",
+      imageUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400",
+      price: 89,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 4567,
+      affiliateUrl: "",
+    },
+    {
+      id: "sa-002",
+      title: "Custom Coordinates Jewelry",
+      imageUrl: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400",
+      price: 75,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 2345,
+      affiliateUrl: "",
+    },
+    {
+      id: "sa-003",
+      title: "Engraved Keepsake Box",
+      imageUrl: "https://images.unsplash.com/photo-1549488344-cbb6c34cf08b?w=400",
+      price: 65,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1876,
+      affiliateUrl: "",
+    },
+    {
+      id: "sa-004",
+      title: "Memory Locket Necklace",
+      imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400",
+      price: 95,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2134,
+      affiliateUrl: "",
+    },
+    {
+      id: "sa-005",
+      title: "Custom Date Ring",
+      imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400",
+      price: 110,
+      currency: "USD",
+      rating: 4.9,
+      reviewCount: 3456,
+      affiliateUrl: "",
+    },
+  ],
+  emotional_surprise: [
+    {
+      id: "es-001",
+      title: "Surprise Date Night Box",
+      imageUrl: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400",
+      price: 85,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 1987,
+      affiliateUrl: "",
+    },
+    {
+      id: "es-002",
+      title: "Love Letter Time Capsule",
+      imageUrl: "https://images.unsplash.com/photo-1513128034602-7628a5be4ed3?w=400",
+      price: 49,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2345,
+      affiliateUrl: "",
+    },
+    {
+      id: "es-003",
+      title: "Romantic Scavenger Hunt Kit",
+      imageUrl: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400",
+      price: 55,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1234,
+      affiliateUrl: "",
+    },
+    {
+      id: "es-004",
+      title: "Couple's Adventure Book",
+      imageUrl: "https://images.unsplash.com/photo-1516796181074-bf453fbfa3e6?w=400",
+      price: 35,
+      currency: "USD",
+      rating: 4.9,
+      reviewCount: 4567,
+      affiliateUrl: "",
+    },
+    {
+      id: "es-005",
+      title: "Message in a Bottle Kit",
+      imageUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400",
+      price: 29,
+      currency: "USD",
+      rating: 4.5,
+      reviewCount: 987,
+      affiliateUrl: "",
+    },
+  ],
+  vulnerability_token: [
+    {
+      id: "vt-001",
+      title: "Open When Letter Set",
+      imageUrl: "https://images.unsplash.com/photo-1579751626657-72bc17010498?w=400",
+      price: 35,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 3456,
+      affiliateUrl: "",
+    },
+    {
+      id: "vt-002",
+      title: "Couples Journal Set",
+      imageUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400",
+      price: 45,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 2134,
+      affiliateUrl: "",
+    },
+    {
+      id: "vt-003",
+      title: "Heartfelt Audio Recorder",
+      imageUrl: "https://images.unsplash.com/photo-1558403194-611308249627?w=400",
+      price: 65,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1567,
+      affiliateUrl: "",
+    },
+    {
+      id: "vt-004",
+      title: "Custom Voice Wave Art",
+      imageUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400",
+      price: 79,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2345,
+      affiliateUrl: "",
+    },
+    {
+      id: "vt-005",
+      title: "Memory Sharing Cards",
+      imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400",
+      price: 28,
+      currency: "USD",
+      rating: 4.5,
+      reviewCount: 1234,
+      affiliateUrl: "",
+    },
+  ],
+  statement_object: [
+    {
+      id: "so-001",
+      title: "Designer Art Print",
+      imageUrl: "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=400",
+      price: 189,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2567,
+      affiliateUrl: "",
+    },
+    {
+      id: "so-002",
+      title: "Luxury Watch Box",
+      imageUrl: "https://images.unsplash.com/photo-1587836374828-a58e31e77a63?w=400",
+      price: 249,
+      currency: "USD",
+      rating: 4.9,
+      reviewCount: 3456,
+      affiliateUrl: "",
+    },
+    {
+      id: "so-003",
+      title: "Handcrafted Sculpture",
+      imageUrl: "https://images.unsplash.com/photo-1544413660-299165566b1d?w=400",
+      price: 175,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 1876,
+      affiliateUrl: "",
+    },
+    {
+      id: "so-004",
+      title: "Premium Leather Bag",
+      imageUrl: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400",
+      price: 295,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2134,
+      affiliateUrl: "",
+    },
+    {
+      id: "so-005",
+      title: "Artisan Ceramic Vase",
+      imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400",
+      price: 145,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1567,
+      affiliateUrl: "",
+    },
+  ],
+  experience_upgrade: [
+    {
+      id: "eu-001",
+      title: "Premium Concert Tickets",
+      imageUrl: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=400",
+      price: 350,
+      currency: "USD",
+      rating: 4.9,
+      reviewCount: 4567,
+      affiliateUrl: "",
+    },
+    {
+      id: "eu-002",
+      title: "Luxury Hotel Voucher",
+      imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400",
+      price: 450,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 3456,
+      affiliateUrl: "",
+    },
+    {
+      id: "eu-003",
+      title: "Private Chef Experience",
+      imageUrl: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
+      price: 275,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 2134,
+      affiliateUrl: "",
+    },
+    {
+      id: "eu-004",
+      title: "Hot Air Balloon Ride",
+      imageUrl: "https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=400",
+      price: 325,
+      currency: "USD",
+      rating: 4.9,
+      reviewCount: 2876,
+      affiliateUrl: "",
+    },
+    {
+      id: "eu-005",
+      title: "Yacht Day Charter",
+      imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400",
+      price: 495,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 1987,
+      affiliateUrl: "",
+    },
+  ],
+  unexpected_category: [
+    {
+      id: "uc-001",
+      title: "Unusual Plant Subscription",
+      imageUrl: "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=400",
+      price: 65,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 1876,
+      affiliateUrl: "",
+    },
+    {
+      id: "uc-002",
+      title: "Mystery Art Box",
+      imageUrl: "https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=400",
+      price: 89,
+      currency: "USD",
+      rating: 4.7,
+      reviewCount: 2345,
+      affiliateUrl: "",
+    },
+    {
+      id: "uc-003",
+      title: "Quirky Gadget Set",
+      imageUrl: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=400",
+      price: 75,
+      currency: "USD",
+      rating: 4.5,
+      reviewCount: 1567,
+      affiliateUrl: "",
+    },
+    {
+      id: "uc-004",
+      title: "Creative Hobby Kit",
+      imageUrl: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400",
+      price: 55,
+      currency: "USD",
+      rating: 4.8,
+      reviewCount: 2134,
+      affiliateUrl: "",
+    },
+    {
+      id: "uc-005",
+      title: "Surprise Subscription Box",
+      imageUrl: "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=400",
+      price: 45,
+      currency: "USD",
+      rating: 4.6,
+      reviewCount: 3456,
+      affiliateUrl: "",
+    },
+  ],
+};
+
+function buildAffiliateUrl(productId: string, country: string): string {
+  const domain = AMAZON_DOMAINS[country] || AMAZON_DOMAINS.US;
+  return `https://www.${domain}/dp/${productId}?tag=${AFFILIATE_TAG}`;
+}
+
+function filterByBudget(products: Product[], budgetRange: BudgetRange): Product[] {
+  const range = BUDGET_RANGES[budgetRange];
+  return products.filter(p => p.price >= range.min && p.price <= range.max);
+}
+
+function filterByRating(products: Product[], minRating: number = 4.2): Product[] {
+  return products.filter(p => p.rating >= minRating);
+}
+
+export async function resolveProducts(input: ProductResolverInput): Promise<ProductResolverResult> {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    let products = MOCK_PRODUCTS[input.patternKey];
+    
+    if (!products || products.length === 0) {
+      products = MOCK_PRODUCTS.curated_comfort;
+    }
+
+    products = products.map(p => ({
+      ...p,
+      affiliateUrl: buildAffiliateUrl(p.id, input.country),
+    }));
+
+    let filtered = filterByRating(products);
+    
+    const budgetFiltered = filterByBudget(filtered, input.budgetRange);
+    if (budgetFiltered.length >= 3) {
+      filtered = budgetFiltered;
+    }
+
+    const limitedProducts = filtered.slice(0, 6);
+
+    return {
+      success: true,
+      products: limitedProducts,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      products: [],
+      error: "Could not load product examples at this time.",
+    };
+  }
+}
+
+export function getAffiliateTag(): string {
+  return AFFILIATE_TAG;
+}

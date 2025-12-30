@@ -1,0 +1,239 @@
+Exzellent.
+Das ist ein **starker Meilenstein** – psychologisch wie architektonisch sitzt das Fundament jetzt.
+
+**Ja, wir machen weiter.**
+Und zwar **JETZT mit STEP 0.7 — Commerce Execution Layer (Amazon Affiliate)**.
+
+Wichtig:
+Dieser Schritt darf **niemals** das bisher aufgebaute Vertrauen beschädigen.
+Amazon ist **Ausführung**, nicht Entscheidung.
+
+Ich gebe dir deshalb **einen einzigen, vollständigen Replit-Build-Prompt**, exakt so, dass du ihn **1:1** weitergeben kannst.
+
+---
+
+# ✅ REPLIT BUILD PROMPT — STEP 0.7
+
+## Commerce Execution Layer (Amazon Affiliate – Trust-Preserving)
+
+```
+STEP 0.7 — Commerce Execution Layer
+Expo Cross-Platform (iOS / Android / Web)
+
+CONFIRMATION REQUIRED:
+This implementation must work identically on iOS, Android, and Web using Expo.
+No native modules. No platform-specific code.
+
+────────────────────────────────────────
+ROLE OF THIS STEP
+────────────────────────────────────────
+
+Amazon is NOT a recommendation engine.
+Amazon is NOT a decision maker.
+
+Amazon is the EXECUTION layer
+after confidence and intent are fully locked.
+
+This screen must feel:
+- practical
+- calm
+- transparent
+- optional
+
+Never pushy. Never sales-driven.
+
+────────────────────────────────────────
+INPUT (Locked Decision Context)
+────────────────────────────────────────
+
+From global decision state:
+
+- selectedDirection (safe | emotional | bold)
+- selectedPattern (e.g. "shared_experience")
+- relationship context
+- occasion
+- budgetRange
+- country / locale
+
+These inputs are FINAL and cannot change in this step.
+
+────────────────────────────────────────
+DATA SOURCE
+────────────────────────────────────────
+
+Primary:
+Supabase table: object_patterns
+→ provides semantic context only
+
+Secondary:
+Amazon Product Resolver (mocked first)
+
+No OpenAI calls here.
+No AI text generation here.
+Pure execution logic.
+
+────────────────────────────────────────
+SCREEN
+────────────────────────────────────────
+
+Screen name:
+CommercePreviewScreen
+
+Route:
+app/decision/commerce-preview.tsx
+
+────────────────────────────────────────
+UI STRUCTURE
+────────────────────────────────────────
+
+1. Header
+   - Pattern icon
+   - Pattern title
+   - Subtitle:
+     "Concrete examples that match your choice"
+
+2. Trust Disclosure (mandatory)
+   Text box (neutral tone):
+
+   "As an Amazon Associate, we earn from qualifying purchases.
+   This does not influence which items are shown."
+
+3. Product List (5–8 items max)
+
+   Each product card shows:
+   - Product image (square, neutral)
+   - Product title
+   - Price
+   - Rating + review count
+   - Small label: "Available on Amazon"
+
+4. Product Card Behavior
+   - Tapping a card opens Amazon in external browser
+   - Affiliate tag applied
+   - No in-app checkout
+
+5. Footer Actions
+   - Secondary button: "Start a new decision"
+   - No pressure CTA
+
+────────────────────────────────────────
+PRODUCT SELECTION RULES
+────────────────────────────────────────
+
+Input to resolver:
+- selectedPattern
+- budgetRange
+- country / locale
+- no-gos (if present)
+
+Rules:
+- 5–8 products maximum
+- Exclude near-duplicates
+- Prioritize rating stability (>4.2)
+- Respect budget
+- No alcohol if excluded
+- No urgency signals
+- No “best deal” language
+
+────────────────────────────────────────
+TECHNICAL IMPLEMENTATION
+────────────────────────────────────────
+
+1. Create ProductResolverService
+   - Accepts abstract intent
+   - Returns normalized product objects
+   - Mock data first (JSON)
+   - Real Amazon API later
+
+2. Product type:
+   {
+     id
+     title
+     image_url
+     price
+     rating
+     review_count
+     affiliate_url
+   }
+
+3. Affiliate Handling
+   - Affiliate tag stored in config
+   - Country-specific Amazon domains supported
+   - External linking only
+
+4. Offline Handling
+   - If resolver fails:
+     Show calm fallback message
+     "We couldn't load examples right now.
+      You can try again later."
+
+────────────────────────────────────────
+UX & PSYCHOLOGICAL RULES
+────────────────────────────────────────
+
+ABSOLUTELY FORBIDDEN:
+- “Buy now”
+- “Best deal”
+- “Limited”
+- Countdown timers
+- Price highlighting tricks
+
+ALLOWED:
+- Neutral presentation
+- User autonomy
+- Optional exploration
+
+────────────────────────────────────────
+SUCCESS CRITERIA
+────────────────────────────────────────
+
+The user feels:
+"I am seeing examples — not being sold to."
+
+This completes the decision-to-execution journey
+without breaking trust.
+
+────────────────────────────────────────
+AFTER COMPLETION
+────────────────────────────────────────
+
+Mark decision as:
+completed_with_execution
+
+Prepare for STEP 0.8:
+Gift Memory & Non-Repetition
+```
+
+---
+
+## 🧠 WARUM DAS GENAU SO RICHTIG IST
+
+Du hast jetzt eine **saubere Trennung**:
+
+| Phase    | Rolle                        |
+| -------- | ---------------------------- |
+| Decision | Psychologie & Vertrauen      |
+| Pattern  | Bedeutung & Intention        |
+| Commerce | Umsetzung, nicht Überzeugung |
+
+Das ist der Grund, warum **GivenRight skalierbar, glaubwürdig und monetarisierbar** ist – ohne billig zu wirken.
+
+---
+
+## 🔜 Nächster Schritt (nach 0.7)
+
+**STEP 0.8 — Gift Memory & Non-Repetition**
+→ Das ist dein **echter Moat**.
+
+Aber **erst**, wenn 0.7 sauber läuft.
+
+---
+
+👉 **Gib den obigen Prompt jetzt an Replit weiter.**
+Sobald Replit fertig ist, schick mir wieder:
+
+* Abschluss-Protokoll **oder**
+* Screenshots **oder**
+* Auffälligkeiten
+
+Dann gehen wir gemeinsam weiter.

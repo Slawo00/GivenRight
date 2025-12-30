@@ -41,6 +41,8 @@ interface DecisionState {
   runDecisionSimulation: () => void;
   runTestScenario: (input: TestScenarioInput) => void;
   setConfig: (params: DecisionParameters, explanations: Record<DecisionDirection, DecisionExplanation>) => void;
+  advanceToCommerce: () => void;
+  completeWithExecution: () => void;
   resetDecision: () => void;
 }
 
@@ -129,6 +131,12 @@ export const useDecisionState = create<DecisionState>((set, get) => ({
         configuredExplanations: state.configuredExplanations,
       };
     }),
+
+  advanceToCommerce: () =>
+    set({ step: "commerce_preview" }),
+
+  completeWithExecution: () =>
+    set({ step: "completed_with_execution" }),
 
   resetDecision: () =>
     set((state) => ({

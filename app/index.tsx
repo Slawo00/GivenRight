@@ -4,11 +4,12 @@ import { DebugPanel } from '@/components/DebugPanel';
 import { DecisionExplanationScreen } from '@/components/DecisionExplanationScreen';
 import { ObjectPatternSelectionScreen } from '@/components/ObjectPatternSelectionScreen';
 import { PatternExplanationScreen } from '@/components/PatternExplanationScreen';
+import { CommercePreviewScreen } from '@/components/CommercePreviewScreen';
 import { useDecisionState } from '@/store/useDecisionState';
 import type { ObjectPattern } from '@/services/supabase/objectPatternService';
 
 export default function HomeScreen() {
-  const { step, advanceStep, runTestScenario, selectPattern, selectedPattern, resetDecision } = useDecisionState();
+  const { step, advanceStep, advanceToCommerce, runTestScenario, selectPattern, selectedPattern, resetDecision } = useDecisionState();
 
   const handleStartDemo = () => {
     runTestScenario({
@@ -32,7 +33,7 @@ export default function HomeScreen() {
   };
 
   const handlePatternExplanationContinue = () => {
-    advanceStep('completed');
+    advanceToCommerce();
   };
 
   if (step === 'decision_ready') {
@@ -69,7 +70,16 @@ export default function HomeScreen() {
     );
   }
 
-  if (step === 'completed') {
+  if (step === 'commerce_preview') {
+    return (
+      <>
+        <CommercePreviewScreen />
+        <DebugPanel />
+      </>
+    );
+  }
+
+  if (step === 'completed' || step === 'completed_with_execution') {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
@@ -86,7 +96,11 @@ export default function HomeScreen() {
             </View>
           )}
           
-          <Text style={styles.nextStep}>Next: Commerce Layer (STEP 0.7)</Text>
+          <Text style={styles.nextStep}>
+            {step === 'completed_with_execution' 
+              ? 'Journey complete! Gift found.' 
+              : 'Ready for next steps.'}
+          </Text>
           <Pressable style={styles.resetButton} onPress={resetDecision}>
             <Text style={styles.resetButtonText}>Start Over</Text>
           </Pressable>
