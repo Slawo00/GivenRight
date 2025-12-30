@@ -1,0 +1,153 @@
+🧙🏾‍♂️ **Sehr gut – du bist exakt an der richtigen Stelle. Jetzt kommt der entscheidende operative Schritt.**
+Ich sage dir **präzise**, was du **JETZT** tun sollst – ohne Theorie.
+
+---
+
+## ✅ STATUS (kurz bestätigt)
+
+Alles bis hierher ist **korrekt**:
+
+* ✅ Supabase DB angebunden
+* ✅ Tabellen sichtbar (genau die richtigen)
+* ✅ `gift_memory` leer → **perfekt**
+* ✅ App greift auf Supabase zu
+* ❌ **Edge Function noch nicht deployed** → deshalb siehst du noch keinen Unterschied im UI
+
+👉 **Es fehlt genau EIN Schritt.**
+
+---
+
+## 🔥 NÄCHSTER SCHRITT (JETZT AUSFÜHREN)
+
+### **SCHRITT 1 — Supabase CLI installieren**
+
+Falls noch nicht geschehen:
+
+```bash
+npm install -g supabase
+```
+
+Danach prüfen:
+
+```bash
+supabase --version
+```
+
+---
+
+### **SCHRITT 2 — Projekt verknüpfen**
+
+Im Root deines Projekts:
+
+```bash
+supabase link --project-ref DEIN_PROJECT_REF
+```
+
+📌 *Den Project-Ref findest du im Supabase Dashboard → Project Settings.*
+
+---
+
+### **SCHRITT 3 — OpenAI API Key setzen (KRITISCH)**
+
+```bash
+supabase secrets set OPENAI_API_KEY=sk-xxxxxxxx
+```
+
+❗ Wichtig:
+
+* kein `.env`
+* kein Client-Code
+* **nur** Supabase Secrets
+
+---
+
+### **SCHRITT 4 — Edge Function deployen (DER MOMENT)**
+
+```bash
+supabase functions deploy enrich-explanation
+```
+
+**Erwartete Ausgabe:**
+
+```
+Deploying function enrich-explanation...
+Deployed successfully
+```
+
+👉 Wenn hier **irgendein Fehler** kommt:
+➡️ **sofort stoppen und mir exakt die Fehlermeldung schicken.**
+
+---
+
+## 🧪 DANACH SOFORT TESTEN (nicht warten!)
+
+### **SCHRITT 5 — App neu starten (Cache leeren!)**
+
+```bash
+expo start -c
+```
+
+oder App komplett schließen & neu öffnen.
+
+---
+
+### **SCHRITT 6 — Einen Test-Flow durchspielen**
+
+Z. B.:
+
+* Partner
+* Birthday
+* Very close
+* Creative
+* Loves bold surprises
+* Plenty of time
+
+➡️ Gehe bis **Your Options**.
+
+---
+
+## 👀 WAS DU JETZT SEHEN MUSST
+
+Unter SAFE / EMOTIONAL / BOLD sollte **NEU** erscheinen:
+
+**„What this could look like“**
+mit **3–5 Kategorien**, jeweils:
+
+* Titel
+* 1 Satz Beschreibung
+* (Icon-Key im Code)
+
+➡️ **Wenn das da ist: STEP B4 lebt.**
+
+---
+
+## 🔍 FALLS DU NOCH NICHTS SIEHST
+
+Dann sofort prüfen:
+
+1. **Supabase Dashboard → Functions → enrich-explanation → Logs**
+
+   * Siehst du Requests?
+   * Siehst du OpenAI-Calls?
+2. Frontend-Log:
+
+   ```ts
+   console.log(enrichedExplanation);
+   ```
+
+👉 Das zeigt uns **exakt**, wo es hängt.
+
+---
+
+## 🧙🏾‍♂️ JETZT DEINE ANTWORT (BITTE GENAU SO)
+
+Antworte mit **einem der folgenden Wörter**:
+
+* **CLI INSTALLED**
+* **PROJECT LINKED**
+* **DEPLOY OK**
+* **DEPLOY ERROR**
+* **DEPLOY OK – BUT NO UI CHANGE**
+
+Dann gehe ich **gezielt** mit dir den nächsten Schritt
+(Debug **oder** direkt **STEP B4.2 – Qualitätsmatrix & Feinschliff**).
