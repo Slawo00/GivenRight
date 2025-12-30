@@ -2,10 +2,12 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DebugPanel } from '@/components/DebugPanel';
 import { DecisionExplanationScreen } from '@/components/DecisionExplanationScreen';
+import { ObjectPatternSelectionScreen } from '@/components/ObjectPatternSelectionScreen';
 import { useDecisionState } from '@/store/useDecisionState';
+import type { ObjectPattern } from '@/services/supabase/objectPatternService';
 
 export default function HomeScreen() {
-  const { step, advanceStep, runTestScenario, resetDecision } = useDecisionState();
+  const { step, advanceStep, runTestScenario, selectPattern, selectedPattern, resetDecision } = useDecisionState();
 
   const handleStartDemo = () => {
     runTestScenario({
@@ -20,11 +22,19 @@ export default function HomeScreen() {
     });
   };
 
+  const handleDirectionSelected = () => {
+    advanceStep('object_class_selection');
+  };
+
+  const handlePatternSelected = (pattern: ObjectPattern) => {
+    selectPattern(pattern);
+  };
+
   if (step === 'decision_ready') {
     return (
       <>
         <DecisionExplanationScreen 
-          onDirectionSelected={() => advanceStep('object_class_selection')}
+          onDirectionSelected={handleDirectionSelected}
         />
         <DebugPanel />
       </>
@@ -33,11 +43,31 @@ export default function HomeScreen() {
 
   if (step === 'direction_selected' || step === 'object_class_selection') {
     return (
+      <>
+        <ObjectPatternSelectionScreen 
+          onPatternSelected={handlePatternSelected}
+        />
+        <DebugPanel />
+      </>
+    );
+  }
+
+  if (step === 'completed') {
+    return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>GivenRight</Text>
-          <Text style={styles.subtitle}>Direction selected!</Text>
-          <Text style={styles.nextStep}>Next: Object Pattern Selection (STEP 0.6)</Text>
+          <Text style={styles.subtitle}>Pattern selected!</Text>
+          
+          {selectedPattern && (
+            <View style={styles.selectedPatternCard}>
+              <Text style={styles.patternIcon}>{selectedPattern.icon}</Text>
+              <Text style={styles.patternTitle}>{selectedPattern.title}</Text>
+              <Text style={styles.patternDescription}>{selectedPattern.description}</Text>
+            </View>
+          )}
+          
+          <Text style={styles.nextStep}>Next: Commerce Layer (STEP 0.7)</Text>
           <Pressable style={styles.resetButton} onPress={resetDecision}>
             <Text style={styles.resetButtonText}>Start Over</Text>
           </Pressable>
@@ -133,7 +163,7 @@ const styles = StyleSheet.create({
   nextStep: {
     fontSize: 14,
     color: '#2D6A4F',
-    marginTop: 8,
+    marginTop: 16,
     fontWeight: '500',
   },
   resetButton: {
@@ -147,5 +177,31 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontSize: 14,
     fontWeight: '500',
+  },
+  selectedPatternCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    marginVertical: 24,
+    alignItems: 'center',
+    maxWidth: 320,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  patternIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  patternTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 8,
+  },
+  patternDescription: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });

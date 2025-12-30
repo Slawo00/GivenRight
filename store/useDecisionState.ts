@@ -8,6 +8,7 @@ import {
   getDefaultExplanations,
   type DecisionParameters 
 } from "../services/supabase";
+import type { ObjectPattern } from "../services/supabase/objectPatternService";
 
 interface TestScenarioInput {
   relationship: RelationshipProfile;
@@ -22,6 +23,7 @@ interface DecisionState {
 
   decisionResult?: DecisionResult;
   selectedDirection?: DecisionDirection;
+  selectedPattern?: ObjectPattern;
 
   step: DecisionStep;
   
@@ -34,6 +36,7 @@ interface DecisionState {
 
   setDecisionResult: (r: DecisionResult) => void;
   selectDirection: (d: DecisionDirection) => void;
+  selectPattern: (p: ObjectPattern) => void;
   advanceStep: (s: DecisionStep) => void;
   runDecisionSimulation: () => void;
   runTestScenario: (input: TestScenarioInput) => void;
@@ -47,6 +50,7 @@ const initialState = {
   budget: undefined,
   decisionResult: undefined,
   selectedDirection: undefined,
+  selectedPattern: undefined,
   step: "idle" as DecisionStep,
   configuredParameters: undefined,
   configuredExplanations: undefined,
@@ -69,6 +73,9 @@ export const useDecisionState = create<DecisionState>((set, get) => ({
 
   selectDirection: (selectedDirection) =>
     set({ selectedDirection, step: "direction_selected" }),
+
+  selectPattern: (selectedPattern) =>
+    set({ selectedPattern, step: "completed" }),
 
   advanceStep: (step) =>
     set({ step }),

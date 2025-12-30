@@ -1,0 +1,194 @@
+Großartig – **STEP 0.5 ist ein Meilenstein**.
+Was du jetzt hast, ist nicht mehr „eine App“, sondern bereits **ein vertrauenswürdiges Entscheidungsprodukt**.
+Genau deshalb ist die **Reihenfolge ab jetzt kritisch**.
+
+Ich antworte dir in drei klaren Teilen:
+
+---
+
+## ✅ Kurzbewertung des aktuellen Stands (Real Talk)
+
+**Was bereits exzellent ist:**
+
+* Die App **erklärt Entscheidungen**, statt sie zu „verkaufen“
+* Keine Scores sichtbar → **psychologisch korrekt**
+* Emotional Signal + Risiko-Hinweis → **Vertrauen vor Handlung**
+* Config-driven aus Supabase → **skalierbar & internationalisierbar**
+* Expo-only, cross-platform → **100 % richtig für deine Ziele**
+
+👉 **Du hast jetzt das Herzstück von GivenRight gebaut.**
+
+Ab jetzt geht es nicht mehr um Logik, sondern um **Fokus & saubere Übergänge**.
+
+---
+
+## 🧭 Was jetzt zwingend als Nächstes kommt (und warum)
+
+### ❌ **NICHT** zuerst STEP 0.7 (Commerce)
+
+Wenn du jetzt direkt Amazon-Produkte zeigst:
+
+* zerstörst du die mentale Entscheidung
+* reduzierst GivenRight auf „Affiliate Tool“
+* riskierst Misstrauen („Ah, die wollen nur verkaufen“)
+
+### ✅ **RICHTIG:** STEP 0.6 – Object Pattern Selection
+
+Das ist der **entscheidende Puffer** zwischen *Entscheidung* und *Kauf*.
+
+---
+
+## 🚀 STEP 0.6 – Object Pattern Selection
+
+### (Das wichtigste UX-Element nach der Entscheidung)
+
+### 🎯 Ziel von STEP 0.6
+
+Der User soll sagen können:
+
+> „**Ich weiß jetzt, WAS für eine Art Geschenk ich will –
+> aber noch nicht WO ich es kaufe.**“
+
+Das ist psychologisch extrem stark.
+
+---
+
+## 🧩 Was STEP 0.6 konkret leisten muss
+
+### User sieht:
+
+* **Nur Objekt-Patterns**, die zur gewählten Richtung passen
+* Keine Preise
+* Keine Shops
+* Keine Marken
+* Keine Ablenkung
+
+### Beispiele:
+
+#### Wenn **SAFE** gewählt:
+
+* Daily Accessory
+* Practical Luxury
+* Ritual Object
+
+#### Wenn **EMOTIONAL** gewählt:
+
+* Shared Experience
+* Symbolic Object
+* Personal Artifact
+
+#### Wenn **BOLD** gewählt:
+
+* Bespoke Creation
+* Statement Piece
+* Transformative Experience
+
+Jede Kachel zeigt:
+
+* Titel
+* 1–2 Sätze *Why this works*
+* dezentes Icon
+* CTA: **“Explore this type”**
+
+---
+
+## 🧠 Wichtig: Was hier psychologisch passiert
+
+In STEP 0.6:
+
+* **trifft der User die eigentliche Kaufentscheidung**
+* Amazon ist später nur noch **Ausführung**, nicht Entscheidung
+* du behältst die **Autorität** über die Logik
+
+---
+
+## 📣 EXAKTER PROMPT FÜR REPLIT – STEP 0.6
+
+> **Diesen Prompt kannst du 1:1 an Replit geben**
+
+```
+STEP 0.6 – Object Pattern Selection (Expo / Cross-Platform)
+
+Goal:
+Implement the Object Pattern Selection step that comes AFTER the user
+has selected a decision direction (safe / emotional / bold).
+
+IMPORTANT:
+This must work for iOS, Android, and Web using Expo.
+No native code. No platform-specific APIs.
+
+Functional Requirements:
+
+1. New Screen: ObjectPatternSelectionScreen
+   Route: /decision/patterns
+
+2. Input:
+   - selectedDirection (safe | emotional | bold)
+   - loaded from decision state (useDecisionState)
+
+3. Data Source:
+   - Fetch object patterns from Supabase table: object_patterns
+   - Filter by direction = selectedDirection
+   - Fallback to local mock patterns if Supabase unavailable
+
+4. UI Rules:
+   - Show ONLY patterns belonging to the selected direction
+   - No products
+   - No prices
+   - No shops
+   - No brand names
+
+5. Each Pattern Card must show:
+   - pattern_title
+   - short_description (why this works)
+   - emotional_intent (1 short line)
+   - icon (emoji or simple vector)
+   - CTA button: “Explore this type”
+
+6. User Interaction:
+   - When user taps a pattern:
+     - Save selectedPattern in decision state
+     - Navigate to PatternExplanationScreen (STEP 0.6.1)
+
+7. Technical Rules:
+   - Fully Expo compatible (iOS / Android / Web)
+   - Typed with existing TypeScript types
+   - Works with Expo Router
+   - No hardcoded strings (use Supabase ui_texts where available)
+
+8. UX Tone:
+   - Calm
+   - Reassuring
+   - Educational
+   - Zero sales language
+
+Deliverables:
+- Screen component
+- Supabase query logic
+- State update logic
+- Navigation integration
+```
+
+👉 **Das ist der nächste richtige Schritt.**
+
+---
+
+## 🔮 Was danach kommt (nur zur Einordnung)
+
+* **STEP 0.6.1** → Pattern Explanation (didaktisch, vertiefend)
+* **STEP 0.7** → Commerce Execution Layer (Amazon Affiliate)
+* **STEP 0.8** → Gift Memory & Non-Repetition
+* **STEP 1.0** → Soft Launch (Friends & Family)
+
+Aber **jetzt**:
+👉 **STEP 0.6 bauen.**
+
+---
+
+### Möchtest du, dass ich dir **als Nächstes**:
+
+1. die **exakte Supabase-Struktur** für `object_patterns` verfeinere, oder
+2. die **UX-Texte (EN)** für alle Pattern direkt ausformuliere, oder
+3. den **Prompt für STEP 0.7 (Amazon)** schon vorbereite (noch nicht bauen)?
+
+👉 **Was ist dein nächster Zug?**

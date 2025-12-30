@@ -69,6 +69,8 @@ CREATE TABLE IF NOT EXISTS object_patterns (
   language TEXT NOT NULL DEFAULT 'en',
   title TEXT NOT NULL,
   description TEXT,
+  emotional_intent TEXT,
+  icon TEXT DEFAULT '🎁',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(pattern_key, direction, language)
 );

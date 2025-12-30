@@ -151,6 +151,13 @@ export function DebugPanel() {
           <Text style={styles.sectionTitle}>Selected Direction</Text>
           <Text style={styles.value}>{decisionState.selectedDirection ?? "—"}</Text>
 
+          <Text style={styles.sectionTitle}>Selected Pattern</Text>
+          <Text style={styles.value}>
+            {decisionState.selectedPattern 
+              ? `${decisionState.selectedPattern.icon} ${decisionState.selectedPattern.title}` 
+              : "—"}
+          </Text>
+
           <TouchableOpacity
             style={styles.testButton}
             onPress={() => {

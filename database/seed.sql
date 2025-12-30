@@ -197,22 +197,42 @@ ON CONFLICT (direction, language) DO UPDATE SET
 ----------------------------------------------------
 -- OBJECT PATTERNS (Gift Pattern Categories)
 ----------------------------------------------------
-INSERT INTO object_patterns (pattern_key, direction, language, title, description) VALUES
+INSERT INTO object_patterns (pattern_key, direction, language, title, description, emotional_intent, icon) VALUES
 -- Safe Patterns
-('classic_gift', 'safe', 'en', 'Classic Gift', 'Traditional, universally appreciated items like flowers, chocolates, or wine.'),
-('practical_item', 'safe', 'en', 'Practical Item', 'Useful everyday items they will definitely use.'),
-('gift_card', 'safe', 'en', 'Gift Card', 'Let them choose exactly what they want.'),
+('daily_accessory', 'safe', 'en', 'Daily Accessory', 
+ 'Something they''ll reach for every single day. Reliable, beautiful, and unmistakably thoughtful.',
+ 'Shows you pay attention to their daily life', '⌚'),
+('practical_luxury', 'safe', 'en', 'Practical Luxury', 
+ 'A premium version of something they already use. Elevates the ordinary into something special.',
+ 'Tells them they deserve the best', '✨'),
+('ritual_object', 'safe', 'en', 'Ritual Object', 
+ 'Something that becomes part of their daily routine. Coffee, tea, morning light, evening calm.',
+ 'Creates a moment of daily joy', '☕'),
 
 -- Emotional Patterns
-('memory_gift', 'emotional', 'en', 'Memory Gift', 'Something that captures a shared memory or inside joke.'),
-('handmade', 'emotional', 'en', 'Handmade Gift', 'A personally crafted item showing time and effort.'),
-('shared_experience', 'emotional', 'en', 'Shared Experience', 'An experience you can enjoy together.'),
+('shared_experience', 'emotional', 'en', 'Shared Experience', 
+ 'Not a thing, but a moment together. Something that becomes a memory you''ll both carry.',
+ 'Says ''I want more moments with you''', '🎭'),
+('symbolic_object', 'emotional', 'en', 'Symbolic Object', 
+ 'Something that represents your connection. An inside joke, a shared story, a meaningful reference.',
+ 'Shows the depth of your understanding', '💫'),
+('personal_artifact', 'emotional', 'en', 'Personal Artifact', 
+ 'A piece of their identity. Something that says ''I see who you really are.''',
+ 'Validates who they are becoming', '🎨'),
 
 -- Bold Patterns
-('surprise_experience', 'bold', 'en', 'Surprise Experience', 'An unexpected adventure or unique experience.'),
-('statement_piece', 'bold', 'en', 'Statement Piece', 'A memorable, conversation-starting gift.'),
-('upgrade', 'bold', 'en', 'Luxury Upgrade', 'A premium version of something they love.')
+('bespoke_creation', 'bold', 'en', 'Bespoke Creation', 
+ 'Something made specifically for them. One of a kind, impossible to replicate, entirely theirs.',
+ 'Declares they are irreplaceable', '💎'),
+('statement_piece', 'bold', 'en', 'Statement Piece', 
+ 'Something that makes people ask ''Where did you get that?'' A gift that starts conversations.',
+ 'Elevates how they see themselves', '🌟'),
+('transformative_experience', 'bold', 'en', 'Transformative Experience', 
+ 'Something that changes them. A skill, a journey, a perspective they didn''t have before.',
+ 'Invests in who they''re becoming', '🚀')
 
 ON CONFLICT (pattern_key, direction, language) DO UPDATE SET 
   title = EXCLUDED.title,
-  description = EXCLUDED.description;
+  description = EXCLUDED.description,
+  emotional_intent = EXCLUDED.emotional_intent,
+  icon = EXCLUDED.icon;

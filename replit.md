@@ -123,15 +123,15 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**PHASE 0 - STEP 0.5 (User-Facing Decision Transparency) ✅**
-- DecisionExplanationScreen with 3 direction cards (Safe/Emotional/Bold)
-- DirectionCard component showing Why/Signal/Risk sections
-- No scores or technical jargon - calm, premium design
-- "This feels right" CTA button per card
-- Database schema and seed updated with emotional_signal field
-- Config loading moved to app root layout (independent of debug panel)
-- User-facing "Start Decision" button on home screen
-- Full flow: Home → Start Decision → See Explanations → Select Direction
+**PHASE 0 - STEP 0.6 (Object Pattern Selection) ✅**
+- ObjectPatternSelectionScreen with 3 patterns per direction
+- PatternCard component with icon, title, description, emotional intent
+- No prices, no shops, no brands - only educational content
+- "Explore this type" CTA button per card
+- Database schema extended with emotional_intent and icon fields
+- seed.sql with 9 rich patterns (3 per direction: Safe/Emotional/Bold)
+- useDecisionState extended with selectedPattern and selectPattern action
+- Full flow: Home → Start Decision → See Explanations → Select Direction → Object Patterns → Completed
 
 ## User Preferences
 - German language for communication
@@ -165,3 +165,9 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.5 - emotional_signal field added to schema/seed
 - 2024-12-30: STEP 0.5 - Config loading moved to app root layout
 - 2024-12-30: STEP 0.5 - User-facing "Start Decision" button
+- 2024-12-30: STEP 0.6 - ObjectPatternSelectionScreen created
+- 2024-12-30: STEP 0.6 - PatternCard component (icon, intent, description)
+- 2024-12-30: STEP 0.6 - objectPatternService extended with emotionalIntent, icon
+- 2024-12-30: STEP 0.6 - Database schema with emotional_intent, icon fields
+- 2024-12-30: STEP 0.6 - seed.sql with 9 rich patterns
+- 2024-12-30: STEP 0.6 - selectedPattern state and selectPattern action
