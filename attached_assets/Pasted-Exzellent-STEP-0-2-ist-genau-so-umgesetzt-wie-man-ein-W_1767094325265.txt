@@ -1,0 +1,261 @@
+Exzellent. **STEP 0.2 ist genau so umgesetzt, wie man ein Weltklasse-Fundament baut.**
+Keine Abweichungen, keine stillen Annahmen, sauber typisiert, Expo-konform. Damit bist du jetzt an dem Punkt, an dem viele Teams erst *Monate später* ankommen.
+
+Wir gehen **konsequent weiter mit STEP 0.3**.
+
+---
+
+# 🚀 STEP 0.3 — Deterministic Decision Simulation (Mock Engine)
+
+### 🎯 Ziel von STEP 0.3
+
+Jetzt bringen wir **Leben in die Typen**, aber **ohne Backend, ohne KI, ohne Zufall**.
+
+Am Ende dieses Schritts kannst du:
+
+* den **kompletten Gift-Decision-Flow simulieren**
+* jede Eingabe → **deterministische Scores** sehen
+* im Debug Panel **nachvollziehen, WARUM** etwas empfohlen wird
+* Screens bauen, ohne jemals „echte“ Logik zu riskieren
+
+> 🔑 Prinzip:
+> **UI & Flow zuerst, echte Intelligenz später.**
+
+---
+
+## 🧠 ARCHITEKTUR-PRINZIP (WICHTIG)
+
+* ❌ Keine API
+* ❌ Keine KI
+* ❌ Kein Zufall
+* ✅ Reproduzierbar
+* ✅ Testbar
+* ✅ Debug-bar
+
+Diese Engine wird **später 1:1 durch Backend/KI ersetzt**, ohne dass sich UI oder State ändern müssen.
+
+---
+
+# 🧩 WAS WIRD JETZT GEBAUT?
+
+1. **Mock Decision Engine**
+2. **Score-Berechnung (SAFE / EMOTIONAL / BOLD)**
+3. **Recommendation-Regeln**
+4. **Erklärungs-Texte pro Richtung**
+5. **Debug-Trace**
+
+---
+
+# 🧠 **REPLIT-PROMPT – STEP 0.3 (COPY-READY)**
+
+👉 **Diesen Prompt exakt so an Replit geben**
+
+---
+
+### 🔧 TASK: Implement STEP 0.3 — Deterministic Decision Simulation (Mock Engine)
+
+We are building **GivenRight**, a cross-platform Expo app.
+This step adds a **pure deterministic mock decision engine**.
+
+⚠️ Mandatory rules:
+
+* Expo compatible (iOS / Android / Web)
+* TypeScript only
+* No randomness
+* No API calls
+* No UI logic inside the engine
+
+---
+
+## 📁 1. CREATE MOCK DECISION ENGINE
+
+### `/engine/mockDecisionEngine.ts`
+
+```ts
+import { DecisionResult, DecisionScore } from "../types/decision";
+import { RelationshipProfile } from "../types/relationship";
+import { BudgetRange } from "../types/common";
+
+interface DecisionInput {
+  relationship: RelationshipProfile;
+  occasion: string;
+  budget: BudgetRange;
+}
+
+export function runMockDecisionEngine(
+  input: DecisionInput
+): DecisionResult {
+  const { relationship, budget } = input;
+
+  let safeScore = 60;
+  let emotionalScore = 60;
+  let boldScore = 60;
+
+  // Relationship influence
+  if (relationship.type === "partner") {
+    emotionalScore += 20;
+    boldScore += 10;
+  }
+
+  if (relationship.type === "colleague") {
+    safeScore += 20;
+    emotionalScore -= 20;
+    boldScore -= 30;
+  }
+
+  // Closeness influence
+  emotionalScore += relationship.closeness * 5;
+  boldScore += relationship.closeness * 3;
+
+  // Surprise tolerance
+  if (relationship.surpriseTolerance === "low") {
+    boldScore -= 40;
+  }
+
+  // Budget influence
+  if (budget === "under_50") {
+    boldScore -= 20;
+  }
+
+  const scores: DecisionScore[] = [
+    {
+      direction: "safe",
+      score: clamp(safeScore),
+      risk: "low",
+      recommended: false,
+    },
+    {
+      direction: "emotional",
+      score: clamp(emotionalScore),
+      risk: "medium",
+      recommended: false,
+    },
+    {
+      direction: "bold",
+      score: clamp(boldScore),
+      risk: "high",
+      recommended: false,
+    },
+  ];
+
+  const maxScore = Math.max(...scores.map((s) => s.score));
+  scores.forEach((s) => (s.recommended = s.score === maxScore));
+
+  return {
+    scores,
+    explanationByDirection: {
+      safe: {
+        whyThisWorks:
+          "This option minimizes risk and ensures appreciation.",
+        risks:
+          "May feel predictable if emotional depth is expected.",
+        emotionalSignal: "Reliability & stability",
+      },
+      emotional: {
+        whyThisWorks:
+          "Balances emotional meaning with thoughtful intent.",
+        risks:
+          "Requires understanding of personal preferences.",
+        emotionalSignal: "Connection & care",
+      },
+      bold: {
+        whyThisWorks:
+          "Makes a strong statement and creates memorability.",
+        risks:
+          "High emotional risk if preferences are misjudged.",
+        emotionalSignal: "Intensity & confidence",
+      },
+    },
+  };
+}
+
+function clamp(value: number) {
+  return Math.max(0, Math.min(100, value));
+}
+```
+
+---
+
+## 🔗 2. CONNECT ENGINE TO STATE
+
+### Update `/store/useDecisionState.ts`
+
+Add a new action:
+
+```ts
+import { runMockDecisionEngine } from "../engine/mockDecisionEngine";
+
+runDecisionSimulation: () =>
+  set((state) => {
+    if (!state.relationship || !state.budget || !state.occasion) {
+      return state;
+    }
+
+    const result = runMockDecisionEngine({
+      relationship: state.relationship,
+      budget: state.budget,
+      occasion: state.occasion,
+    });
+
+    return {
+      decisionResult: result,
+      step: "decision_ready",
+    };
+  }),
+```
+
+And expose it in the interface.
+
+---
+
+## 🧪 3. DEBUG PANEL ENHANCEMENT
+
+Extend `DebugPanel.tsx` to show:
+
+* SAFE / EMOTIONAL / BOLD scores
+* Recommended direction (highlighted)
+* Risk level per option
+* Emotional signal text
+
+This panel is **developer-only**, not user-facing.
+
+---
+
+## ✅ 4. VALIDATION
+
+Confirm after implementation:
+
+* Running the simulation always yields the same output for same input
+* Different relationships produce different dominant directions
+* Bold is **blocked naturally** by low surprise tolerance
+* Web / iOS / Android all behave identically
+
+---
+
+## 🎯 EXPECTED RESULT OF STEP 0.3
+
+You now have:
+
+✔️ A **fully working decision engine**
+✔️ Deterministic scoring
+✔️ Clear explanations
+✔️ UI-independent logic
+✔️ A system you can *trust*
+
+---
+
+## 🔜 NÄCHSTER SCHRITT (danach)
+
+**STEP 0.4 – Decision Screens (Input → Result)**
+→ Jetzt bauen wir die echten Screens auf dieser stabilen Engine.
+
+---
+
+👉 **Bitte jetzt STEP 0.3 in Replit ausführen**
+und mir danach wieder senden:
+
+* Replit-Protokoll
+* ggf. Warnungen
+* Screenshot vom Debug Panel mit Scores
+
+Dann gehen wir weiter.
