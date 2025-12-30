@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DebugPanel } from '@/components/DebugPanel';
 import { DecisionExplanationScreen } from '@/components/DecisionExplanationScreen';
 import { ObjectPatternSelectionScreen } from '@/components/ObjectPatternSelectionScreen';
+import { PatternExplanationScreen } from '@/components/PatternExplanationScreen';
 import { useDecisionState } from '@/store/useDecisionState';
 import type { ObjectPattern } from '@/services/supabase/objectPatternService';
 
@@ -30,6 +31,10 @@ export default function HomeScreen() {
     selectPattern(pattern);
   };
 
+  const handlePatternExplanationContinue = () => {
+    advanceStep('completed');
+  };
+
   if (step === 'decision_ready') {
     return (
       <>
@@ -52,18 +57,32 @@ export default function HomeScreen() {
     );
   }
 
+  if (step === 'pattern_explanation' && selectedPattern) {
+    return (
+      <>
+        <PatternExplanationScreen 
+          pattern={selectedPattern}
+          onContinue={handlePatternExplanationContinue}
+        />
+        <DebugPanel />
+      </>
+    );
+  }
+
   if (step === 'completed') {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>GivenRight</Text>
-          <Text style={styles.subtitle}>Pattern selected!</Text>
+          <Text style={styles.subtitle}>You're ready to find your gift</Text>
           
           {selectedPattern && (
             <View style={styles.selectedPatternCard}>
               <Text style={styles.patternIcon}>{selectedPattern.icon}</Text>
               <Text style={styles.patternTitle}>{selectedPattern.title}</Text>
-              <Text style={styles.patternDescription}>{selectedPattern.description}</Text>
+              <Text style={styles.patternDescription}>
+                You've chosen this direction with confidence.
+              </Text>
             </View>
           )}
           

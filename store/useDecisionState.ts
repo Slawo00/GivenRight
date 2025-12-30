@@ -75,7 +75,7 @@ export const useDecisionState = create<DecisionState>((set, get) => ({
     set({ selectedDirection, step: "direction_selected" }),
 
   selectPattern: (selectedPattern) =>
-    set({ selectedPattern, step: "completed" }),
+    set({ selectedPattern, step: "pattern_explanation" }),
 
   advanceStep: (step) =>
     set({ step }),

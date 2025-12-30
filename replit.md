@@ -123,15 +123,15 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 **RLS Policies:** Read-only for anon + authenticated users
 
 ## Current Phase
-**PHASE 0 - STEP 0.6 (Object Pattern Selection) ✅**
-- ObjectPatternSelectionScreen with 3 patterns per direction
-- PatternCard component with icon, title, description, emotional intent
-- No prices, no shops, no brands - only educational content
-- "Explore this type" CTA button per card
-- Database schema extended with emotional_intent and icon fields
-- seed.sql with 9 rich patterns (3 per direction: Safe/Emotional/Bold)
-- useDecisionState extended with selectedPattern and selectPattern action
-- Full flow: Home → Start Decision → See Explanations → Select Direction → Object Patterns → Completed
+**PHASE 0 - STEP 0.6.1 (Pattern Explanation - Confidence Lock) ✅**
+- PatternExplanationScreen as a CONFIDENCE LOCK before commerce
+- Shows: Why This Works, Why This Fits Your Relationship, Emotional Signal, Things to Consider
+- Calm, reflective, non-commercial design
+- CTA: "Show concrete examples" → leads to STEP 0.7 (Commerce)
+- Database schema extended with relationship_fit and things_to_consider fields
+- seed.sql with rich educational content per pattern
+- Decision flow: pattern_explanation step added between object_class_selection and completed
+- Full flow: Home → Start Decision → See Explanations → Select Direction → Object Patterns → Pattern Explanation → Ready for Commerce
 
 ## User Preferences
 - German language for communication
@@ -171,3 +171,7 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP 0.6 - Database schema with emotional_intent, icon fields
 - 2024-12-30: STEP 0.6 - seed.sql with 9 rich patterns
 - 2024-12-30: STEP 0.6 - selectedPattern state and selectPattern action
+- 2024-12-30: STEP 0.6.1 - PatternExplanationScreen (Confidence Lock)
+- 2024-12-30: STEP 0.6.1 - Extended schema: relationship_fit, things_to_consider
+- 2024-12-30: STEP 0.6.1 - Rich educational seed data for all 9 patterns
+- 2024-12-30: STEP 0.6.1 - pattern_explanation step in decision flow
