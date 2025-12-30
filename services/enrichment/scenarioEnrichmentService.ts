@@ -70,6 +70,7 @@ async function enrichOption(
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${anonKey}`,
+        'apikey': anonKey,
       },
       body: JSON.stringify({
         decision_context: {
