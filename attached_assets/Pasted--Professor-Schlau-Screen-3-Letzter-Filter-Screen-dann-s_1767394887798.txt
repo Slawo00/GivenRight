@@ -1,0 +1,169 @@
+🧙🏾‍♂️ Professor Schlau – **Screen 3. Letzter Filter-Screen, dann sind wir UI-seitig „clean“.**
+Fokus: **Values** & **No-Gos** als **harte Filter**, **rein Supabase-getrieben**, **keine Scores**, **keine Defaults**.
+
+---
+
+# 🧩 SCREEN 3 – „Anything to keep in mind?“
+
+## Leitprinzip (verbindlich)
+
+> **Values & No-Gos filtern – sie bewerten nicht.**
+> Die UI sammelt **Codes**, die Logik greift **später**.
+
+---
+
+## 1️⃣ Supabase-Queries (UI-Read)
+
+**Eine Tabelle, zwei Rollen** (`q_value_constraints`):
+
+### A) Values
+
+```sql
+SELECT code, label
+FROM q_value_constraints
+WHERE type = 'value'
+ORDER BY label;
+```
+
+### B) No-Gos
+
+```sql
+SELECT code, label
+FROM q_value_constraints
+WHERE type = 'no_go'
+ORDER BY label;
+```
+
+> Falls `type` anders heißt (z. B. `constraint_type`): bitte anpassen.
+> **Keine weiteren Filter** (kein LIMIT, keine Whitelist).
+
+---
+
+## 2️⃣ Replit – Fetch Pattern (Screen 3)
+
+```ts
+// lib/loadScreen3Options.ts
+import { supabase } from './supabase';
+
+export async function loadScreen3Options() {
+  const [values, noGos] = await Promise.all([
+    supabase
+      .from('q_value_constraints')
+      .select('code,label')
+      .eq('type', 'value')
+      .order('label'),
+
+    supabase
+      .from('q_value_constraints')
+      .select('code,label')
+      .eq('type', 'no_go')
+      .order('label')
+  ]);
+
+  if (values.error || noGos.error) {
+    throw new Error('Failed to load Screen 3 options');
+  }
+
+  return {
+    values: values.data,
+    noGos: noGos.data
+  };
+}
+```
+
+---
+
+## 3️⃣ UI-State (nur Codes)
+
+```ts
+// state/screen3.ts
+export const screen3State = {
+  values: [] as string[], // optional, multi
+  no_gos: [] as string[]  // optional, multi
+};
+```
+
+**Beispiel:**
+
+```json
+{
+  "values": ["sustainability", "craftsmanship"],
+  "no_gos": ["alcohol", "clothing"]
+}
+```
+
+---
+
+## 4️⃣ UI-Regeln (klar & stabil)
+
+* **Beide optional**
+* **Multi-Select**
+* **Keine Max/Min-Anzahl**
+* **Kein Default**
+* Continue-Button **immer aktiv** (auch ohne Auswahl)
+
+---
+
+## 5️⃣ Persistenz (`recipients` ergänzen)
+
+> Screen 3 **ergänzt** den bestehenden Recipient.
+
+```ts
+// services/saveRecipientConstraints.ts
+import { supabase } from './supabase';
+
+export async function updateRecipientConstraints(
+  recipientId: string,
+  data: { values: string[]; no_gos: string[] }
+) {
+  const { error } = await supabase
+    .from('recipients')
+    .update({
+      values: data.values,
+      no_gos: data.no_gos
+    })
+    .eq('recipient_id', recipientId);
+
+  if (error) throw error;
+}
+```
+
+---
+
+## 6️⃣ Harte Regel (bitte festhalten)
+
+🚫 **Nicht im Frontend:**
+
+* Priorisierung
+* Gewichtung
+* „wichtiger als“
+* Ausschlusslogik
+
+✅ **Erst später (Commerce-Layer):**
+
+* No-Gos **filtern Produkte strikt**
+* Values **priorisieren Auswahl**, aber **nie erzwingen**
+
+---
+
+## 7️⃣ Checkliste – Screen 3 „fertig“
+
+* [ ] Alle **Values** aus Supabase sichtbar
+* [ ] Alle **No-Gos** aus Supabase sichtbar
+* [ ] Multi-Select funktioniert
+* [ ] State speichert **nur Codes**
+* [ ] Update auf `recipients` korrekt
+* [ ] Kein numerisches Mapping im UI
+
+---
+
+## 🧭 Nächster Schritt (empfohlen)
+
+Nach Screen 3 haben wir **alle freien Präferenzen** sauber erfasst.
+Als Nächstes empfehle ich:
+
+**Screen 4 – Constraints (Budget, Gift Type, Time)**
+→ gleicher Pattern, danach **Life Stage Screen** (falls Kind)
+→ **dann zurück zur Decision Engine & Replit-Integration**
+
+👉 **Soll ich Screen 4 jetzt direkt vorbereiten?**

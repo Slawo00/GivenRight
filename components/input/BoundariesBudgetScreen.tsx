@@ -1,27 +1,7 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useInputCollectionState } from '@/store/useInputCollectionState';
-import type { PersonalValue, BudgetRange } from '@/services/decisionEngine/types';
-
-const VALUES_OPTIONS: { value: PersonalValue; label: string }[] = [
-  { value: 'sustainability', label: 'Sustainability' },
-  { value: 'quality', label: 'Craftsmanship' },
-  { value: 'uniqueness', label: 'Experiences over things' },
-  { value: 'functionality', label: 'Minimalism' },
-];
-
-const NO_GO_OPTIONS = [
-  'alcohol',
-  'clothing',
-  'personal items',
-  'generic gifts',
-];
-
-const BUDGET_OPTIONS: { value: BudgetRange; label: string }[] = [
-  { value: 'under_50', label: 'Under $50' },
-  { value: '50_100', label: '$50 – $100' },
-  { value: '100_250', label: '$100 – $250' },
-  { value: '250_plus', label: 'Flexible' },
-];
+import { loadScreen3Options, Screen3Options } from '@/services/supabase/screen3OptionsService';
 
 export function BoundariesBudgetScreen() {
   const { 
@@ -34,7 +14,48 @@ export function BoundariesBudgetScreen() {
     nextStep,
   } = useInputCollectionState();
 
+  const [options, setOptions] = useState<Screen3Options | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchOptions() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await loadScreen3Options();
+        setOptions(data);
+      } catch (err) {
+        setError('Failed to load options');
+        console.error('Error loading Screen 3 options:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchOptions();
+  }, []);
+
   const canContinue = budget_range !== null;
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2D5A3D" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (error || !options) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error || 'Something went wrong'}</Text>
+        <Pressable style={styles.retryButton} onPress={() => setIsLoading(true)}>
+          <Text style={styles.retryButtonText}>Try Again</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -46,18 +67,18 @@ export function BoundariesBudgetScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Values (optional)</Text>
         <View style={styles.optionsGrid}>
-          {VALUES_OPTIONS.map((option) => (
+          {options.values.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.optionButton,
-                values.includes(option.value) && styles.optionButtonSelected,
+                values.includes(option.code) && styles.optionButtonSelected,
               ]}
-              onPress={() => toggleValue(option.value)}
+              onPress={() => toggleValue(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                values.includes(option.value) && styles.optionTextSelected,
+                values.includes(option.code) && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -69,20 +90,20 @@ export function BoundariesBudgetScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>No-Gos (optional)</Text>
         <View style={styles.optionsGrid}>
-          {NO_GO_OPTIONS.map((option) => (
+          {options.noGos.map((option) => (
             <Pressable
-              key={option}
+              key={option.code}
               style={[
                 styles.optionButton,
-                no_gos.includes(option) && styles.noGoSelected,
+                no_gos.includes(option.code) && styles.noGoSelected,
               ]}
-              onPress={() => toggleNoGo(option)}
+              onPress={() => toggleNoGo(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                no_gos.includes(option) && styles.noGoTextSelected,
+                no_gos.includes(option.code) && styles.noGoTextSelected,
               ]}>
-                {option}
+                {option.label}
               </Text>
             </Pressable>
           ))}
@@ -92,18 +113,18 @@ export function BoundariesBudgetScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Budget</Text>
         <View style={styles.budgetGrid}>
-          {BUDGET_OPTIONS.map((option) => (
+          {options.budgetRanges.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.budgetButton,
-                budget_range === option.value && styles.optionButtonSelected,
+                budget_range === option.code && styles.optionButtonSelected,
               ]}
-              onPress={() => setBudgetRange(option.value)}
+              onPress={() => setBudgetRange(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                budget_range === option.value && styles.optionTextSelected,
+                budget_range === option.code && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -131,6 +152,42 @@ const styles = StyleSheet.create({
   content: {
     padding: 24,
     paddingBottom: 48,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+    padding: 24,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+    padding: 24,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#CC4444',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#2D5A3D',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
   },
   header: {
     marginBottom: 32,

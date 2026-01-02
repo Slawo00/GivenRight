@@ -28,6 +28,11 @@ export {
   clearScreen2OptionsCache,
   type Screen2Options
 } from "./screen2OptionsService";
+export {
+  loadScreen3Options,
+  clearScreen3OptionsCache,
+  type Screen3Options
+} from "./screen3OptionsService";
 
 import { isSupabaseConfigured } from "../../config/supabase";
 export { isSupabaseConfigured };

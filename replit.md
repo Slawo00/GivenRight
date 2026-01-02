@@ -43,6 +43,7 @@ The app helps users make gift decisions based on relationships, occasions, and p
   objectPatternService.ts      # Gift patterns from DB
   screen1OptionsService.ts     # Screen 1 options (relationship, closeness, occasion, importance)
   screen2OptionsService.ts     # Screen 2 options (personality traits, surprise tolerance)
+  screen3OptionsService.ts     # Screen 3 options (values, no-gos, budget ranges)
 
 /types                 # TypeScript type definitions
   common.ts            # Shared types (ID, BudgetRange, LoadingState)
@@ -256,3 +257,8 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2025-01-02: STEP SCREEN2 - ThePersonScreen with multi-select traits, single-select tolerance
 - 2025-01-02: STEP SCREEN2 - String-based types for personality_traits[] and surprise_tolerance
 - 2025-01-02: STEP SCREEN2 - No numeric mapping in frontend (codes only)
+- 2025-01-02: STEP SCREEN3 - Screen 3 fully Supabase-driven (Values, No-Gos, Budget)
+- 2025-01-02: STEP SCREEN3 - loadScreen3Options service (q_value_constraints, q_budget_ranges)
+- 2025-01-02: STEP SCREEN3 - BoundariesBudgetScreen with multi-select values/no_gos, single-select budget
+- 2025-01-02: STEP SCREEN3 - String-based types for values[], no_gos[], budget_range
+- 2025-01-02: STEP SCREEN3 - No numeric mapping in frontend (codes only)

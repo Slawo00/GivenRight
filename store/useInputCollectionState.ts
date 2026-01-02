@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import type { 
   DecisionContext, 
-  BudgetRange,
   GiftTypePreference,
   TimeConstraint
 } from '@/services/decisionEngine/types';
@@ -28,7 +27,7 @@ interface InputCollectionState {
   
   values: string[];
   no_gos: string[];
-  budget_range: BudgetRange | null;
+  budget_range: string | null;
   
   gift_type_preference: GiftTypePreference;
   time_constraint: TimeConstraint;
@@ -48,7 +47,7 @@ interface InputCollectionState {
   toggleValue: (value: string) => void;
   setNoGos: (noGos: string[]) => void;
   toggleNoGo: (noGo: string) => void;
-  setBudgetRange: (range: BudgetRange) => void;
+  setBudgetRange: (range: string) => void;
   
   setGiftTypePreference: (pref: GiftTypePreference) => void;
   setTimeConstraint: (constraint: TimeConstraint) => void;
