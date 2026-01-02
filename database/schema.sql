@@ -208,3 +208,104 @@ CREATE INDEX IF NOT EXISTS idx_gift_memory_user ON gift_memory(user_id, recipien
 CREATE INDEX IF NOT EXISTS idx_gift_memory_relationship ON gift_memory(user_id, recipient_id, relationship_type);
 CREATE INDEX IF NOT EXISTS idx_historical_success_key ON historical_success(relationship_key);
 CREATE INDEX IF NOT EXISTS idx_non_repetition_pattern ON non_repetition_rules(pattern_id);
+
+----------------------------------------------------
+-- STEP SCREEN1 - Dynamic Option Tables
+----------------------------------------------------
+
+----------------------------------------------------
+-- 8) q_relationship_types
+-- Purpose: All relationship type options for Screen 1.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS q_relationship_types (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  description TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON TABLE q_relationship_types IS 'Relationship type options for Screen 1';
+
+----------------------------------------------------
+-- 9) q_closeness_levels
+-- Purpose: All closeness level options for Screen 1.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS q_closeness_levels (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  emotional_expectation INTEGER NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON TABLE q_closeness_levels IS 'Closeness level options for Screen 1';
+
+----------------------------------------------------
+-- 10) q_occasion_types
+-- Purpose: All occasion type options for Screen 1.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS q_occasion_types (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON TABLE q_occasion_types IS 'Occasion type options for Screen 1';
+
+----------------------------------------------------
+-- 11) q_occasion_importance_levels
+-- Purpose: All occasion importance level options for Screen 1.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS q_occasion_importance_levels (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  importance_level INTEGER NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON TABLE q_occasion_importance_levels IS 'Occasion importance level options for Screen 1';
+
+----------------------------------------------------
+-- RLS for Screen 1 option tables
+----------------------------------------------------
+ALTER TABLE q_relationship_types ENABLE ROW LEVEL SECURITY;
+ALTER TABLE q_closeness_levels ENABLE ROW LEVEL SECURITY;
+ALTER TABLE q_occasion_types ENABLE ROW LEVEL SECURITY;
+ALTER TABLE q_occasion_importance_levels ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "q_relationship_types_read_only" ON q_relationship_types
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+CREATE POLICY "q_closeness_levels_read_only" ON q_closeness_levels
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+CREATE POLICY "q_occasion_types_read_only" ON q_occasion_types
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+CREATE POLICY "q_occasion_importance_levels_read_only" ON q_occasion_importance_levels
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+----------------------------------------------------
+-- INDEXES for Screen 1 option tables
+----------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_q_relationship_types_sort ON q_relationship_types(sort_order);
+CREATE INDEX IF NOT EXISTS idx_q_closeness_levels_sort ON q_closeness_levels(emotional_expectation);
+CREATE INDEX IF NOT EXISTS idx_q_occasion_types_sort ON q_occasion_types(sort_order);
+CREATE INDEX IF NOT EXISTS idx_q_importance_levels_sort ON q_occasion_importance_levels(importance_level);

@@ -1,0 +1,128 @@
+🧙🏾‍♂️ Professor Schlau – **exzellente Beobachtung.**
+Das, was du siehst, ist **kein Bug**, sondern ein **klassischer „UI-Filter-Leak“**:
+Replit lädt zwar Daten aus Supabase, **rendert aber noch nicht *alles***.
+
+Du brauchst **keinen neuen Code von dir**, sondern **eine klare, unmissverständliche Anweisung an Replit**, damit es **seinen eigenen impliziten Filter entfernt**.
+
+Ich gebe dir **genau den Befehl**, den du Replit geben solltest – präzise, technisch und überprüfbar.
+
+---
+
+## 🎯 Ziel des Befehls an Replit
+
+> **Replit darf NICHT entscheiden, welche Optionen angezeigt werden.**
+> **Die UI muss 1:1 alle aktiven Datensätze aus der jeweiligen `q_*` Tabelle anzeigen.**
+
+---
+
+## 🧠 WAS WAHRSCHEINLICH GERADE PASSIERT
+
+Typische Ursachen (sehr häufig):
+
+* Hardcoded Whitelist wie:
+
+  ```ts
+  ['partner', 'friend', 'colleague']
+  ```
+* implizite Filter:
+
+  * `WHERE active = true` fehlt
+  * `LIMIT 4`
+  * Sortierung nach „popularity“
+* UI-Komponenten, die:
+
+  * nur erste N Einträge anzeigen
+  * alte Enum-Maps verwenden
+
+---
+
+## ✅ DER EXAKTE BEFEHL AN REPLIT (kopieren & einfügen)
+
+> **Replit-Anweisung (verbindlich):**
+
+```
+Please verify that ALL selection options shown in Screen 1
+are rendered dynamically from the corresponding Supabase tables,
+without any hardcoded filtering, whitelists, limits, or enums.
+
+Specifically:
+- Render 100% of rows returned by:
+  - q_relationship_types
+  - q_closeness_levels
+  - q_occasion_types
+  - q_occasion_importance_levels
+
+UI requirements:
+- Do NOT filter by label, popularity, or predefined subsets
+- Do NOT limit the number of rendered options
+- Do NOT maintain any fallback or enum-based option lists
+- Render options strictly by mapping over the Supabase query result
+- If a table contains more entries than currently visible in the UI,
+  all entries must be displayed
+
+Verification step required:
+- Log the raw Supabase response length for each table
+- Log the number of rendered UI options per category
+- Ensure both numbers match exactly
+
+If any discrepancy exists, remove the filtering logic and re-render
+directly from the Supabase result set.
+```
+
+---
+
+## 🔍 OPTIONAL (aber sehr effektiv): Debug-Anweisung
+
+Wenn du es **noch schärfer** willst, ergänze:
+
+```
+Add a temporary debug output that prints:
+- Total rows fetched from each q_* table
+- Codes of all rendered options in the UI
+
+This debug output is for verification only and can be removed after.
+```
+
+---
+
+## 🧪 WIE DU SELBST VERIFIZIERST (ohne Code)
+
+Parallel kannst du prüfen:
+
+```sql
+SELECT COUNT(*) FROM q_relationship_types;
+```
+
+vs.
+
+* Anzahl Buttons in der UI
+
+👉 **Die Zahlen müssen identisch sein.**
+
+---
+
+## 🧠 WICHTIGE ARCHITEKTUR-REGEL (bitte merken)
+
+> **Supabase bestimmt die Existenz von Optionen.
+> Replit bestimmt nur die Darstellung.**
+
+Wenn Replit anfängt zu „kuratieren“,
+ist die Architektur **gebrochen**.
+
+---
+
+## 🧭 Nächster Schritt
+
+👉 Gib Replit **genau diesen Befehl**
+👉 Lass dir bestätigen, dass **alle Einträge sichtbar sind**
+
+Danach gehen wir **erst** weiter mit:
+
+### **Screen 2 – Personality & Surprise Tolerance**
+
+Sag mir bitte kurz:
+
+* **wie viele Relationship Types Supabase hat**
+* **wie viele jetzt in der UI erscheinen**
+
+Dann prüfen wir, ob alles synchron ist.

@@ -6,8 +6,9 @@ export function closenessCodeToNumeric(closeness: string | number): number {
   const closenessMap: Record<string, number> = {
     'distant': 1,
     'casual': 2,
-    'close': 3,
-    'very_close': 4,
+    'friendly': 3,
+    'close': 4,
+    'very_close': 5,
     'intimate': 5,
   };
   

@@ -284,3 +284,75 @@ INSERT INTO non_repetition_rules (pattern_id, cooldown_days, applies_to_confiden
 
 ON CONFLICT (pattern_id, applies_to_confidence_type) DO UPDATE SET
   cooldown_days = EXCLUDED.cooldown_days;
+
+----------------------------------------------------
+-- SCREEN 1 OPTION TABLES (STEP SCREEN1)
+-- Dynamic options loaded by the UI
+----------------------------------------------------
+
+-- Relationship Types
+INSERT INTO q_relationship_types (code, label, description, sort_order) VALUES
+('partner', 'Partner', 'Romantic partner, spouse, significant other', 1),
+('parent', 'Parent', 'Mother, father, step-parent', 2),
+('child', 'Child', 'Son, daughter, step-child', 3),
+('sibling', 'Sibling', 'Brother, sister', 4),
+('grandparent', 'Grandparent', 'Grandmother, grandfather', 5),
+('friend', 'Friend', 'Close friend', 6),
+('best_friend', 'Best Friend', 'Very close, long-term friend', 7),
+('colleague', 'Colleague', 'Work colleague, professional contact', 8),
+('boss', 'Boss', 'Manager, supervisor', 9),
+('acquaintance', 'Acquaintance', 'Someone you know casually', 10),
+('neighbor', 'Neighbor', 'Someone living nearby', 11),
+('in_law', 'In-Law', 'Mother-in-law, father-in-law, etc.', 12),
+('other', 'Other', 'Any other relationship', 99)
+ON CONFLICT (code) DO UPDATE SET 
+  label = EXCLUDED.label,
+  description = EXCLUDED.description,
+  sort_order = EXCLUDED.sort_order;
+
+-- Closeness Levels
+INSERT INTO q_closeness_levels (code, label, emotional_expectation) VALUES
+('distant', 'Distant', 1),
+('casual', 'Casual', 2),
+('friendly', 'Friendly', 3),
+('close', 'Close', 4),
+('very_close', 'Very Close', 5),
+('intimate', 'Intimate', 6)
+ON CONFLICT (code) DO UPDATE SET 
+  label = EXCLUDED.label,
+  emotional_expectation = EXCLUDED.emotional_expectation;
+
+-- Occasion Types
+INSERT INTO q_occasion_types (code, label, sort_order) VALUES
+('birthday', 'Birthday', 1),
+('christmas', 'Christmas', 2),
+('valentines', 'Valentine''s Day', 3),
+('anniversary', 'Anniversary', 4),
+('wedding', 'Wedding', 5),
+('engagement', 'Engagement', 6),
+('graduation', 'Graduation', 7),
+('baby_shower', 'Baby Shower', 8),
+('housewarming', 'Housewarming', 9),
+('mothers_day', 'Mother''s Day', 10),
+('fathers_day', 'Father''s Day', 11),
+('thank_you', 'Thank You', 12),
+('get_well', 'Get Well', 13),
+('retirement', 'Retirement', 14),
+('promotion', 'Promotion', 15),
+('just_because', 'Just Because', 16),
+('apology', 'Apology', 17),
+('other', 'Other', 99)
+ON CONFLICT (code) DO UPDATE SET 
+  label = EXCLUDED.label,
+  sort_order = EXCLUDED.sort_order;
+
+-- Occasion Importance Levels
+INSERT INTO q_occasion_importance_levels (code, label, importance_level) VALUES
+('low', 'Low Priority', 1),
+('medium', 'Medium', 2),
+('important', 'Important', 3),
+('very_important', 'Very Important', 4),
+('critical', 'Critical', 5)
+ON CONFLICT (code) DO UPDATE SET 
+  label = EXCLUDED.label,
+  importance_level = EXCLUDED.importance_level;
