@@ -115,12 +115,38 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - `decision_parameters`: Scoring parameters for decision engine
 - `decision_explanations`: Explanations per direction (safe/emotional/bold)
 - `object_patterns`: Gift pattern categories
+- `q_relationship_types`: Relationship type options (code, label, description)
+- `q_closeness_levels`: Closeness level options (code, label)
+- `q_occasion_types`: Occasion type options (code, label)
+- `q_occasion_importance_levels`: Importance level options (code, label)
 
 **Environment Variables Required:**
 - `EXPO_PUBLIC_SUPABASE_URL`: Supabase project URL
 - `EXPO_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key
 
 **RLS Policies:** Read-only for anon + authenticated users
+
+### Screen 1 - Supabase-Driven Options (STEP SCREEN1)
+
+**Data Source Tables:**
+- `q_relationship_types`: Relationship options with sort_order
+- `q_closeness_levels`: Closeness options sorted by emotional_expectation
+- `q_occasion_types`: Occasion options with sort_order
+- `q_occasion_importance_levels`: Importance levels sorted by importance_level
+
+**Service:** `services/supabase/screen1OptionsService.ts`
+- `loadScreen1Options()`: Fetches all Screen 1 options in parallel
+- Caching: In-memory cache after first successful load
+- Fallback: Default hardcoded options if Supabase unavailable
+
+**State Management:**
+- UI renders **Labels**, stores **Codes**
+- All four fields required: relationship_type, closeness_level, occasion_type, occasion_importance
+- String-based codes (no numeric values for closeness/importance)
+
+**Helper Functions:** `services/decisionEngine/phases/helpers.ts`
+- `closenessCodeToNumeric()`: Converts closeness codes to 1-5 scale
+- `importanceCodeToNumeric()`: Converts importance codes to 1-5 scale
 
 ## Current Phase
 **STEP B4.1 - Weltklasse Contextual Enrichment ✅**
@@ -218,3 +244,8 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2024-12-30: STEP B4.1 - Frontend updated to call Edge Function via fetch
 - 2024-12-30: STEP B4.1 - Edge Function deployed with --no-verify-jwt for anon access
 - 2024-12-30: STEP B4.1 - LIVE: Personalized examples showing in UI (Stylish Accessories, Cooking Class, etc.)
+- 2025-01-02: STEP SCREEN1 - Screen 1 fully Supabase-driven (no hardcoded options)
+- 2025-01-02: STEP SCREEN1 - loadScreen1Options service with caching and fallbacks
+- 2025-01-02: STEP SCREEN1 - String-based closeness_level and occasion_importance codes
+- 2025-01-02: STEP SCREEN1 - Helper functions for code-to-numeric conversion
+- 2025-01-02: STEP SCREEN1 - RelationshipOccasionScreen with dynamic loading and error UI
