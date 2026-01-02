@@ -44,12 +44,10 @@ export async function loadScreen4Options(): Promise<Screen4Options> {
     const [giftTypes, timeConstraints] = await Promise.all([
       supabase
         .from('q_gift_type_preferences')
-        .select('code, label')
-        .order('sort_order'),
+        .select('code, label'),
       supabase
         .from('q_time_constraints')
-        .select('code, label')
-        .order('urgency_level'),
+        .select('code, label'),
     ]);
 
     if (giftTypes.error || timeConstraints.error) {

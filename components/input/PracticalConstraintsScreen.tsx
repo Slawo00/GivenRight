@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useInputCollectionState } from '@/store/useInputCollectionState';
 import { useState, useEffect } from 'react';
-import { loadScreen4Options, type OptionItem, type Screen4Options } from '@/services/supabase/screen4OptionsService';
+import { loadScreen4Options, clearScreen4OptionsCache, type OptionItem, type Screen4Options } from '@/services/supabase/screen4OptionsService';
 
 interface PracticalConstraintsScreenProps {
   onComplete: () => void;
@@ -23,6 +23,7 @@ export function PracticalConstraintsScreen({ onComplete }: PracticalConstraintsS
   useEffect(() => {
     async function fetchOptions() {
       try {
+        clearScreen4OptionsCache();
         const loaded = await loadScreen4Options();
         setOptions(loaded);
       } catch (err) {
