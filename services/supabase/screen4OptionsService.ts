@@ -11,9 +11,11 @@ export interface Screen4Options {
 }
 
 const defaultGiftTypes: OptionItem[] = [
-  { code: 'physical', label: 'Something tangible' },
+  { code: 'practical', label: 'Something practical' },
+  { code: 'emotional', label: 'Something emotional' },
+  { code: 'mixed', label: 'A mix of both' },
+  { code: 'surprise', label: 'A surprise' },
   { code: 'experience', label: 'An experience' },
-  { code: 'both', label: 'Open to both' },
 ];
 
 const defaultTimeConstraints: OptionItem[] = [

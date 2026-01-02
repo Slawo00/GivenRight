@@ -2,7 +2,7 @@ export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
 export type ExpectationFrame = 'CONSERVATIVE' | 'BALANCED' | 'OPEN';
 export type ConfidenceType = 'SAFE' | 'EMOTIONAL' | 'BOLD';
 export type SurpriseTolerance = string;
-export type TimeConstraint = 'urgent' | 'normal' | 'flexible';
+export type TimeConstraint = string;
 
 export type RelationshipType = 
   | 'partner'
@@ -31,11 +31,7 @@ export type BudgetRange =
   | '100_250'
   | '250_plus';
 
-export type GiftTypePreference =
-  | 'experience'
-  | 'physical'
-  | 'consumable'
-  | 'no_preference';
+export type GiftTypePreference = string;
 
 export type PersonalityTrait = string;
 

@@ -363,9 +363,11 @@ ON CONFLICT (code) DO UPDATE SET
 
 -- Gift Type Preferences
 INSERT INTO q_gift_type_preferences (code, label, sort_order) VALUES
-('physical', 'Something tangible', 1),
-('experience', 'An experience', 2),
-('both', 'Open to both', 3)
+('practical', 'Something practical', 1),
+('emotional', 'Something emotional', 2),
+('mixed', 'A mix of both', 3),
+('surprise', 'A surprise', 4),
+('experience', 'An experience', 5)
 ON CONFLICT (code) DO UPDATE SET 
   label = EXCLUDED.label,
   sort_order = EXCLUDED.sort_order;
