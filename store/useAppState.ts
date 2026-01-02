@@ -10,7 +10,7 @@ interface AppState {
 
 export const useAppState = create<AppState>((set) => ({
   appReady: false,
-  debugMode: true,
+  debugMode: false,
   setAppReady: (ready) => set({ appReady: ready }),
   setDebugMode: (enabled) => set({ debugMode: enabled }),
   toggleDebugMode: () => set((state) => ({ debugMode: !state.debugMode })),
