@@ -11,17 +11,17 @@ export interface Screen4Options {
 }
 
 const defaultGiftTypes: OptionItem[] = [
-  { code: 'practical', label: 'Something practical' },
-  { code: 'emotional', label: 'Something emotional' },
-  { code: 'mixed', label: 'A mix of both' },
-  { code: 'surprise', label: 'A surprise' },
-  { code: 'experience', label: 'An experience' },
+  { code: 'practical', label: 'Practical' },
+  { code: 'emotional', label: 'Emotional' },
+  { code: 'mixed', label: 'Mixed' },
+  { code: 'surprise', label: 'Surprise' },
+  { code: 'experience', label: 'Experience' },
 ];
 
 const defaultTimeConstraints: OptionItem[] = [
-  { code: 'flexible', label: 'Plenty of time' },
-  { code: '1_2_weeks', label: '1-2 weeks' },
-  { code: 'urgent', label: 'Very soon' },
+  { code: 'relaxed', label: '> 2 Weeks' },
+  { code: 'normal', label: '1-2 Weeks' },
+  { code: 'urgent', label: '< 3 Days' },
 ];
 
 const defaultOptions: Screen4Options = {

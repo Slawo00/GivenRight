@@ -362,21 +362,19 @@ ON CONFLICT (code) DO UPDATE SET
 ----------------------------------------------------
 
 -- Gift Type Preferences
-INSERT INTO q_gift_type_preferences (code, label, sort_order) VALUES
-('practical', 'Something practical', 1),
-('emotional', 'Something emotional', 2),
-('mixed', 'A mix of both', 3),
-('surprise', 'A surprise', 4),
-('experience', 'An experience', 5)
+INSERT INTO q_gift_type_preferences (code, label) VALUES
+('practical', 'Practical'),
+('emotional', 'Emotional'),
+('mixed', 'Mixed'),
+('surprise', 'Surprise'),
+('experience', 'Experience')
 ON CONFLICT (code) DO UPDATE SET 
-  label = EXCLUDED.label,
-  sort_order = EXCLUDED.sort_order;
+  label = EXCLUDED.label;
 
 -- Time Constraints
-INSERT INTO q_time_constraints (code, label, urgency_level) VALUES
-('flexible', 'Plenty of time', 1),
-('1_2_weeks', '1-2 weeks', 2),
-('urgent', 'Very soon', 3)
+INSERT INTO q_time_constraints (code, label) VALUES
+('relaxed', '> 2 Weeks'),
+('normal', '1-2 Weeks'),
+('urgent', '< 3 Days')
 ON CONFLICT (code) DO UPDATE SET 
-  label = EXCLUDED.label,
-  urgency_level = EXCLUDED.urgency_level;
+  label = EXCLUDED.label;
