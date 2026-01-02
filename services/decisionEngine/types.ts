@@ -63,11 +63,14 @@ export type RiskType =
   | 'overstep'
   | 'insignificance';
 
+export type ClosenessLevel = string;
+export type OccasionImportance = string;
+
 export interface DecisionContext {
   relationship_type: RelationshipType;
-  closeness_level: 1 | 2 | 3 | 4 | 5;
+  closeness_level: ClosenessLevel;
   occasion_type: OccasionType;
-  personal_importance: 1 | 2 | 3 | 4 | 5;
+  occasion_importance: OccasionImportance;
   personality_traits: PersonalityTrait[];
   surprise_tolerance: SurpriseTolerance;
   values: PersonalValue[];

@@ -1,4 +1,5 @@
 import type { DecisionContext, RiskLevel } from '../types';
+import { closenessCodeToNumeric, importanceCodeToNumeric } from './helpers';
 
 export interface UncertaintyOutput {
   decision_risk_level: RiskLevel;
@@ -7,15 +8,18 @@ export interface UncertaintyOutput {
 export function qualifyUncertainty(context: DecisionContext): UncertaintyOutput {
   let riskScore = 0;
   
-  if (context.closeness_level >= 4) {
+  const closenessNumeric = closenessCodeToNumeric(context.closeness_level);
+  const importanceNumeric = importanceCodeToNumeric(context.occasion_importance);
+  
+  if (closenessNumeric >= 4) {
     riskScore += 2;
-  } else if (context.closeness_level >= 2) {
+  } else if (closenessNumeric >= 2) {
     riskScore += 1;
   }
   
-  if (context.personal_importance >= 4) {
+  if (importanceNumeric >= 4) {
     riskScore += 2;
-  } else if (context.personal_importance >= 2) {
+  } else if (importanceNumeric >= 2) {
     riskScore += 1;
   }
   

@@ -1,4 +1,5 @@
 import type { DecisionContext, ExpectationFrame } from '../types';
+import { closenessCodeToNumeric } from './helpers';
 
 export interface SocialExpectationOutput {
   expectation_frame: ExpectationFrame;
@@ -36,9 +37,11 @@ export function mapSocialExpectation(context: DecisionContext): SocialExpectatio
     openScore += 1;
   }
   
-  if (context.closeness_level <= 2) {
+  const closenessNumeric = closenessCodeToNumeric(context.closeness_level);
+  
+  if (closenessNumeric <= 2) {
     conservativeScore += 1;
-  } else if (context.closeness_level >= 4) {
+  } else if (closenessNumeric >= 4) {
     openScore += 1;
   }
   

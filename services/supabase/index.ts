@@ -17,6 +17,12 @@ export {
   clearPatternCache,
   type ObjectPattern 
 } from "./objectPatternService";
+export {
+  loadScreen1Options,
+  clearScreen1OptionsCache,
+  type OptionItem,
+  type Screen1Options
+} from "./screen1OptionsService";
 
 import { isSupabaseConfigured } from "../../config/supabase";
 export { isSupabaseConfigured };

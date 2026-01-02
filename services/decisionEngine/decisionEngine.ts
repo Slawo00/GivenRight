@@ -109,9 +109,9 @@ export function runDecisionEngine(
 export function createDefaultContext(): DecisionContext {
   return {
     relationship_type: 'friend',
-    closeness_level: 3,
+    closeness_level: 'close',
     occasion_type: 'birthday',
-    personal_importance: 3,
+    occasion_importance: 'medium',
     personality_traits: [],
     surprise_tolerance: 'medium',
     values: [],

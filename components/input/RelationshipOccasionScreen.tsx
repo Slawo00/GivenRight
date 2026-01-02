@@ -1,40 +1,60 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { useEffect, useState } from 'react';
 import { useInputCollectionState } from '@/store/useInputCollectionState';
-import type { RelationshipType, OccasionType } from '@/services/decisionEngine/types';
-
-const RELATIONSHIP_OPTIONS: { value: RelationshipType; label: string }[] = [
-  { value: 'partner', label: 'Partner' },
-  { value: 'parent', label: 'Close Family' },
-  { value: 'friend', label: 'Friend' },
-  { value: 'colleague', label: 'Colleague' },
-];
-
-const CLOSENESS_OPTIONS: { value: 1 | 2 | 3 | 4 | 5; label: string }[] = [
-  { value: 2, label: 'Not very close' },
-  { value: 3, label: 'Close' },
-  { value: 5, label: 'Very close' },
-];
-
-const OCCASION_OPTIONS: { value: OccasionType; label: string }[] = [
-  { value: 'birthday', label: 'Birthday' },
-  { value: 'anniversary', label: 'Anniversary' },
-  { value: 'christmas', label: 'Holiday' },
-  { value: 'thank_you', label: 'Thank You' },
-  { value: 'other', label: 'Other' },
-];
+import { loadScreen1Options, type Screen1Options, type OptionItem } from '@/services/supabase';
 
 export function RelationshipOccasionScreen() {
   const { 
     relationship_type, 
     closeness_level, 
     occasion_type,
+    occasion_importance,
     setRelationshipType,
     setClosenessLevel,
     setOccasionType,
+    setOccasionImportance,
     nextStep,
   } = useInputCollectionState();
 
-  const canContinue = relationship_type && occasion_type;
+  const [options, setOptions] = useState<Screen1Options | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchOptions() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await loadScreen1Options();
+        setOptions(data);
+      } catch (err) {
+        setError('Failed to load options');
+        console.error('Error loading Screen 1 options:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchOptions();
+  }, []);
+
+  const canContinue = relationship_type && closeness_level && occasion_type && occasion_importance;
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2D5A3D" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (error || !options) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error || 'Something went wrong'}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -46,18 +66,18 @@ export function RelationshipOccasionScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Relationship</Text>
         <View style={styles.optionsGrid}>
-          {RELATIONSHIP_OPTIONS.map((option) => (
+          {options.relationships.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.optionButton,
-                relationship_type === option.value && styles.optionButtonSelected,
+                relationship_type === option.code && styles.optionButtonSelected,
               ]}
-              onPress={() => setRelationshipType(option.value)}
+              onPress={() => setRelationshipType(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                relationship_type === option.value && styles.optionTextSelected,
+                relationship_type === option.code && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -69,18 +89,18 @@ export function RelationshipOccasionScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>How close are you?</Text>
         <View style={styles.optionsRow}>
-          {CLOSENESS_OPTIONS.map((option) => (
+          {options.closeness.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.closenessButton,
-                closeness_level === option.value && styles.optionButtonSelected,
+                closeness_level === option.code && styles.optionButtonSelected,
               ]}
-              onPress={() => setClosenessLevel(option.value)}
+              onPress={() => setClosenessLevel(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                closeness_level === option.value && styles.optionTextSelected,
+                closeness_level === option.code && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -92,18 +112,41 @@ export function RelationshipOccasionScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Occasion</Text>
         <View style={styles.optionsGrid}>
-          {OCCASION_OPTIONS.map((option) => (
+          {options.occasions.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.optionButton,
-                occasion_type === option.value && styles.optionButtonSelected,
+                occasion_type === option.code && styles.optionButtonSelected,
               ]}
-              onPress={() => setOccasionType(option.value)}
+              onPress={() => setOccasionType(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                occasion_type === option.value && styles.optionTextSelected,
+                occasion_type === option.code && styles.optionTextSelected,
+              ]}>
+                {option.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionLabel}>How important is this occasion?</Text>
+        <View style={styles.optionsRow}>
+          {options.importance.map((option) => (
+            <Pressable
+              key={option.code}
+              style={[
+                styles.importanceButton,
+                occasion_importance === option.code && styles.optionButtonSelected,
+              ]}
+              onPress={() => setOccasionImportance(option.code)}
+            >
+              <Text style={[
+                styles.optionTextSmall,
+                occasion_importance === option.code && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -131,6 +174,29 @@ const styles = StyleSheet.create({
   content: {
     padding: 24,
     paddingBottom: 48,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+    padding: 24,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#DC3545',
+    textAlign: 'center',
   },
   header: {
     marginBottom: 32,
@@ -163,6 +229,7 @@ const styles = StyleSheet.create({
   },
   optionsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 10,
   },
   optionButton: {
@@ -175,8 +242,20 @@ const styles = StyleSheet.create({
   },
   closenessButton: {
     flex: 1,
+    minWidth: 80,
     paddingVertical: 14,
     paddingHorizontal: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    alignItems: 'center',
+  },
+  importanceButton: {
+    flex: 1,
+    minWidth: 70,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
@@ -191,6 +270,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333333',
     fontWeight: '500',
+  },
+  optionTextSmall: {
+    fontSize: 13,
+    color: '#333333',
+    fontWeight: '500',
+    textAlign: 'center',
   },
   optionTextSelected: {
     color: '#FFFFFF',

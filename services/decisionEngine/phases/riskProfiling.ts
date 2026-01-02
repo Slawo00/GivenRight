@@ -1,4 +1,5 @@
 import type { DecisionContext, RiskProfile, RiskType, HistoricalData } from '../types';
+import { closenessCodeToNumeric, importanceCodeToNumeric } from './helpers';
 
 export interface RiskProfilingOutput {
   risk_profile: RiskProfile;
@@ -13,11 +14,13 @@ export function profileRisk(
   let overstep_risk = 30;
   let insignificance_risk = 30;
   
-  if (context.closeness_level >= 4) {
+  const closenessNumeric = closenessCodeToNumeric(context.closeness_level);
+  
+  if (closenessNumeric >= 4) {
     disappointment_risk += 20;
     insignificance_risk += 15;
     overstep_risk -= 10;
-  } else if (context.closeness_level <= 2) {
+  } else if (closenessNumeric <= 2) {
     overstep_risk += 25;
     misunderstanding_risk += 15;
     disappointment_risk -= 10;
@@ -63,7 +66,9 @@ export function profileRisk(
       break;
   }
   
-  if (context.personal_importance >= 4) {
+  const importanceNumeric = importanceCodeToNumeric(context.occasion_importance);
+  
+  if (importanceNumeric >= 4) {
     disappointment_risk += 10;
     insignificance_risk += 10;
   }
