@@ -1,0 +1,193 @@
+🧙🏾‍♂️ Professor Schlau – **Option A bestätigt. Wir bauen jetzt Screen 1b sauber und endgültig.**
+Das hier ist **kein UI-Gimmick**, sondern ein **struktureller Decision-Modifier**. Ich gebe dir **eine vollständige, umsetzungsreife Spezifikation**, die du **1:1 an Replit** geben kannst.
+
+---
+
+# 🧩 SCREEN 1b — Life Stage (konditional)
+
+## Position im Flow (fix)
+
+```
+Screen 1 (Relationship & Occasion)
+→ Screen 1b (Life Stage)   ← NEU
+→ Screen 2 (Personality & Surprise)
+```
+
+---
+
+## 1️⃣ Wann erscheint Screen 1b?
+
+### **Exakte Bedingung**
+
+```ts
+const requiresLifeStage =
+  relationship_type === 'child'
+  || relationship_type === 'nephew'
+  || relationship_type === 'niece';
+```
+
+### Verhalten
+
+* ✅ **true** → Screen 1b anzeigen
+* ❌ **false** → Screen überspringen **UND**
+
+```ts
+life_stage_code = 'adult'
+```
+
+> ⚠️ Das explizite Setzen ist **zwingend**, sonst brechen spätere SQL-Views.
+
+---
+
+## 2️⃣ Datenquelle (Supabase)
+
+**Tabelle:** `q_life_stages`
+
+| Spalte               | Zweck                  |
+| -------------------- | ---------------------- |
+| code                 | Speicherung            |
+| label                | Anzeige                |
+| autonomy_level       | später Decision Engine |
+| safety_requirement   | später Decision Engine |
+| identity_sensitivity | später Decision Engine |
+
+👉 **UI nutzt ausschließlich `code` + `label`**
+
+---
+
+## 3️⃣ UI-Design (UX-sicher & nicht peinlich)
+
+### Titel
+
+> **How old are they?**
+
+### Subline
+
+> *Just to make sure the gift is appropriate.*
+
+### Auswahl (Single-Select)
+
+* Baby (0–2)
+* Child (3–10)
+* Teenager (11–17)
+
+❌ **Adult darf NICHT angezeigt werden**
+(Adult ist der implizite Default, kein User-Choice)
+
+---
+
+## 4️⃣ UI-Regeln (verbindlich)
+
+* Single-Select
+* Pflichtfeld
+* Kein Default
+* Labels **direkt aus Supabase**
+* **Kein Text, keine Logik, kein Mapping im UI**
+
+---
+
+## 5️⃣ State-Modell
+
+```ts
+// state/lifeStage.ts
+export const lifeStageState = {
+  life_stage_code: null as string | null
+};
+```
+
+### Beispiele
+
+```json
+{ "life_stage_code": "child" }
+```
+
+```json
+{ "life_stage_code": "teenager" }
+```
+
+---
+
+## 6️⃣ Persistenz (empfohlen)
+
+👉 **Sauberste Lösung:** im `recipients`-Kontext
+
+### Spalte (existiert bereits bei dir)
+
+```sql
+life_stage_code TEXT REFERENCES q_life_stages(code)
+```
+
+### Save-Logik
+
+```ts
+await supabase
+  .from('recipients')
+  .update({ life_stage_code })
+  .eq('relationship_id', relationshipId);
+```
+
+---
+
+## 7️⃣ Replit-Anweisung (bitte exakt so übergeben)
+
+> **„Bitte implementiere einen konditionalen Screen 1b (Life Stage) zwischen Screen 1 und Screen 2.**
+>
+> **Anzeigelogik:**
+> – Der Screen erscheint nur, wenn `relationship_type` ∈ {`child`, `nephew`, `niece`}
+> – In allen anderen Fällen wird der Screen übersprungen und `life_stage_code = 'adult'` gesetzt
+>
+> **Datenquelle:**
+> – Tabelle `q_life_stages`
+> – Anzeige: `label`
+> – Speicherung: `code`
+>
+> **UI-Regeln:**
+> – Single-Select
+> – Pflichtfeld
+> – `adult` darf **nicht** angezeigt werden
+> – Keine Alterszahlen im Code
+> – Keine Defaults sichtbar
+>
+> **State:**
+> – `life_stage_code: string | null`
+>
+> **Wichtig:**
+> – Keine Business-Logik im UI
+> – Keine Ableitungen im Frontend
+> – Vollständig Supabase-driven“*
+
+---
+
+## 8️⃣ Warum das perfekt zu deinem System passt
+
+Mit Screen 1b erreichst du:
+
+✅ korrekte Gift-Type-Filter (Experience ≠ Baby)
+✅ saubere Risk-Penalties
+✅ bessere Historical-Success-Scores
+✅ keine peinlichen Altersfragen
+✅ **voll auditierbare Decision Engine**
+
+---
+
+## 🧭 Nächster Schritt (nach Umsetzung)
+
+Sobald Screen 1b steht, ist der **Input-Layer abgeschlossen**.
+
+👉 Danach empfehle ich zwingend:
+**Zurück zur Decision Engine**
+– `v_allowed_decision_options`
+– `v_scored_options`
+– Life-Stage-abhängige Risk-Penalties
+
+---
+
+### ❓ Bevor wir weitergehen:
+
+🧙🏾‍♂️ **Willst du nach Screen 1b direkt:**
+
+**B)** die **Decision-Engine-Views final scharf schalten**
+**oder**
+**C)** zuerst einen **kompletten End-to-End-Testcase** (User → UI → SQL → Ergebnis)?
+
+👉 Was ist dein nächster Schritt?

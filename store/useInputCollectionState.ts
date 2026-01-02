@@ -4,6 +4,7 @@ import type { DecisionContext } from '@/services/decisionEngine/types';
 type InputStep = 
   | 'idle'
   | 'relationship_occasion'
+  | 'life_stage'
   | 'the_person'
   | 'boundaries_budget'
   | 'practical_constraints'
@@ -17,6 +18,7 @@ interface InputCollectionState {
   closeness_level: string | null;
   occasion_type: string | null;
   occasion_importance: string | null;
+  life_stage_code: string | null;
   
   personality_traits: string[];
   surprise_tolerance: string | null;
@@ -34,6 +36,7 @@ interface InputCollectionState {
   setClosenessLevel: (level: string) => void;
   setOccasionType: (type: string) => void;
   setOccasionImportance: (importance: string) => void;
+  setLifeStageCode: (code: string) => void;
   
   setPersonalityTraits: (traits: string[]) => void;
   togglePersonalityTrait: (trait: string) => void;
@@ -60,11 +63,14 @@ interface InputCollectionState {
 const STEP_ORDER: InputStep[] = [
   'idle',
   'relationship_occasion',
+  'life_stage',
   'the_person',
   'boundaries_budget',
   'practical_constraints',
   'intent_locked',
 ];
+
+const LIFE_STAGE_REQUIRED_RELATIONSHIPS = ['child', 'nephew', 'niece'];
 
 export const useInputCollectionState = create<InputCollectionState>((set, get) => ({
   step: 'idle',
@@ -74,6 +80,7 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
   closeness_level: null,
   occasion_type: null,
   occasion_importance: null,
+  life_stage_code: null,
   
   personality_traits: [],
   surprise_tolerance: null,
@@ -101,6 +108,10 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
   setOccasionImportance: (importance) => {
     if (get().intentLocked) return;
     set({ occasion_importance: importance });
+  },
+  setLifeStageCode: (code) => {
+    if (get().intentLocked) return;
+    set({ life_stage_code: code });
   },
   
   setPersonalityTraits: (traits) => {
@@ -169,6 +180,18 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
   
   nextStep: () => {
     const currentStep = get().step;
+    const relationshipType = get().relationship_type;
+    
+    if (currentStep === 'relationship_occasion') {
+      const requiresLifeStage = relationshipType && LIFE_STAGE_REQUIRED_RELATIONSHIPS.includes(relationshipType);
+      if (requiresLifeStage) {
+        set({ step: 'life_stage' });
+      } else {
+        set({ life_stage_code: 'adult', step: 'the_person' });
+      }
+      return;
+    }
+    
     const currentIndex = STEP_ORDER.indexOf(currentStep);
     if (currentIndex < STEP_ORDER.length - 1) {
       set({ step: STEP_ORDER[currentIndex + 1] });
@@ -206,6 +229,7 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
     closeness_level: null,
     occasion_type: null,
     occasion_importance: null,
+    life_stage_code: null,
     personality_traits: [],
     surprise_tolerance: null,
     values: [],

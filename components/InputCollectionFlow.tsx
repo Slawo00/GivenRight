@@ -1,7 +1,8 @@
 import { View, StyleSheet } from 'react-native';
 import { useInputCollectionState } from '@/store/useInputCollectionState';
 import { 
-  RelationshipOccasionScreen, 
+  RelationshipOccasionScreen,
+  LifeStageScreen,
   ThePersonScreen, 
   BoundariesBudgetScreen, 
   PracticalConstraintsScreen 
@@ -30,6 +31,8 @@ export function InputCollectionFlow({ onComplete }: InputCollectionFlowProps) {
     switch (step) {
       case 'relationship_occasion':
         return <RelationshipOccasionScreen />;
+      case 'life_stage':
+        return <LifeStageScreen />;
       case 'the_person':
         return <ThePersonScreen />;
       case 'boundaries_budget':
