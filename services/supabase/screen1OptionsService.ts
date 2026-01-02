@@ -64,20 +64,16 @@ export async function loadScreen1Options(): Promise<Screen1Options> {
     const [relationships, closeness, occasions, importance] = await Promise.all([
       supabase
         .from('q_relationship_types')
-        .select('code, label, description')
-        .order('sort_order', { ascending: true }),
+        .select('code, label'),
       supabase
         .from('q_closeness_levels')
-        .select('code, label')
-        .order('emotional_expectation', { ascending: true }),
+        .select('code, label'),
       supabase
         .from('q_occasion_types')
-        .select('code, label')
-        .order('sort_order', { ascending: true }),
+        .select('code, label'),
       supabase
         .from('q_occasion_importance_levels')
-        .select('code, label')
-        .order('importance_level', { ascending: true }),
+        .select('code, label'),
     ]);
 
     if (relationships.error || closeness.error || occasions.error || importance.error) {
@@ -93,25 +89,8 @@ export async function loadScreen1Options(): Promise<Screen1Options> {
 
     if (!hasData) {
       console.warn('No data in Screen 1 tables, using defaults');
-      console.log('[Screen1Options] FALLBACK - Using default options:', {
-        relationships: defaultRelationships.length,
-        closeness: defaultCloseness.length,
-        occasions: defaultOccasions.length,
-        importance: defaultImportance.length,
-      });
       return defaultOptions;
     }
-
-    console.log('[Screen1Options] SUPABASE DATA LOADED:', {
-      relationships: relationships.data?.length,
-      closeness: closeness.data?.length,
-      occasions: occasions.data?.length,
-      importance: importance.data?.length,
-    });
-    console.log('[Screen1Options] Relationship codes:', relationships.data?.map(r => r.code));
-    console.log('[Screen1Options] Closeness codes:', closeness.data?.map(c => c.code));
-    console.log('[Screen1Options] Occasion codes:', occasions.data?.map(o => o.code));
-    console.log('[Screen1Options] Importance codes:', importance.data?.map(i => i.code));
 
     cachedOptions = {
       relationships: relationships.data as OptionItem[],

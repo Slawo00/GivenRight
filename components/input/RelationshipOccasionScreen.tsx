@@ -27,12 +27,6 @@ export function RelationshipOccasionScreen() {
         setError(null);
         const data = await loadScreen1Options();
         setOptions(data);
-        console.log('[RelationshipOccasionScreen] UI RENDERING:', {
-          relationships: data.relationships.length,
-          closeness: data.closeness.length,
-          occasions: data.occasions.length,
-          importance: data.importance.length,
-        });
       } catch (err) {
         setError('Failed to load options');
         console.error('Error loading Screen 1 options:', err);
