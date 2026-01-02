@@ -185,7 +185,7 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
     if (currentStep === 'relationship_occasion') {
       const requiresLifeStage = relationshipType && LIFE_STAGE_REQUIRED_RELATIONSHIPS.includes(relationshipType);
       if (requiresLifeStage) {
-        set({ step: 'life_stage' });
+        set({ life_stage_code: null, step: 'life_stage' });
       } else {
         set({ life_stage_code: 'adult', step: 'the_person' });
       }
