@@ -1,16 +1,9 @@
 import { create } from 'zustand';
 import type { 
   DecisionContext, 
-  RelationshipType, 
-  OccasionType, 
-  PersonalityTrait, 
-  SurpriseTolerance,
-  PersonalValue,
   BudgetRange,
   GiftTypePreference,
-  TimeConstraint,
-  ClosenessLevel,
-  OccasionImportance
+  TimeConstraint
 } from '@/services/decisionEngine/types';
 
 type InputStep = 
@@ -30,10 +23,10 @@ interface InputCollectionState {
   occasion_type: string | null;
   occasion_importance: string | null;
   
-  personality_traits: PersonalityTrait[];
-  surprise_tolerance: SurpriseTolerance;
+  personality_traits: string[];
+  surprise_tolerance: string | null;
   
-  values: PersonalValue[];
+  values: string[];
   no_gos: string[];
   budget_range: BudgetRange | null;
   
@@ -47,12 +40,12 @@ interface InputCollectionState {
   setOccasionType: (type: string) => void;
   setOccasionImportance: (importance: string) => void;
   
-  setPersonalityTraits: (traits: PersonalityTrait[]) => void;
-  togglePersonalityTrait: (trait: PersonalityTrait) => void;
-  setSurpriseTolerance: (tolerance: SurpriseTolerance) => void;
+  setPersonalityTraits: (traits: string[]) => void;
+  togglePersonalityTrait: (trait: string) => void;
+  setSurpriseTolerance: (tolerance: string) => void;
   
-  setValues: (values: PersonalValue[]) => void;
-  toggleValue: (value: PersonalValue) => void;
+  setValues: (values: string[]) => void;
+  toggleValue: (value: string) => void;
   setNoGos: (noGos: string[]) => void;
   toggleNoGo: (noGo: string) => void;
   setBudgetRange: (range: BudgetRange) => void;
@@ -88,7 +81,7 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
   occasion_importance: null,
   
   personality_traits: [],
-  surprise_tolerance: 'medium',
+  surprise_tolerance: null,
   
   values: [],
   no_gos: [],
@@ -194,18 +187,13 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
   getDecisionContext: () => {
     const state = get();
     
-    const relationshipType = (state.relationship_type || 'friend') as RelationshipType;
-    const occasionType = (state.occasion_type || 'birthday') as OccasionType;
-    const closenessLevel = state.closeness_level || 'close';
-    const occasionImportance = state.occasion_importance || 'medium';
-    
     return {
-      relationship_type: relationshipType,
-      closeness_level: closenessLevel,
-      occasion_type: occasionType,
-      occasion_importance: occasionImportance,
+      relationship_type: state.relationship_type || 'friend',
+      closeness_level: state.closeness_level || 'close',
+      occasion_type: state.occasion_type || 'birthday',
+      occasion_importance: state.occasion_importance || 'important',
       personality_traits: state.personality_traits.length > 0 ? state.personality_traits : ['practical'],
-      surprise_tolerance: state.surprise_tolerance,
+      surprise_tolerance: state.surprise_tolerance || 'medium',
       values: state.values,
       no_gos: state.no_gos,
       budget_range: state.budget_range || '50_100',
@@ -224,7 +212,7 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
     occasion_type: null,
     occasion_importance: null,
     personality_traits: [],
-    surprise_tolerance: 'medium',
+    surprise_tolerance: null,
     values: [],
     no_gos: [],
     budget_range: null,

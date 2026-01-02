@@ -23,6 +23,11 @@ export {
   type OptionItem,
   type Screen1Options
 } from "./screen1OptionsService";
+export {
+  loadScreen2Options,
+  clearScreen2OptionsCache,
+  type Screen2Options
+} from "./screen2OptionsService";
 
 import { isSupabaseConfigured } from "../../config/supabase";
 export { isSupabaseConfigured };

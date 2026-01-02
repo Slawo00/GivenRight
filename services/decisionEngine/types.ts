@@ -1,7 +1,7 @@
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
 export type ExpectationFrame = 'CONSERVATIVE' | 'BALANCED' | 'OPEN';
 export type ConfidenceType = 'SAFE' | 'EMOTIONAL' | 'BOLD';
-export type SurpriseTolerance = 'low' | 'medium' | 'high';
+export type SurpriseTolerance = string;
 export type TimeConstraint = 'urgent' | 'normal' | 'flexible';
 
 export type RelationshipType = 
@@ -37,15 +37,7 @@ export type GiftTypePreference =
   | 'consumable'
   | 'no_preference';
 
-export type PersonalityTrait =
-  | 'practical'
-  | 'creative'
-  | 'sentimental'
-  | 'adventurous'
-  | 'minimalist'
-  | 'traditional'
-  | 'trendy'
-  | 'intellectual';
+export type PersonalityTrait = string;
 
 export type PersonalValue =
   | 'sustainability'
@@ -67,17 +59,17 @@ export type ClosenessLevel = string;
 export type OccasionImportance = string;
 
 export interface DecisionContext {
-  relationship_type: RelationshipType;
-  closeness_level: ClosenessLevel;
-  occasion_type: OccasionType;
-  occasion_importance: OccasionImportance;
-  personality_traits: PersonalityTrait[];
-  surprise_tolerance: SurpriseTolerance;
-  values: PersonalValue[];
+  relationship_type: string;
+  closeness_level: string;
+  occasion_type: string;
+  occasion_importance: string;
+  personality_traits: string[];
+  surprise_tolerance: string;
+  values: string[];
   no_gos: string[];
-  budget_range: BudgetRange;
-  gift_type_preference: GiftTypePreference;
-  time_constraint: TimeConstraint;
+  budget_range: string;
+  gift_type_preference: string;
+  time_constraint: string;
   country: string;
   relationship_key?: string;
 }

@@ -1,20 +1,7 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useInputCollectionState } from '@/store/useInputCollectionState';
-import type { PersonalityTrait, SurpriseTolerance } from '@/services/decisionEngine/types';
-
-const PERSONALITY_OPTIONS: { value: PersonalityTrait; label: string }[] = [
-  { value: 'practical', label: 'Practical' },
-  { value: 'sentimental', label: 'Sentimental' },
-  { value: 'creative', label: 'Creative' },
-  { value: 'minimalist', label: 'Minimalist' },
-  { value: 'adventurous', label: 'Expressive' },
-];
-
-const SURPRISE_OPTIONS: { value: SurpriseTolerance; label: string }[] = [
-  { value: 'low', label: 'Prefers safe choices' },
-  { value: 'medium', label: 'Enjoys a thoughtful surprise' },
-  { value: 'high', label: 'Loves bold surprises' },
-];
+import { loadScreen2Options, Screen2Options } from '@/services/supabase/screen2OptionsService';
 
 export function ThePersonScreen() {
   const { 
@@ -24,6 +11,49 @@ export function ThePersonScreen() {
     setSurpriseTolerance,
     nextStep,
   } = useInputCollectionState();
+
+  const [options, setOptions] = useState<Screen2Options | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchOptions() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await loadScreen2Options();
+        setOptions(data);
+      } catch (err) {
+        setError('Failed to load options');
+        console.error('Error loading Screen 2 options:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchOptions();
+  }, []);
+
+  const canContinue = surprise_tolerance !== null;
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2D5A3D" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (error || !options) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error || 'Something went wrong'}</Text>
+        <Pressable style={styles.retryButton} onPress={() => setIsLoading(true)}>
+          <Text style={styles.retryButtonText}>Try Again</Text>
+        </Pressable>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -36,18 +66,18 @@ export function ThePersonScreen() {
         <Text style={styles.sectionLabel}>What are they like?</Text>
         <Text style={styles.hint}>Select all that apply</Text>
         <View style={styles.optionsGrid}>
-          {PERSONALITY_OPTIONS.map((option) => (
+          {options.personalityTraits.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.optionButton,
-                personality_traits.includes(option.value) && styles.optionButtonSelected,
+                personality_traits.includes(option.code) && styles.optionButtonSelected,
               ]}
-              onPress={() => togglePersonalityTrait(option.value)}
+              onPress={() => togglePersonalityTrait(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                personality_traits.includes(option.value) && styles.optionTextSelected,
+                personality_traits.includes(option.code) && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -59,18 +89,18 @@ export function ThePersonScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>Surprise tolerance</Text>
         <View style={styles.optionsColumn}>
-          {SURPRISE_OPTIONS.map((option) => (
+          {options.surpriseTolerance.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.surpriseButton,
-                surprise_tolerance === option.value && styles.optionButtonSelected,
+                surprise_tolerance === option.code && styles.optionButtonSelected,
               ]}
-              onPress={() => setSurpriseTolerance(option.value)}
+              onPress={() => setSurpriseTolerance(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                surprise_tolerance === option.value && styles.optionTextSelected,
+                surprise_tolerance === option.code && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -80,8 +110,9 @@ export function ThePersonScreen() {
       </View>
 
       <Pressable
-        style={styles.continueButton}
-        onPress={() => nextStep()}
+        style={[styles.continueButton, !canContinue && styles.continueButtonDisabled]}
+        onPress={() => canContinue && nextStep()}
+        disabled={!canContinue}
       >
         <Text style={styles.continueButtonText}>Continue</Text>
       </Pressable>
@@ -97,6 +128,42 @@ const styles = StyleSheet.create({
   content: {
     padding: 24,
     paddingBottom: 48,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+    padding: 24,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#666666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+    padding: 24,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#CC4444',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#2D5A3D',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
   },
   header: {
     marginBottom: 32,
@@ -169,6 +236,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 16,
+  },
+  continueButtonDisabled: {
+    backgroundColor: '#CCCCCC',
   },
   continueButtonText: {
     fontSize: 17,

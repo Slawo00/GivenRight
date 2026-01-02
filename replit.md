@@ -41,6 +41,8 @@ The app helps users make gift decisions based on relationships, occasions, and p
   decisionParameterService.ts  # Decision parameters from DB
   decisionExplanationService.ts # Explanations from DB
   objectPatternService.ts      # Gift patterns from DB
+  screen1OptionsService.ts     # Screen 1 options (relationship, closeness, occasion, importance)
+  screen2OptionsService.ts     # Screen 2 options (personality traits, surprise tolerance)
 
 /types                 # TypeScript type definitions
   common.ts            # Shared types (ID, BudgetRange, LoadingState)
@@ -249,3 +251,8 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - 2025-01-02: STEP SCREEN1 - String-based closeness_level and occasion_importance codes
 - 2025-01-02: STEP SCREEN1 - Helper functions for code-to-numeric conversion
 - 2025-01-02: STEP SCREEN1 - RelationshipOccasionScreen with dynamic loading and error UI
+- 2025-01-02: STEP SCREEN2 - Screen 2 fully Supabase-driven (Personality Traits + Surprise Tolerance)
+- 2025-01-02: STEP SCREEN2 - loadScreen2Options service (q_personality_traits, q_surprise_tolerance_levels)
+- 2025-01-02: STEP SCREEN2 - ThePersonScreen with multi-select traits, single-select tolerance
+- 2025-01-02: STEP SCREEN2 - String-based types for personality_traits[] and surprise_tolerance
+- 2025-01-02: STEP SCREEN2 - No numeric mapping in frontend (codes only)

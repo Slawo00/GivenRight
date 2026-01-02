@@ -1,0 +1,185 @@
+🧙🏾‍♂️ Professor Schlau – **Screen 2. Jetzt ziehen wir das exakt so sauber durch wie Screen 1.**
+Fokus: **Personality Traits (Multi-Select)** & **Surprise Tolerance (Single-Select)** – **rein Supabase-getrieben**, **ohne numerische Logik im Frontend**.
+
+---
+
+# 🧩 SCREEN 2 – „Tell us a bit about them“
+
+## Ziel (verbindlich)
+
+* UI zeigt **alle Optionen aus Supabase**
+* UI speichert **nur Codes**
+* **Keine** Gewichtung / Bewertung / Mapping im Frontend
+* Persistenz **nur** in `recipients`
+
+---
+
+## 1️⃣ Supabase-Queries (UI-Read)
+
+### A) Personality Traits (Multi-Select)
+
+```sql
+SELECT code, label
+FROM q_personality_traits
+ORDER BY label;
+```
+
+### B) Surprise Tolerance (Single-Select)
+
+```sql
+SELECT code, label
+FROM q_surprise_tolerance_levels
+ORDER BY tolerance_level;
+```
+
+> Falls `tolerance_level` nicht existiert:
+> → vorerst `ORDER BY label` (keine Logik im UI erzwingen).
+
+---
+
+## 2️⃣ Replit – Fetch Pattern (Screen 2)
+
+```ts
+// lib/loadScreen2Options.ts
+import { supabase } from './supabase';
+
+export async function loadScreen2Options() {
+  const [traits, tolerance] = await Promise.all([
+    supabase
+      .from('q_personality_traits')
+      .select('code,label')
+      .order('label'),
+
+    supabase
+      .from('q_surprise_tolerance_levels')
+      .select('code,label')
+      .order('tolerance_level', { ascending: true })
+  ]);
+
+  if (traits.error || tolerance.error) {
+    throw new Error('Failed to load Screen 2 options');
+  }
+
+  return {
+    personalityTraits: traits.data,
+    surpriseTolerance: tolerance.data
+  };
+}
+```
+
+---
+
+## 3️⃣ UI-State (nur Codes!)
+
+```ts
+// state/screen2.ts
+export const screen2State = {
+  personality_traits: [] as string[],   // multi
+  surprise_tolerance: null as string | null // single
+};
+```
+
+### Beispiel-Zustand:
+
+```json
+{
+  "personality_traits": ["practical", "creative"],
+  "surprise_tolerance": "thoughtful_surprise"
+}
+```
+
+---
+
+## 4️⃣ UI-Regeln (wichtig & minimal)
+
+### Personality Traits
+
+* Multi-Select
+* **Optional** (leere Liste erlaubt)
+* Keine Maximalanzahl erzwingen
+
+### Surprise Tolerance
+
+* **Pflichtfeld**
+* Genau **ein** Code
+* Kein Default
+
+➡️ Continue-Button nur aktiv, wenn:
+
+```ts
+surprise_tolerance !== null
+```
+
+---
+
+## 5️⃣ Persistenz (`recipients`)
+
+> Screen 2 **legt keinen neuen Datensatz an**,
+> sondern **ergänzt** den bestehenden Recipient.
+
+```ts
+// services/saveRecipientPersonality.ts
+import { supabase } from './supabase';
+
+export async function updateRecipientPersonality(
+  recipientId: string,
+  data: any
+) {
+  const { error } = await supabase
+    .from('recipients')
+    .update({
+      personality_traits: data.personality_traits,
+      surprise_tolerance: data.surprise_tolerance
+    })
+    .eq('recipient_id', recipientId);
+
+  if (error) throw error;
+}
+```
+
+---
+
+## 6️⃣ HARTE REGEL (bitte beachten)
+
+🚫 **Verboten ab jetzt:**
+
+* `traitCodeToScore()`
+* `surpriseToleranceWeight()`
+* irgendwelche Zahlen im Frontend
+
+✅ **Erlaubt:**
+
+* Codes speichern
+* Labels anzeigen
+* Validieren: gesetzt / nicht gesetzt
+
+👉 **Alle Zahlen kommen später aus Supabase (Views).**
+
+---
+
+## 7️⃣ Checkliste – wann Screen 2 „fertig“ ist
+
+Bitte selbst prüfen:
+
+* [ ] Alle Personality Traits aus Supabase sichtbar
+* [ ] Alle Surprise-Tolerance-Level sichtbar
+* [ ] Multi-Select funktioniert
+* [ ] Surprise Tolerance Pflichtfeld
+* [ ] State speichert **nur Codes**
+* [ ] `recipients` wird korrekt aktualisiert
+* [ ] Kein numerisches Mapping im UI
+
+---
+
+## 🧭 Nächster Schritt (nach Screen 2)
+
+Danach gehen wir **konsequent weiter** mit:
+
+### **Screen 3 – Values & No-Gos**
+
+* gleiche Struktur
+* gleicher Pattern
+* einheitliches Modell
+
+👉 **Sag mir bitte Bescheid, sobald Screen 2 umgesetzt ist**,
+oder wenn du möchtest, dass ich **Screen 3 direkt vorbereite**.
