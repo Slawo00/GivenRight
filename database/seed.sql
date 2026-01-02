@@ -356,3 +356,25 @@ INSERT INTO q_occasion_importance_levels (code, label, importance_level) VALUES
 ON CONFLICT (code) DO UPDATE SET 
   label = EXCLUDED.label,
   importance_level = EXCLUDED.importance_level;
+
+----------------------------------------------------
+-- SCREEN 4 OPTIONS
+----------------------------------------------------
+
+-- Gift Type Preferences
+INSERT INTO q_gift_type_preferences (code, label, sort_order) VALUES
+('physical', 'Something tangible', 1),
+('experience', 'An experience', 2),
+('both', 'Open to both', 3)
+ON CONFLICT (code) DO UPDATE SET 
+  label = EXCLUDED.label,
+  sort_order = EXCLUDED.sort_order;
+
+-- Time Constraints
+INSERT INTO q_time_constraints (code, label, urgency_level) VALUES
+('flexible', 'Plenty of time', 1),
+('1_2_weeks', '1-2 weeks', 2),
+('urgent', 'Very soon', 3)
+ON CONFLICT (code) DO UPDATE SET 
+  label = EXCLUDED.label,
+  urgency_level = EXCLUDED.urgency_level;

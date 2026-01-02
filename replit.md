@@ -1,173 +1,7 @@
 # GivenRight - Expo Cross-Platform App
 
 ## Overview
-GivenRight is a cross-platform mobile application built with Expo (React Native).
-The app helps users make gift decisions based on relationships, occasions, and preferences.
-
-**Target Platforms:** iOS, Android, Web
-**Framework:** Expo SDK 54 with React Native
-**Navigation:** Expo Router
-
-## Project Structure
-
-```
-/app                    # Expo Router pages
-  _layout.tsx          # Root layout
-  index.tsx            # Home screen
-  +not-found.tsx       # 404 page
-
-/components            # Reusable UI components
-  DebugPanel.tsx       # Debug overlay (dev mode)
-
-/store                 # Global state management
-  useAppState.ts       # App-level state (appReady, debugMode)
-  useDecisionState.ts  # Decision flow state machine + runTestScenario
-  useConfigState.ts    # Supabase config loading state
-
-/engine                # Decision logic
-  mockDecisionEngine.ts  # Deterministic mock engine for testing
-
-/config                # Configuration
-  env.ts               # Environment variables
-  supabase.ts          # Supabase client configuration
-
-/database              # Database schemas
-  schema.sql           # Table definitions with RLS policies
-  seed.sql             # Initial data (ui_texts, decision_parameters)
-
-/services/supabase     # Supabase data access layer
-  index.ts             # Barrel export
-  uiTextService.ts     # UI text fetching with caching
-  decisionParameterService.ts  # Decision parameters from DB
-  decisionExplanationService.ts # Explanations from DB
-  objectPatternService.ts      # Gift patterns from DB
-  screen1OptionsService.ts     # Screen 1 options (relationship, closeness, occasion, importance)
-  screen2OptionsService.ts     # Screen 2 options (personality traits, surprise tolerance)
-  screen3OptionsService.ts     # Screen 3 options (values, no-gos, budget ranges)
-
-/types                 # TypeScript type definitions
-  common.ts            # Shared types (ID, BudgetRange, LoadingState)
-  relationship.ts      # Relationship types (RelationshipProfile)
-  decision.ts          # Decision types (DecisionDirection, DecisionResult, etc.)
-
-/assets                # Static assets
-  /images
-    givenright-logo.png  # App logo
-```
-
-## Commands
-
-- **Start App (Tunnel):** `npx expo start --tunnel`
-- **Start App (Web):** `npx expo start --web`
-- **Start App (iOS):** `npx expo start --ios`
-- **Start App (Android):** `npx expo start --android`
-
-## Development
-
-### Global State (Zustand)
-
-**App State (useAppState.ts):**
-- `appReady`: Boolean indicating app initialization state
-- `debugMode`: Boolean to show/hide debug panel (default: true)
-
-**Decision State (useDecisionState.ts):**
-- Inputs: `relationship`, `occasion`, `budget`
-- Outputs: `decisionResult`, `selectedDirection`
-- Flow control: `step` (idle → collecting_inputs → decision_ready → direction_selected → completed)
-- Actions: `setRelationship`, `setOccasion`, `setBudget`, `setDecisionResult`, `selectDirection`, `runTestScenario`, `runDecisionSimulation`, `resetDecision`
-
-### Mock Decision Engine (STEP 0.3)
-
-**Scoring Rules (engine/mockDecisionEngine.ts):**
-- **Base scores**: safe=50, emotional=50, bold=50
-- **Relationship modifiers**: partner (+15 emotional/bold), colleague (+20 safe, -10 bold), friend (+10 emotional)
-- **Closeness**: High (4-5) boosts emotional/bold by 10-20; Low (1-2) boosts safe by 10-15
-- **Surprise tolerance**: low (+15 safe), high (+15 bold)
-- **Budget**: under_50 (+10 safe), 250_plus (+10 bold, +5 emotional)
-- **Occasion**: birthday (+10 emotional), valentines (+15 emotional, +10 bold), wedding (+10 safe, +5 emotional), christmas (+5 safe)
-- **Risk**: bold=high, emotional=medium, safe=low
-
-### Canonical Types
-
-**Decision Types:**
-- `DecisionDirection`: "safe" | "emotional" | "bold"
-- `RiskLevel`: "low" | "medium" | "high"
-- `DecisionScore`: direction, score (0-100), risk, recommended
-- `DecisionExplanation`: whyThisWorks, risks, emotionalSignal
-- `DecisionResult`: scores[], explanationByDirection
-
-**Relationship Types:**
-- `RelationshipType`: partner, parent, child, friend, colleague, other
-- `RelationshipProfile`: type, closeness (1-5), emotionalStyle[], surpriseTolerance
-
-**Common Types:**
-- `BudgetRange`: under_50, 50_100, 100_250, 250_plus
-
-### Debug Panel
-When `debugMode` is true, a collapsible debug panel appears showing:
-- Current decision step
-- Relationship type and closeness
-- Budget selection
-- Decision scores (safe/emotional/bold)
-- Selected direction
-
-### Supabase Configuration (STEP 0.4.A)
-
-**Database Tables:**
-- `ui_texts`: Multi-language UI texts (key, language, value)
-- `decision_parameters`: Scoring parameters for decision engine
-- `decision_explanations`: Explanations per direction (safe/emotional/bold)
-- `object_patterns`: Gift pattern categories
-- `q_relationship_types`: Relationship type options (code, label, description)
-- `q_closeness_levels`: Closeness level options (code, label)
-- `q_occasion_types`: Occasion type options (code, label)
-- `q_occasion_importance_levels`: Importance level options (code, label)
-
-**Environment Variables Required:**
-- `EXPO_PUBLIC_SUPABASE_URL`: Supabase project URL
-- `EXPO_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key
-
-**RLS Policies:** Read-only for anon + authenticated users
-
-### Screen 1 - Supabase-Driven Options (STEP SCREEN1)
-
-**Data Source Tables:**
-- `q_relationship_types`: Relationship options with sort_order
-- `q_closeness_levels`: Closeness options sorted by emotional_expectation
-- `q_occasion_types`: Occasion options with sort_order
-- `q_occasion_importance_levels`: Importance levels sorted by importance_level
-
-**Service:** `services/supabase/screen1OptionsService.ts`
-- `loadScreen1Options()`: Fetches all Screen 1 options in parallel
-- Caching: In-memory cache after first successful load
-- Fallback: Default hardcoded options if Supabase unavailable
-
-**State Management:**
-- UI renders **Labels**, stores **Codes**
-- All four fields required: relationship_type, closeness_level, occasion_type, occasion_importance
-- String-based codes (no numeric values for closeness/importance)
-
-**Helper Functions:** `services/decisionEngine/phases/helpers.ts`
-- `closenessCodeToNumeric()`: Converts closeness codes to 1-5 scale
-- `importanceCodeToNumeric()`: Converts importance codes to 1-5 scale
-
-## Current Phase
-**STEP B4.1 - Weltklasse Contextual Enrichment ✅**
-- ChatGPT-powered explanation personalization via gpt-4o-mini
-- READ-ONLY layer - preserves all engine data exactly (ordering, risk_level, expectation_frame)
-- NO synthetic scores or fabricated metrics - pure enrichment only
-- 3-5 concrete example categories per option with icons/hints
-- First option from engine marked as "Recommended" (green badge)
-- In-memory caching (context+result hash key)
-- Graceful fallback if API fails - shows base explanations without examples
-- **Weltklasse Prompts**: Context summary format (Partner · Birthday · Very close · Creative...)
-- **Neutral & Human Tone**: calm, grounded, non-promotional language
-
-### Supabase Edge Function (Backend)
-- **Path**: `supabase/functions/enrich-explanation/index.ts`
-- **Purpose**: Secure server-side OpenAI calls (API key not exposed to client)
-- **Deployment**: See `supabase/README.md` for instructions
-- **Required Secret**: `OPENAI_API_KEY` (set via `supabase secrets set`)
+GivenRight is a cross-platform mobile application built with Expo (React Native) that assists users in making informed gift decisions. It achieves this by considering relationship dynamics, specific occasions, and personal preferences of the recipient. The app aims to provide personalized gift direction recommendations, enhanced with contextual enrichment, across iOS, Android, and Web platforms.
 
 ## User Preferences
 - German language for communication
@@ -175,90 +9,34 @@ When `debugMode` is true, a collapsible debug panel appears showing:
 - No native code (Swift/Kotlin)
 - Single codebase for iOS/Android/Web
 
-## Recent Changes
-- 2024-12-30: STEP 0.1 - Initial clean build setup
-- 2024-12-30: STEP 0.1 - Added GivenRight logo
-- 2024-12-30: STEP 0.1 - Created folder structure
-- 2024-12-30: STEP 0.1 - Implemented app state with Zustand
-- 2024-12-30: STEP 0.2 - Canonical decision types
-- 2024-12-30: STEP 0.2 - Decision state machine
-- 2024-12-30: STEP 0.2 - Enhanced DebugPanel
-- 2024-12-30: STEP 0.3 - Mock decision engine created
-- 2024-12-30: STEP 0.3 - runTestScenario action (deterministic)
-- 2024-12-30: STEP 0.3 - DebugPanel with test scenarios & score visualization
-- 2024-12-30: STEP 0.4.A - Supabase client configuration
-- 2024-12-30: STEP 0.4.A - SQL schema (ui_texts, decision_parameters, etc.)
-- 2024-12-30: STEP 0.4.A - Seed data for initial configuration
-- 2024-12-30: STEP 0.4.B - Supabase data access layer (services)
-- 2024-12-30: STEP 0.4.B - Config-driven decision engine
-- 2024-12-30: STEP 0.4.B - useConfigState for config loading
-- 2024-12-30: STEP 0.4.B - Debug Panel with Supabase status badge
-- 2024-12-30: STEP 0.4.B - Fully config-driven engine (no hardcoded values)
-- 2024-12-30: STEP 0.4.B - Expanded DecisionParameters for all types
-- 2024-12-30: STEP 0.4.B - Updated seed.sql with complete parameter set
-- 2024-12-30: STEP 0.5 - DecisionExplanationScreen created
-- 2024-12-30: STEP 0.5 - DirectionCard component (Why/Signal/Risk)
-- 2024-12-30: STEP 0.5 - emotional_signal field added to schema/seed
-- 2024-12-30: STEP 0.5 - Config loading moved to app root layout
-- 2024-12-30: STEP 0.5 - User-facing "Start Decision" button
-- 2024-12-30: STEP 0.6 - ObjectPatternSelectionScreen created
-- 2024-12-30: STEP 0.6 - PatternCard component (icon, intent, description)
-- 2024-12-30: STEP 0.6 - objectPatternService extended with emotionalIntent, icon
-- 2024-12-30: STEP 0.6 - Database schema with emotional_intent, icon fields
-- 2024-12-30: STEP 0.6 - seed.sql with 9 rich patterns
-- 2024-12-30: STEP 0.6 - selectedPattern state and selectPattern action
-- 2024-12-30: STEP 0.6.1 - PatternExplanationScreen (Confidence Lock)
-- 2024-12-30: STEP 0.6.1 - Extended schema: relationship_fit, things_to_consider
-- 2024-12-30: STEP 0.6.1 - Rich educational seed data for all 9 patterns
-- 2024-12-30: STEP 0.6.1 - pattern_explanation step in decision flow
-- 2024-12-30: STEP 0.7 - Product type definitions (types/product.ts)
-- 2024-12-30: STEP 0.7 - ProductResolverService with mock data
-- 2024-12-30: STEP 0.7 - ProductCard component (neutral presentation)
-- 2024-12-30: STEP 0.7 - CommercePreviewScreen with trust disclosure
-- 2024-12-30: STEP 0.7 - commerce_preview and completed_with_execution steps
-- 2024-12-30: STEP 0.8 - Gift Memory schema (gift_memory, historical_success, non_repetition_rules)
-- 2024-12-30: STEP 0.8 - GiftMemoryService with local+Supabase sync
-- 2024-12-30: STEP 0.8 - useGiftMemoryState Zustand store
-- 2024-12-30: STEP 0.8 - Pattern suppression in ObjectPatternSelectionScreen
-- 2024-12-30: STEP 0.8 - Memory recording on decision completion
-- 2024-12-30: STEP 0.8 - PatternCard dimmed prop for cooldown patterns
-- 2024-12-30: STEP B2 - Deterministic Decision Core with 8 phases
-- 2024-12-30: STEP B2 - Types (DecisionContext, PhaseOutputs, DecisionResult)
-- 2024-12-30: STEP B2 - Phase functions (uncertainty, socialExpectation, riskProfiling, personalityFit, patternFiltering, scoring, confidenceDerivation)
-- 2024-12-30: STEP B2 - ExplanationBuilder (rule-based, no generation)
-- 2024-12-30: STEP B2 - Decision Engine Orchestrator
-- 2024-12-30: STEP B0 - Structured Input & Intent Lock
-- 2024-12-30: STEP B0 - useInputCollectionState Zustand store
-- 2024-12-30: STEP B0 - 4 Input Screens (Relationship, Person, Boundaries, Practical)
-- 2024-12-30: STEP B0 - InputCollectionFlow component
-- 2024-12-30: STEP B0 - Integration with Decision Engine
-- 2024-12-30: STEP B4 - OpenAI Integration via Replit AI Integrations
-- 2024-12-30: STEP B4 - ScenarioEnrichmentService with ChatGPT
-- 2024-12-30: STEP B4 - Enrichment types (ConcreteExampleCategory)
-- 2024-12-30: STEP B4 - useEnrichmentState Zustand store
-- 2024-12-30: STEP B4 - EnrichedDirectionCard with example categories
-- 2024-12-30: STEP B4 - EnrichedDecisionScreen integration
-- 2024-12-30: STEP B4 FIX - Removed synthetic scores, preserved engine ordering
-- 2024-12-30: STEP B4 FIX - EnrichedDecisionResult now READ-ONLY (decision_risk_level, expectation_frame)
-- 2024-12-30: STEP B4 FIX - First option marked "Recommended" via badge, not computed score
-- 2024-12-30: STEP B4.1 - Weltklasse Prompts (Context · Occasion · Closeness · Personality summary)
-- 2024-12-30: STEP B4.1 - Refined System Prompt (neutral, non-directive, non-promotional)
-- 2024-12-30: STEP B4.1 - Supabase Edge Function for secure OpenAI calls
-- 2024-12-30: STEP B4.1 - Frontend updated to call Edge Function via fetch
-- 2024-12-30: STEP B4.1 - Edge Function deployed with --no-verify-jwt for anon access
-- 2024-12-30: STEP B4.1 - LIVE: Personalized examples showing in UI (Stylish Accessories, Cooking Class, etc.)
-- 2025-01-02: STEP SCREEN1 - Screen 1 fully Supabase-driven (no hardcoded options)
-- 2025-01-02: STEP SCREEN1 - loadScreen1Options service with caching and fallbacks
-- 2025-01-02: STEP SCREEN1 - String-based closeness_level and occasion_importance codes
-- 2025-01-02: STEP SCREEN1 - Helper functions for code-to-numeric conversion
-- 2025-01-02: STEP SCREEN1 - RelationshipOccasionScreen with dynamic loading and error UI
-- 2025-01-02: STEP SCREEN2 - Screen 2 fully Supabase-driven (Personality Traits + Surprise Tolerance)
-- 2025-01-02: STEP SCREEN2 - loadScreen2Options service (q_personality_traits, q_surprise_tolerance_levels)
-- 2025-01-02: STEP SCREEN2 - ThePersonScreen with multi-select traits, single-select tolerance
-- 2025-01-02: STEP SCREEN2 - String-based types for personality_traits[] and surprise_tolerance
-- 2025-01-02: STEP SCREEN2 - No numeric mapping in frontend (codes only)
-- 2025-01-02: STEP SCREEN3 - Screen 3 fully Supabase-driven (Values, No-Gos, Budget)
-- 2025-01-02: STEP SCREEN3 - loadScreen3Options service (q_value_constraints, q_budget_ranges)
-- 2025-01-02: STEP SCREEN3 - BoundariesBudgetScreen with multi-select values/no_gos, single-select budget
-- 2025-01-02: STEP SCREEN3 - String-based types for values[], no_gos[], budget_range
-- 2025-01-02: STEP SCREEN3 - No numeric mapping in frontend (codes only)
+## System Architecture
+The application is built using Expo SDK 54 with React Native and Expo Router for navigation. Global state management is handled by Zustand, separating app-level state from decision-specific state. The core decision logic is driven by a deterministic engine that processes user inputs and configuration parameters from a Supabase backend to generate gift directions.
+
+**UI/UX Decisions:**
+- A collapsible Debug Panel is available in development mode to monitor application state and decision flow.
+- Direction cards provide explanations, risks, and emotional signals for each gift direction.
+- Contextual enrichment is provided by external AI, offering personalized examples without altering core engine data. The first recommended option is clearly badged.
+
+**Technical Implementations:**
+- **State Management:** Zustand is used for `useAppState` (app readiness, debug mode), `useDecisionState` (decision flow, inputs, results), `useConfigState` (Supabase configuration loading), `useInputCollectionState` (input screens), and `useEnrichmentState` (AI enrichment data).
+- **Decision Engine:** A deterministic core with 8 phases (uncertainty, social expectation, risk profiling, personality fit, pattern filtering, scoring, confidence derivation) calculates `DecisionScore`s and `DecisionExplanation`s. It is fully configurable via Supabase.
+- **Data Handling:** All input options for decision screens (relationship types, closeness, occasions, personality traits, budget ranges, etc.) are fetched dynamically from Supabase, with in-memory caching and hardcoded fallbacks. UI displays labels but stores codes for consistency.
+- **AI Integration:** ChatGPT (gpt-4o-mini) is used for contextual enrichment to provide personalized examples for gift suggestions. This is a read-only layer that does not influence the core decision engine's output (scores, ordering).
+- **Security:** OpenAI API calls are routed through a Supabase Edge Function to securely manage API keys and prevent client-side exposure.
+
+**Feature Specifications:**
+- **Gift Decision Flow:** Guides users through multiple input screens (Relationship, Person, Boundaries, Practical) to collect data.
+- **Personalized Recommendations:** Generates "safe," "emotional," or "bold" gift directions based on user-provided context.
+- **Contextual Enrichment:** AI-generated concrete examples and descriptions for each recommended gift direction, leveraging a refined "Weltklasse Prompt" structure.
+- **Debug Panel:** Provides real-time insights into the decision-making process for development.
+- **Input Forms:** Screens dynamically load options from Supabase and use string-based codes for selections.
+
+## External Dependencies
+- **Supabase:**
+    - **Database:** PostgreSQL for storing UI texts (`ui_texts`), decision parameters (`decision_parameters`), explanations (`decision_explanations`), object patterns (`object_patterns`), and all dynamic options for input screens (`q_relationship_types`, `q_closeness_levels`, `q_occasion_types`, `q_occasion_importance_levels`, `q_personality_traits`, `q_surprise_tolerance_levels`, `q_value_constraints`, `q_budget_ranges`, `q_gift_type_preferences`, `q_time_constraints`).
+    - **Edge Functions:** Used for secure server-side calls to OpenAI API (`enrich-explanation`).
+    - **Authentication/Authorization:** RLS policies are set for read-only access for anonymous and authenticated users.
+- **OpenAI:** ChatGPT (specifically `gpt-4o-mini`) API for contextual enrichment and generating personalized gift examples.
+- **Zustand:** State management library for React.
+- **Expo:** Cross-platform development framework for React Native.
+- **Expo Router:** File-system based router for Expo applications.

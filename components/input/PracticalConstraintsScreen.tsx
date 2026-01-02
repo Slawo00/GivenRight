@@ -1,18 +1,7 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useInputCollectionState } from '@/store/useInputCollectionState';
-import type { GiftTypePreference, TimeConstraint } from '@/services/decisionEngine/types';
-
-const GIFT_TYPE_OPTIONS: { value: GiftTypePreference; label: string }[] = [
-  { value: 'physical', label: 'Something tangible' },
-  { value: 'experience', label: 'An experience' },
-  { value: 'no_preference', label: 'Open to both' },
-];
-
-const TIME_OPTIONS: { value: TimeConstraint; label: string }[] = [
-  { value: 'flexible', label: 'Plenty of time' },
-  { value: 'normal', label: '1–2 weeks' },
-  { value: 'urgent', label: 'Very soon' },
-];
+import { useState, useEffect } from 'react';
+import { loadScreen4Options, type OptionItem, type Screen4Options } from '@/services/supabase/screen4OptionsService';
 
 interface PracticalConstraintsScreenProps {
   onComplete: () => void;
@@ -27,10 +16,48 @@ export function PracticalConstraintsScreen({ onComplete }: PracticalConstraintsS
     lockIntent,
   } = useInputCollectionState();
 
+  const [options, setOptions] = useState<Screen4Options | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchOptions() {
+      try {
+        const loaded = await loadScreen4Options();
+        setOptions(loaded);
+      } catch (err) {
+        setError('Failed to load options');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchOptions();
+  }, []);
+
   const handleComplete = () => {
     lockIntent();
     onComplete();
   };
+
+  const canContinue = gift_type_preference !== null && time_constraint !== null;
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2D5A3D" />
+        <Text style={styles.loadingText}>Loading options...</Text>
+      </View>
+    );
+  }
+
+  if (error || !options) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.errorText}>{error || 'Failed to load options'}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -42,18 +69,18 @@ export function PracticalConstraintsScreen({ onComplete }: PracticalConstraintsS
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>What kind of gift?</Text>
         <View style={styles.optionsColumn}>
-          {GIFT_TYPE_OPTIONS.map((option) => (
+          {options.giftTypes.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.optionButton,
-                gift_type_preference === option.value && styles.optionButtonSelected,
+                gift_type_preference === option.code && styles.optionButtonSelected,
               ]}
-              onPress={() => setGiftTypePreference(option.value)}
+              onPress={() => setGiftTypePreference(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                gift_type_preference === option.value && styles.optionTextSelected,
+                gift_type_preference === option.code && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -65,18 +92,18 @@ export function PracticalConstraintsScreen({ onComplete }: PracticalConstraintsS
       <View style={styles.section}>
         <Text style={styles.sectionLabel}>How soon do you need it?</Text>
         <View style={styles.optionsColumn}>
-          {TIME_OPTIONS.map((option) => (
+          {options.timeConstraints.map((option) => (
             <Pressable
-              key={option.value}
+              key={option.code}
               style={[
                 styles.optionButton,
-                time_constraint === option.value && styles.optionButtonSelected,
+                time_constraint === option.code && styles.optionButtonSelected,
               ]}
-              onPress={() => setTimeConstraint(option.value)}
+              onPress={() => setTimeConstraint(option.code)}
             >
               <Text style={[
                 styles.optionText,
-                time_constraint === option.value && styles.optionTextSelected,
+                time_constraint === option.code && styles.optionTextSelected,
               ]}>
                 {option.label}
               </Text>
@@ -86,8 +113,9 @@ export function PracticalConstraintsScreen({ onComplete }: PracticalConstraintsS
       </View>
 
       <Pressable
-        style={styles.completeButton}
+        style={[styles.completeButton, !canContinue && styles.completeButtonDisabled]}
         onPress={handleComplete}
+        disabled={!canContinue}
       >
         <Text style={styles.completeButtonText}>Find the right gift</Text>
       </Pressable>
@@ -103,6 +131,21 @@ const styles = StyleSheet.create({
   content: {
     padding: 24,
     paddingBottom: 48,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFA',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666666',
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#CC0000',
   },
   header: {
     marginBottom: 32,
@@ -157,6 +200,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 24,
+  },
+  completeButtonDisabled: {
+    backgroundColor: '#CCCCCC',
   },
   completeButtonText: {
     fontSize: 18,

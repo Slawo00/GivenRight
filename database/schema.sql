@@ -309,3 +309,59 @@ CREATE INDEX IF NOT EXISTS idx_q_relationship_types_sort ON q_relationship_types
 CREATE INDEX IF NOT EXISTS idx_q_closeness_levels_sort ON q_closeness_levels(emotional_expectation);
 CREATE INDEX IF NOT EXISTS idx_q_occasion_types_sort ON q_occasion_types(sort_order);
 CREATE INDEX IF NOT EXISTS idx_q_importance_levels_sort ON q_occasion_importance_levels(importance_level);
+
+----------------------------------------------------
+-- STEP SCREEN4 - Practical Constraints Tables
+----------------------------------------------------
+
+----------------------------------------------------
+-- 16) q_gift_type_preferences
+-- Purpose: Gift type preference options for Screen 4.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS q_gift_type_preferences (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON TABLE q_gift_type_preferences IS 'Gift type preference options for Screen 4';
+
+----------------------------------------------------
+-- 17) q_time_constraints
+-- Purpose: Time constraint options for Screen 4.
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS q_time_constraints (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  urgency_level INTEGER NOT NULL DEFAULT 0,
+  active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMENT ON TABLE q_time_constraints IS 'Time constraint options for Screen 4';
+
+----------------------------------------------------
+-- RLS for Screen 4 option tables
+----------------------------------------------------
+ALTER TABLE q_gift_type_preferences ENABLE ROW LEVEL SECURITY;
+ALTER TABLE q_time_constraints ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "q_gift_type_preferences_read_only" ON q_gift_type_preferences
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+CREATE POLICY "q_time_constraints_read_only" ON q_time_constraints
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+----------------------------------------------------
+-- INDEXES for Screen 4 option tables
+----------------------------------------------------
+CREATE INDEX IF NOT EXISTS idx_q_gift_type_preferences_sort ON q_gift_type_preferences(sort_order);
+CREATE INDEX IF NOT EXISTS idx_q_time_constraints_urgency ON q_time_constraints(urgency_level);

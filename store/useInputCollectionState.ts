@@ -1,9 +1,5 @@
 import { create } from 'zustand';
-import type { 
-  DecisionContext, 
-  GiftTypePreference,
-  TimeConstraint
-} from '@/services/decisionEngine/types';
+import type { DecisionContext } from '@/services/decisionEngine/types';
 
 type InputStep = 
   | 'idle'
@@ -29,8 +25,8 @@ interface InputCollectionState {
   no_gos: string[];
   budget_range: string | null;
   
-  gift_type_preference: GiftTypePreference;
-  time_constraint: TimeConstraint;
+  gift_type_preference: string | null;
+  time_constraint: string | null;
   country: string;
   relationship_key?: string;
   
@@ -49,8 +45,8 @@ interface InputCollectionState {
   toggleNoGo: (noGo: string) => void;
   setBudgetRange: (range: string) => void;
   
-  setGiftTypePreference: (pref: GiftTypePreference) => void;
-  setTimeConstraint: (constraint: TimeConstraint) => void;
+  setGiftTypePreference: (pref: string) => void;
+  setTimeConstraint: (constraint: string) => void;
   setCountry: (country: string) => void;
   
   goToStep: (step: InputStep) => void;
@@ -86,8 +82,8 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
   no_gos: [],
   budget_range: null,
   
-  gift_type_preference: 'no_preference',
-  time_constraint: 'normal',
+  gift_type_preference: null,
+  time_constraint: null,
   country: 'US',
   
   setRelationshipType: (type) => {
@@ -196,8 +192,8 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
       values: state.values,
       no_gos: state.no_gos,
       budget_range: state.budget_range || '50_100',
-      gift_type_preference: state.gift_type_preference,
-      time_constraint: state.time_constraint,
+      gift_type_preference: state.gift_type_preference || 'both',
+      time_constraint: state.time_constraint || '1_2_weeks',
       country: state.country,
       relationship_key: state.relationship_key,
     };
@@ -215,8 +211,8 @@ export const useInputCollectionState = create<InputCollectionState>((set, get) =
     values: [],
     no_gos: [],
     budget_range: null,
-    gift_type_preference: 'no_preference',
-    time_constraint: 'normal',
+    gift_type_preference: null,
+    time_constraint: null,
     country: 'US',
     relationship_key: undefined,
   }),

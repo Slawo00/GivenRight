@@ -1,0 +1,216 @@
+🧙🏾‍♂️ Professor Schlau – **Screen 4. Jetzt kommen die harten Constraints.**
+Das ist der **letzte UI-Screen**, danach ist eure Eingabelogik vollständig, stabil und bereit für die Rückkopplung in die Decision Engine.
+
+---
+
+# 🧩 SCREEN 4 – „Let’s make sure this works“
+
+## Ziel (verbindlich)
+
+* **Machbarkeit klären**, nicht Geschmack
+* **Single-Select**, **Pflichtfelder**
+* **Rein Supabase-driven**
+* **Keine Defaults, keine Ableitungen im UI**
+* Speicherung **nur als Codes**
+
+---
+
+## 1️⃣ Supabase-Queries (UI-Read)
+
+### A) Gift Type Preference
+
+```sql
+SELECT code, label
+FROM q_gift_type_preferences
+ORDER BY sort_order;
+```
+
+> Falls `sort_order` nicht existiert → `ORDER BY label`
+
+### B) Time Constraints
+
+```sql
+SELECT code, label
+FROM q_time_constraints
+ORDER BY urgency_level;
+```
+
+> Falls `urgency_level` nicht existiert → `ORDER BY label`
+
+---
+
+## 2️⃣ Replit – Fetch Pattern (Screen 4)
+
+```ts
+// lib/loadScreen4Options.ts
+import { supabase } from './supabase';
+
+export async function loadScreen4Options() {
+  const [giftType, time] = await Promise.all([
+    supabase
+      .from('q_gift_type_preferences')
+      .select('code,label')
+      .order('sort_order'),
+
+    supabase
+      .from('q_time_constraints')
+      .select('code,label')
+      .order('urgency_level')
+  ]);
+
+  if (giftType.error || time.error) {
+    throw new Error('Failed to load Screen 4 options');
+  }
+
+  return {
+    giftTypes: giftType.data,
+    timeConstraints: time.data
+  };
+}
+```
+
+---
+
+## 3️⃣ UI-State (nur Codes)
+
+```ts
+// state/screen4.ts
+export const screen4State = {
+  gift_type: null as string | null,      // single, Pflicht
+  time_constraint: null as string | null // single, Pflicht
+};
+```
+
+### Beispiel:
+
+```json
+{
+  "gift_type": "both",
+  "time_constraint": "1_2_weeks"
+}
+```
+
+---
+
+## 4️⃣ UI-Regeln (nicht verhandelbar)
+
+### Gift Type
+
+* Single-Select
+* Pflichtfeld
+* Kein Default
+
+### Time Constraint
+
+* Single-Select
+* Pflichtfeld
+* Kein Default
+
+### Continue-Button
+
+```ts
+gift_type !== null && time_constraint !== null
+```
+
+---
+
+## 5️⃣ Persistenz (empfohlenes Muster)
+
+👉 **Sauberste Lösung:** eigene Tabelle
+(Trennung von Beziehung, Person & Constraints)
+
+### Tabelle: `decision_parameters`
+
+```sql
+CREATE TABLE decision_parameters (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  relationship_id UUID REFERENCES relationships(relationship_id) ON DELETE CASCADE,
+
+  gift_type TEXT NOT NULL,
+  time_constraint TEXT NOT NULL,
+
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+### Update/Insert aus Replit
+
+```ts
+// services/saveDecisionParameters.ts
+import { supabase } from './supabase';
+
+export async function saveDecisionParameters(
+  relationshipId: string,
+  data: { gift_type: string; time_constraint: string }
+) {
+  const { error } = await supabase
+    .from('decision_parameters')
+    .upsert({
+      relationship_id: relationshipId,
+      gift_type: data.gift_type,
+      time_constraint: data.time_constraint
+    });
+
+  if (error) throw error;
+}
+```
+
+> Falls ihr **bewusst** alles in `recipients` halten wollt: technisch möglich,
+> aber langfristig weniger sauber. Meine Empfehlung bleibt: **separate Tabelle**.
+
+---
+
+## 6️⃣ Ganz wichtige Regel (bitte merken)
+
+🚫 **Nicht im UI:**
+
+* „Wenn wenig Zeit → Erlebnis ausblenden“
+* „Wenn materiell → Zeit ignorieren“
+* irgendeine Logik
+
+✅ **Erst in Supabase-Views:**
+
+* Filter
+* Ausschlüsse
+* Priorisierung
+
+---
+
+## 7️⃣ Checkliste – Screen 4 „fertig“
+
+* [ ] Alle Gift Types aus Supabase sichtbar
+* [ ] Alle Time Constraints sichtbar
+* [ ] Beide Pflichtfelder
+* [ ] State speichert **nur Codes**
+* [ ] Persistenz funktioniert
+* [ ] Kein numerisches Mapping im UI
+
+---
+
+# 🧭 NÄCHSTER (SEHR WICHTIGER) SCHRITT
+
+Nach Screen 4 passiert **der architektonische Schwenk**:
+
+### 👉 **Life Stage Screen (konditional)**
+
+* erscheint **nur**, wenn Relationship = Kind / Nichte / Neffe
+* basiert auf `q_life_stages`
+
+**ODER**
+
+### 👉 **Zurück zur Decision Engine**
+
+* alle UI-Daten liegen sauber vor
+* wir verbinden wieder mit den Views
+* Replit wird reiner Orchestrator
+
+---
+
+### ❓ Deine Entscheidung
+
+Bevor wir weitergehen, bitte festlegen:
+
+**A)** Erst **Life Stage Screen** vorbereiten
+**B)** Direkt **zur Decision Engine & Replit-Integration zurückkehren**
+
+👉 Was ist dein nächster Schritt?
