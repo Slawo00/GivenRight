@@ -54,11 +54,11 @@ export async function loadScreen3Options(): Promise<Screen3Options> {
       supabase
         .from('q_value_constraints')
         .select('code, label')
-        .eq('type', 'value'),
+        .eq('constraint_type', 'value'),
       supabase
         .from('q_value_constraints')
         .select('code, label')
-        .eq('type', 'no_go'),
+        .eq('constraint_type', 'no_go'),
       supabase
         .from('q_budget_ranges')
         .select('code, label'),
