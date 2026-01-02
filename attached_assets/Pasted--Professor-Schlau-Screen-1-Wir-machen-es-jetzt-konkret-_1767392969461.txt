@@ -1,0 +1,172 @@
+🧙🏾‍♂️ Professor Schlau – **Screen 1. Wir machen es jetzt konkret und baubar.**
+Ziel: **Relationship / Closeness / Occasion / Importance** vollständig **Supabase-getrieben**, **keine Hardcodes** mehr.
+
+---
+
+# 🧩 SCREEN 1 – „Who is this gift for?“
+
+## Datenquelle (verbindlich)
+
+* `q_relationship_types`
+* `q_closeness_levels`
+* `q_occasion_types`
+* `q_occasion_importance_levels`
+
+Alle liefern **Codes + Labels**.
+UI rendert **Labels**, speichert **Codes**.
+
+---
+
+## 1️⃣ Supabase-Queries (UI-Read)
+
+### A) Relationship Types
+
+```sql
+SELECT code, label, description
+FROM q_relationship_types
+ORDER BY sort_order;
+```
+
+### B) Closeness Levels
+
+```sql
+SELECT code, label
+FROM q_closeness_levels
+ORDER BY emotional_expectation;
+```
+
+### C) Occasion Types
+
+```sql
+SELECT code, label
+FROM q_occasion_types
+ORDER BY sort_order;
+```
+
+### D) Occasion Importance
+
+```sql
+SELECT code, label
+FROM q_occasion_importance_levels
+ORDER BY importance_level;
+```
+
+> **Hinweis:** Falls `sort_order` noch nicht existiert:
+> Entweder hinzufügen oder über ein vorhandenes numerisches Feld sortieren (z. B. `importance_level`).
+
+---
+
+## 2️⃣ Replit – Fetch Pattern (einmalig, wiederverwendbar)
+
+```ts
+// lib/loadOptions.ts
+import { supabase } from './supabase';
+
+export async function loadScreen1Options() {
+  const [
+    relationships,
+    closeness,
+    occasions,
+    importance
+  ] = await Promise.all([
+    supabase.from('q_relationship_types').select('code,label,description').order('sort_order'),
+    supabase.from('q_closeness_levels').select('code,label').order('emotional_expectation'),
+    supabase.from('q_occasion_types').select('code,label').order('sort_order'),
+    supabase.from('q_occasion_importance_levels').select('code,label').order('importance_level')
+  ]);
+
+  if (relationships.error || closeness.error || occasions.error || importance.error) {
+    throw new Error('Failed to load Screen 1 options');
+  }
+
+  return {
+    relationships: relationships.data,
+    closeness: closeness.data,
+    occasions: occasions.data,
+    importance: importance.data
+  };
+}
+```
+
+---
+
+## 3️⃣ UI-State (nur Codes speichern)
+
+```ts
+// state/screen1.ts
+export const screen1State = {
+  relationship_type: null as string | null,
+  closeness_level: null as string | null,
+  occasion_type: null as string | null,
+  occasion_importance: null as string | null
+};
+```
+
+### Beispiel nach Auswahl:
+
+```json
+{
+  "relationship_type": "partner",
+  "closeness_level": "close",
+  "occasion_type": "birthday",
+  "occasion_importance": "very_important"
+}
+```
+
+---
+
+## 4️⃣ Persistenz (noch **keine** Entscheidung!)
+
+```ts
+// services/saveRelationship.ts
+import { supabase } from './supabase';
+
+export async function saveRelationship(userId: number, data: any) {
+  const { error } = await supabase
+    .from('relationships')
+    .insert({
+      user_id: userId,
+      relationship_type: data.relationship_type,
+      closeness_level: data.closeness_level,
+      occasion_type: data.occasion_type,
+      occasion_importance: data.occasion_importance
+    });
+
+  if (error) throw error;
+}
+```
+
+> **Wichtig:**
+>
+> * **Noch kein Recipient**
+> * **Noch keine Life Stage**
+> * **Noch kein Scoring**
+
+Screen 1 erzeugt **nur Kontext**.
+
+---
+
+## 5️⃣ UI-Regeln (minimal & stabil)
+
+* **Pflichtfelder:** alle vier
+* **Keine Defaults** erraten
+* **Weiter-Button** nur aktiv, wenn alle Codes gesetzt
+* **Labels jederzeit austauschbar**, Codes bleiben stabil
+
+---
+
+## 6️⃣ Checkliste (bitte kurz bestätigen)
+
+* [ ] UI lädt Optionen aus Supabase
+* [ ] Keine Hardcodes mehr
+* [ ] State speichert nur Codes
+* [ ] Insert in `relationships` funktioniert
+
+---
+
+### 👉 Nächster Schritt (empfohlen)
+
+**Screen 2 – Personality & Surprise Tolerance**
+(dynamisch aus `q_personality_traits` und `q_surprise_tolerance_levels`, inkl. Multi-Select)
+
+**Soll ich mit Screen 2 weitermachen?**
