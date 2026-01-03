@@ -25,7 +25,7 @@ export async function loadAllowedDecisionOptions(lifeStageCode: string): Promise
     return [];
   }
 
-  const options = data.map(d => d.decision_option);
+  const options = data.map(d => d.decision_option.toUpperCase());
   console.log('[DecisionOptions] Allowed options:', options);
   return options;
 }
