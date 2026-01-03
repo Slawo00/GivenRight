@@ -44,6 +44,7 @@ export function EnrichedDecisionScreen({
 
     setIsLoadingAllowed(true);
     setLoadError(null);
+    setSelectedDirection(null);
     
     loadAllowedDecisionOptions(life_stage_code)
       .then((options) => {
@@ -66,7 +67,7 @@ export function EnrichedDecisionScreen({
   }, []);
   
   const handleConfirm = () => {
-    if (selectedDirection) {
+    if (selectedDirection && allowedOptions.includes(selectedDirection)) {
       onDirectionSelected(selectedDirection);
     }
   };
