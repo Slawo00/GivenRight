@@ -25,7 +25,9 @@ The application is built using Expo SDK 54 with React Native and Expo Router for
 - **Security:** OpenAI API calls are routed through a Supabase Edge Function to securely manage API keys and prevent client-side exposure.
 
 **Feature Specifications:**
-- **Gift Decision Flow:** Guides users through multiple input screens (Relationship, Person, Boundaries, Practical) to collect data.
+- **Gift Decision Flow:** Guides users through multiple input screens (Relationship, Life Stage (conditional), Person, Boundaries, Practical) to collect data.
+- **Life Stage Screen (Screen 1b):** Conditional screen shown only for relationship types `child`, `nephew`, `niece`. Sets `life_stage_code` (baby/child/teenager). For all other relationships, `life_stage_code` defaults to `adult` automatically.
+- **Decision Options Filtering:** The Decision Screen loads allowed options from `v_allowed_decision_options` view based on `life_stage_code`. Only DB-allowed options are displayed (e.g., baby=SAFE only, adult=SAFE+EMOTIONAL+BOLD). No frontend logic or fallbacks.
 - **Personalized Recommendations:** Generates "safe," "emotional," or "bold" gift directions based on user-provided context.
 - **Contextual Enrichment:** AI-generated concrete examples and descriptions for each recommended gift direction, leveraging a refined "Weltklasse Prompt" structure.
 - **Debug Panel:** Provides real-time insights into the decision-making process for development.
@@ -33,7 +35,8 @@ The application is built using Expo SDK 54 with React Native and Expo Router for
 
 ## External Dependencies
 - **Supabase:**
-    - **Database:** PostgreSQL for storing UI texts (`ui_texts`), decision parameters (`decision_parameters`), explanations (`decision_explanations`), object patterns (`object_patterns`), and all dynamic options for input screens (`q_relationship_types`, `q_closeness_levels`, `q_occasion_types`, `q_occasion_importance_levels`, `q_personality_traits`, `q_surprise_tolerance_levels`, `q_value_constraints`, `q_budget_ranges`, `q_gift_type_preferences`, `q_time_constraints`).
+    - **Database:** PostgreSQL for storing UI texts (`ui_texts`), decision parameters (`decision_parameters`), explanations (`decision_explanations`), object patterns (`object_patterns`), and all dynamic options for input screens (`q_relationship_types`, `q_closeness_levels`, `q_occasion_types`, `q_occasion_importance_levels`, `q_personality_traits`, `q_surprise_tolerance_levels`, `q_value_constraints`, `q_budget_ranges`, `q_gift_type_preferences`, `q_time_constraints`, `q_life_stages`).
+    - **Views:** `v_allowed_decision_options` determines which decision options (SAFE/EMOTIONAL/BOLD) are allowed for each life stage.
     - **Edge Functions:** Used for secure server-side calls to OpenAI API (`enrich-explanation`).
     - **Authentication/Authorization:** RLS policies are set for read-only access for anonymous and authenticated users.
 - **OpenAI:** ChatGPT (specifically `gpt-4o-mini`) API for contextual enrichment and generating personalized gift examples.
