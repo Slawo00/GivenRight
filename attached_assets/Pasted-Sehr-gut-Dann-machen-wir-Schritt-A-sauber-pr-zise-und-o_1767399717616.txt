@@ -1,0 +1,162 @@
+Sehr gut. Dann machen wir **Schritt A sauber, präzise und ohne jede Nebenlogik**.
+Das Ziel ist **rein technisch**: *Frontend zeigt exakt das, was die Datenbank erlaubt.*
+
+---
+
+## 🎯 Ziel von Schritt A (klar definiert)
+
+> **Der Entscheidungs-Screen (SAFE / EMOTIONAL / BOLD) darf ausschließlich Optionen anzeigen,
+> die in `v_allowed_decision_options` für den aktuellen `life_stage_code` auf `is_allowed = true` stehen.**
+
+Keine Defaults.
+Keine Fallbacks.
+Keine Logik im UI.
+
+---
+
+## 🧱 Architektur-Grundsatz (wichtig)
+
+* **DB entscheidet**
+* **Frontend rendert**
+* **State speichert nur Codes**
+
+---
+
+## ✅ Schritt A – Exakte Replit-Anweisung (1:1 umsetzen)
+
+### 1️⃣ Service anlegen (oder erweitern)
+
+**Datei:**
+`services/supabase/decisionOptionsService.ts`
+
+```ts
+import { supabase } from './client';
+
+export async function loadAllowedDecisionOptions(lifeStageCode: string) {
+  const { data, error } = await supabase
+    .from('v_allowed_decision_options')
+    .select('decision_option')
+    .eq('life_stage_code', lifeStageCode)
+    .eq('is_allowed', true)
+    .order('decision_option');
+
+  if (error) throw error;
+
+  return data.map(d => d.decision_option);
+}
+```
+
+🔒 **Wichtig**
+
+* keine Fallback-Daten
+* kein Mapping
+* kein Filter im Code
+
+---
+
+### 2️⃣ Screen-Logik (Decision Screen)
+
+**State**
+
+```ts
+const [allowedOptions, setAllowedOptions] = useState<string[]>([]);
+const [selectedOption, setSelectedOption] = useState<string | null>(null);
+```
+
+---
+
+### 3️⃣ Laden beim Screen-Entry
+
+```ts
+useEffect(() => {
+  if (!lifeStageCode) return;
+
+  loadAllowedDecisionOptions(lifeStageCode)
+    .then(setAllowedOptions)
+    .catch(() => setAllowedOptions([]));
+}, [lifeStageCode]);
+```
+
+🔒 **Regel**
+
+* Wenn `allowedOptions.length === 0` → Screen blockiert
+* Das ist **ein Datenfehler**, kein UI-Problem
+
+---
+
+### 4️⃣ Rendering (ohne Logik!)
+
+```tsx
+{allowedOptions.map(option => (
+  <SelectableCard
+    key={option}
+    label={option.toUpperCase()}
+    selected={selectedOption === option}
+    onPress={() => setSelectedOption(option)}
+  />
+))}
+```
+
+❌ KEIN:
+
+* `if (lifeStage === 'baby')`
+* `filter()`
+* `switch`
+* `map-to-label`
+
+---
+
+### 5️⃣ Continue-Button
+
+```tsx
+<Button
+  disabled={!selectedOption}
+  onPress={async () => {
+    await supabase
+      .from('decision_inputs')
+      .upsert({
+        relationship_id,
+        decision_option: selectedOption
+      });
+    navigateNext();
+  }}
+/>
+```
+
+---
+
+## 🧪 Pflicht-Tests (bitte exakt so prüfen)
+
+| Life Stage | Erwartete Buttons     |
+| ---------- | --------------------- |
+| baby       | SAFE                  |
+| child      | SAFE, EMOTIONAL       |
+| teenager   | SAFE, EMOTIONAL       |
+| adult      | SAFE, EMOTIONAL, BOLD |
+
+Wenn **auch nur ein Button zu viel erscheint → Fehler**
+(und zwar **DB-seitig**, nicht im UI)
+
+---
+
+## 🧠 Warum das jetzt richtig ist
+
+* Deine Decision Engine ist **100 % datengetrieben**
+* Neue Regeln = **nur SQL-View ändern**
+* Kein Re-Deploy nötig
+* Voll auditierbar
+
+---
+
+## Nächster Schritt (deine Wahl)
+
+**Empfehlung:**
+👉 **Schritt B – Explanation Layer**
+(dynamische Begründung: *„Warum SAFE für ein Baby?“*)
+
+Oder möchtest du:
+
+* erst den Screen visuell polieren
+* oder direkt den **Decision Score + Confidence Level** einführen?
+
+👉 **Was machen wir als Nächstes?**

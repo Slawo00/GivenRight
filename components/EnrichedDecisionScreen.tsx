@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useEnrichmentState } from '../store/useEnrichmentState';
 import { useInputCollectionState } from '../store/useInputCollectionState';
 import { EnrichedDirectionCard } from './EnrichedDirectionCard';
+import { loadAllowedDecisionOptions } from '../services/supabase/decisionOptionsService';
 import type { ConfidenceType, DecisionResult } from '../services/decisionEngine/types';
 
 interface EnrichedDecisionScreenProps {
@@ -27,9 +28,35 @@ export function EnrichedDecisionScreen({
   onBack,
 }: EnrichedDecisionScreenProps) {
   const [selectedDirection, setSelectedDirection] = useState<ConfidenceType | null>(null);
+  const [allowedOptions, setAllowedOptions] = useState<string[]>([]);
+  const [isLoadingAllowed, setIsLoadingAllowed] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   
   const { isEnriching, enrichedResult, startEnrichment } = useEnrichmentState();
-  const { getDecisionContext } = useInputCollectionState();
+  const { getDecisionContext, life_stage_code } = useInputCollectionState();
+  
+  useEffect(() => {
+    if (!life_stage_code) {
+      setLoadError('Life stage not set');
+      setIsLoadingAllowed(false);
+      return;
+    }
+
+    setIsLoadingAllowed(true);
+    setLoadError(null);
+    
+    loadAllowedDecisionOptions(life_stage_code)
+      .then((options) => {
+        setAllowedOptions(options);
+        setIsLoadingAllowed(false);
+      })
+      .catch((error) => {
+        console.error('Failed to load allowed options:', error);
+        setAllowedOptions([]);
+        setLoadError('Failed to load options');
+        setIsLoadingAllowed(false);
+      });
+  }, [life_stage_code]);
   
   useEffect(() => {
     const context = getDecisionContext();
@@ -65,7 +92,22 @@ export function EnrichedDecisionScreen({
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {isEnriching ? (
+        {isLoadingAllowed ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#6366f1" />
+            <Text style={styles.loadingText}>Loading options...</Text>
+          </View>
+        ) : loadError || allowedOptions.length === 0 ? (
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle" size={48} color="#ef4444" />
+            <Text style={styles.errorText}>
+              {loadError || 'No options available for this selection'}
+            </Text>
+            <Text style={styles.errorSubtext}>
+              This is a data configuration issue
+            </Text>
+          </View>
+        ) : isEnriching ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#6366f1" />
             <Text style={styles.loadingText}>
@@ -76,30 +118,33 @@ export function EnrichedDecisionScreen({
             </Text>
           </View>
         ) : enrichedResult ? (
-          enrichedResult.options.map((option, index) => (
-            <EnrichedDirectionCard
-              key={option.confidence_type}
-              option={option}
-              isSelected={selectedDirection === option.confidence_type}
-              isRecommended={index === 0}
-              onSelect={() => setSelectedDirection(option.confidence_type)}
-            />
-          ))
+          enrichedResult.options
+            .filter((option) => allowedOptions.includes(option.confidence_type))
+            .map((option, index) => (
+              <EnrichedDirectionCard
+                key={option.confidence_type}
+                option={option}
+                isSelected={selectedDirection === option.confidence_type}
+                isRecommended={index === 0}
+                onSelect={() => setSelectedDirection(option.confidence_type)}
+              />
+            ))
         ) : (
-          // Fallback: show base options without enrichment
-          decisionResult.options.map((option) => (
-            <TouchableOpacity
-              key={option.confidence_type}
-              style={[
-                styles.fallbackCard,
-                selectedDirection === option.confidence_type && styles.fallbackSelected,
-              ]}
-              onPress={() => setSelectedDirection(option.confidence_type)}
-            >
-              <Text style={styles.fallbackTitle}>{option.confidence_type} Choice</Text>
-              <Text style={styles.fallbackText}>{option.explanation.why_this_works}</Text>
-            </TouchableOpacity>
-          ))
+          decisionResult.options
+            .filter((option) => allowedOptions.includes(option.confidence_type))
+            .map((option) => (
+              <TouchableOpacity
+                key={option.confidence_type}
+                style={[
+                  styles.fallbackCard,
+                  selectedDirection === option.confidence_type && styles.fallbackSelected,
+                ]}
+                onPress={() => setSelectedDirection(option.confidence_type)}
+              >
+                <Text style={styles.fallbackTitle}>{option.confidence_type} Choice</Text>
+                <Text style={styles.fallbackText}>{option.explanation.why_this_works}</Text>
+              </TouchableOpacity>
+            ))
         )}
       </ScrollView>
       
@@ -176,6 +221,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#9ca3af',
     marginTop: 8,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  errorText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ef4444',
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: '#9ca3af',
+    marginTop: 8,
+    textAlign: 'center',
   },
   fallbackCard: {
     backgroundColor: '#f9fafb',
