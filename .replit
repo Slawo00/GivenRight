@@ -1,5 +1,5 @@
 entrypoint = "README.md"
-modules = ["nodejs-22", "postgresql-16"]
+modules = ["nodejs-22", "postgresql-16", "python-3.11"]
 
 [nix]
 channel = "stable-24_05"
@@ -77,7 +77,7 @@ args = "CI=1 npx expo start --tunnel"
 
 [agent]
 expertMode = true
-integrations = ["javascript_openai_ai_integrations:2.0.0"]
+integrations = ["javascript_openai_ai_integrations:2.0.0", "github:1.0.0"]
 
 [userenv]
 
