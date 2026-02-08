@@ -1,35 +1,31 @@
-name: Supabase DB Push
+name: Supabase Deploy
 
 on:
   push:
-    branches: [ "master" ]  # Using master (not main)
-    paths:
-      - "supabase/**"
-  workflow_dispatch:  # Manual trigger
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
     
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
       
     - name: Install Supabase CLI
       uses: supabase/setup-cli@v1
       with:
         version: latest
         
-    - name: Authenticate Supabase CLI
-      run: supabase login --access-token "${{ secrets.SUPABASE_ACCESS_TOKEN }}"
+    - name: Supabase link
+      run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
       
-    - name: Link project
-      run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}"
-      
-    - name: Push migrations
-      env:
-        SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-      run: supabase db push
+    - name: Push migrations (debug)
+      run: supabase db push --db-url "$SUPABASE_DB_URL" --debug
       
     - name: Verify deployment
       run: |
