@@ -13,9 +13,9 @@ SELECT
             calculate_personality_fit_score(
                 dc.personality_traits,
                 COALESCE(dc.gift_type_preference, 'experience'),
-                COALESCE(dc.decision_option, 'safe'),
+                'safe',  -- default decision_option (column doesn't exist)
                 COALESCE(dc.time_constraint, 'relaxed'),
-                COALESCE(dc.surprise_tolerance, 'likes_surprises'),
+                'likes_surprises',  -- default surprise_tolerance (column doesn't exist)
                 TRUE,  -- personalization_allowed
                 FALSE  -- public_visibility
             )
@@ -36,9 +36,9 @@ SELECT
                 calculate_personality_fit_score(
                     dc.personality_traits,
                     COALESCE(dc.gift_type_preference, 'experience'),
-                    COALESCE(dc.decision_option, 'safe'),
+                    'safe',  -- default decision_option (column doesn't exist)
                     COALESCE(dc.time_constraint, 'relaxed'),
-                    COALESCE(dc.surprise_tolerance, 'likes_surprises'),
+                    'likes_surprises',  -- default surprise_tolerance (column doesn't exist)
                     TRUE,  -- personalization_allowed
                     FALSE  -- public_visibility
                 )
@@ -63,7 +63,7 @@ SELECT
                 COALESCE(dc.gift_type_preference, 'experience'),
                 'safe',
                 COALESCE(dc.time_constraint, 'relaxed'),
-                COALESCE(dc.surprise_tolerance, 'likes_surprises'),
+                'likes_surprises',  -- default surprise_tolerance (column doesn't exist)
                 TRUE,  -- personalization_allowed
                 FALSE  -- public_visibility
             )
