@@ -1,75 +1,33 @@
--- GivenRight Initial Database Schema
+-- GivenRight Enhanced Schema
 -- Created: 2026-02-09
--- Purpose: Core tables for gift recommendation system with confidence scoring
+-- Purpose: Add gift recommendation tables + enhanced confidence scoring
+-- NOTE: Existing tables (users, recipients, gift_sessions, etc.) from v2 are preserved
 
--- UUID functions are available by default in Supabase
--- Using gen_random_uuid() instead of gen_random_uuid()
-
--- Users table for app users
-CREATE TABLE IF NOT EXISTS users (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    email VARCHAR(255) UNIQUE,
-    name VARCHAR(255),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    preferences JSONB DEFAULT '{}',
-    total_recommendations INTEGER DEFAULT 0
-);
-
--- Recipients table for gift recipients
-CREATE TABLE IF NOT EXISTS recipients (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    relationship VARCHAR(100),
-    age_range VARCHAR(50),
-    gender VARCHAR(50),
-    personality_type VARCHAR(100),
-    interests TEXT[],
-    hobbies TEXT[],
-    lifestyle VARCHAR(100),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Gift sessions table for each recommendation session
-CREATE TABLE IF NOT EXISTS gift_sessions (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    recipient_id UUID REFERENCES recipients(id) ON DELETE CASCADE,
-    occasion VARCHAR(100) NOT NULL,
-    budget_min DECIMAL(10,2) DEFAULT 0,
-    budget_max DECIMAL(10,2) DEFAULT 100,
-    timing VARCHAR(50) DEFAULT 'flexible',
-    special_notes TEXT,
-    confidence_score INTEGER DEFAULT 0,
-    score_breakdown JSONB DEFAULT '{}',
-    session_data JSONB DEFAULT '{}',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    completed_at TIMESTAMP WITH TIME ZONE
-);
+-- ============================================
+-- NEW TABLES (only if they don't exist yet)
+-- ============================================
 
 -- Gift recommendations table
 CREATE TABLE IF NOT EXISTS gift_recommendations (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    session_id UUID REFERENCES gift_sessions(id) ON DELETE CASCADE,
+    session_id UUID,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     category VARCHAR(100),
     price_range VARCHAR(50),
-    confidence_score INTEGER NOT NULL,
+    confidence_score INTEGER NOT NULL DEFAULT 0,
     reasoning TEXT,
     purchase_links JSONB DEFAULT '[]',
     ai_generated BOOLEAN DEFAULT FALSE,
-    user_feedback INTEGER, -- 1-5 rating
+    user_feedback INTEGER,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Confidence scoring factors table
 CREATE TABLE IF NOT EXISTS confidence_factors (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    session_id UUID REFERENCES gift_sessions(id) ON DELETE CASCADE,
-    factor_type VARCHAR(100) NOT NULL, -- 'personality', 'relationship', 'budget', 'occasion', 'preference'
+    session_id UUID,
+    factor_type VARCHAR(100) NOT NULL,
     factor_value VARCHAR(255),
     points_awarded INTEGER DEFAULT 0,
     max_points INTEGER DEFAULT 0,
@@ -88,22 +46,28 @@ CREATE TABLE IF NOT EXISTS gift_categories (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Insert default gift categories
+-- ============================================
+-- SEED DATA
+-- ============================================
+
 INSERT INTO gift_categories (name, description, typical_price_range, personality_matches, occasion_matches) VALUES
-('Creative & Arts', 'Art supplies, craft kits, creative workshops', '$20-150', ARRAY['Creative & Artistic'], ARRAY['Birthday', 'Christmas', 'Just Because']),
-('Technology', 'Gadgets, smart devices, tech accessories', '$25-200', ARRAY['Tech Enthusiast'], ARRAY['Birthday', 'Graduation', 'Christmas']),
-('Experience', 'Classes, workshops, events, activities', '$30-300', ARRAY['Active & Adventurous', 'Social & Outgoing'], ARRAY['Birthday', 'Anniversary', 'Graduation']),
-('Food & Drink', 'Gourmet items, cooking supplies, beverages', '$15-100', ARRAY['Practical & Logical'], ARRAY['Housewarming', 'Thank You', 'Christmas']),
-('Comfort & Wellness', 'Relaxation items, self-care, cozy goods', '$20-120', ARRAY['Homebody & Cozy', 'Quiet & Thoughtful'], ARRAY['Thank You', 'Just Because', 'Valentine''s Day']),
-('Personal & Sentimental', 'Custom items, photo gifts, memory keepsakes', '$25-150', ARRAY['Quiet & Thoughtful'], ARRAY['Anniversary', 'Valentine''s Day', 'Wedding']),
-('Books & Learning', 'Books, courses, educational materials', '$15-80', ARRAY['Quiet & Thoughtful'], ARRAY['Graduation', 'Birthday', 'Just Because']),
-('Fashion & Style', 'Clothing, accessories, jewelry', '$20-250', ARRAY['Social & Outgoing'], ARRAY['Birthday', 'Christmas', 'Valentine''s Day']),
+('Creative & Arts', 'Art supplies, craft kits, creative workshops', '$20-150', ARRAY['Creative & Artistic', 'creative'], ARRAY['Birthday', 'Christmas', 'Just Because']),
+('Technology', 'Gadgets, smart devices, tech accessories', '$25-200', ARRAY['Tech Enthusiast', 'analytical'], ARRAY['Birthday', 'Graduation', 'Christmas']),
+('Experience', 'Classes, workshops, events, activities', '$30-300', ARRAY['Active & Adventurous', 'adventurous', 'Social & Outgoing'], ARRAY['Birthday', 'Anniversary', 'Graduation']),
+('Food & Drink', 'Gourmet items, cooking supplies, beverages', '$15-100', ARRAY['Practical & Logical', 'practical'], ARRAY['Housewarming', 'Thank You', 'Christmas']),
+('Comfort & Wellness', 'Relaxation items, self-care, cozy goods', '$20-120', ARRAY['Homebody & Cozy', 'Quiet & Thoughtful', 'introverted'], ARRAY['Thank You', 'Just Because']),
+('Personal & Sentimental', 'Custom items, photo gifts, memory keepsakes', '$25-150', ARRAY['Quiet & Thoughtful', 'sentimental'], ARRAY['Anniversary', 'Wedding']),
+('Books & Learning', 'Books, courses, educational materials', '$15-80', ARRAY['Quiet & Thoughtful', 'intellectual'], ARRAY['Graduation', 'Birthday', 'Just Because']),
+('Fashion & Style', 'Clothing, accessories, jewelry', '$20-250', ARRAY['Social & Outgoing', 'trendy'], ARRAY['Birthday', 'Christmas']),
 ('Home & Garden', 'Home decor, plants, organization items', '$25-150', ARRAY['Homebody & Cozy', 'Nature Lover'], ARRAY['Housewarming', 'Wedding', 'Christmas']),
-('Sports & Fitness', 'Exercise equipment, outdoor gear, sports items', '$30-200', ARRAY['Active & Adventurous'], ARRAY['New Year', 'Birthday', 'Graduation'])
+('Sports & Fitness', 'Exercise equipment, outdoor gear, sports items', '$30-200', ARRAY['Active & Adventurous', 'athletic'], ARRAY['Birthday', 'Graduation'])
 ON CONFLICT (name) DO NOTHING;
 
--- Functions for confidence scoring
-CREATE OR REPLACE FUNCTION calculate_confidence_score(
+-- ============================================
+-- ENHANCED CONFIDENCE SCORING FUNCTION
+-- ============================================
+
+CREATE OR REPLACE FUNCTION calculate_gift_confidence_score(
     p_personality_type VARCHAR,
     p_interests TEXT[],
     p_relationship VARCHAR,
@@ -123,9 +87,9 @@ BEGIN
     -- Personality Match Score (max 25 points)
     IF p_personality_type IS NOT NULL THEN
         personality_score := 15;
-        IF array_length(p_interests, 1) >= 3 THEN
+        IF p_interests IS NOT NULL AND array_length(p_interests, 1) >= 3 THEN
             personality_score := personality_score + 10;
-        ELSIF array_length(p_interests, 1) >= 1 THEN
+        ELSIF p_interests IS NOT NULL AND array_length(p_interests, 1) >= 1 THEN
             personality_score := personality_score + 5;
         END IF;
     END IF;
@@ -144,7 +108,7 @@ BEGIN
     IF p_budget_max > p_budget_min THEN
         budget_score := 10;
         IF (p_budget_max - p_budget_min) <= 20 THEN
-            budget_score := budget_score + 5; -- Specific budget
+            budget_score := budget_score + 5;
         END IF;
     END IF;
     
@@ -194,63 +158,36 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Indexes for performance
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_recipients_user_id ON recipients(user_id);
-CREATE INDEX idx_gift_sessions_user_id ON gift_sessions(user_id);
-CREATE INDEX idx_gift_sessions_created_at ON gift_sessions(created_at);
-CREATE INDEX idx_gift_recommendations_session_id ON gift_recommendations(session_id);
-CREATE INDEX idx_gift_recommendations_confidence_score ON gift_recommendations(confidence_score DESC);
-CREATE INDEX idx_confidence_factors_session_id ON confidence_factors(session_id);
+-- ============================================
+-- INDEXES (safe with IF NOT EXISTS pattern)
+-- ============================================
 
--- RLS (Row Level Security) policies
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE recipients ENABLE ROW LEVEL SECURITY;
-ALTER TABLE gift_sessions ENABLE ROW LEVEL SECURITY;
+CREATE INDEX IF NOT EXISTS idx_gift_recommendations_session_id ON gift_recommendations(session_id);
+CREATE INDEX IF NOT EXISTS idx_gift_recommendations_confidence ON gift_recommendations(confidence_score DESC);
+CREATE INDEX IF NOT EXISTS idx_confidence_factors_session_id ON confidence_factors(session_id);
+CREATE INDEX IF NOT EXISTS idx_gift_categories_name ON gift_categories(name);
+
+-- ============================================
+-- RLS POLICIES
+-- ============================================
+
 ALTER TABLE gift_recommendations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE confidence_factors ENABLE ROW LEVEL SECURITY;
-
--- Users can only access their own data
-CREATE POLICY users_own_data ON users FOR ALL USING (auth.uid() = id);
-CREATE POLICY recipients_own_data ON recipients FOR ALL USING (
-    user_id = auth.uid() OR 
-    user_id IN (SELECT id FROM users WHERE auth.uid() = id)
-);
-CREATE POLICY sessions_own_data ON gift_sessions FOR ALL USING (
-    user_id = auth.uid() OR
-    user_id IN (SELECT id FROM users WHERE auth.uid() = id)
-);
-CREATE POLICY recommendations_own_data ON gift_recommendations FOR ALL USING (
-    session_id IN (SELECT id FROM gift_sessions WHERE user_id = auth.uid())
-);
-CREATE POLICY factors_own_data ON confidence_factors FOR ALL USING (
-    session_id IN (SELECT id FROM gift_sessions WHERE user_id = auth.uid())
-);
+ALTER TABLE gift_categories ENABLE ROW LEVEL SECURITY;
 
 -- Gift categories are public (read-only)
 CREATE POLICY categories_public_read ON gift_categories FOR SELECT USING (true);
 
--- Update timestamps function
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- Recommendations and factors: allow all for now (refine with auth later)
+CREATE POLICY recommendations_public ON gift_recommendations FOR ALL USING (true);
+CREATE POLICY factors_public ON confidence_factors FOR ALL USING (true);
 
--- Add update triggers
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users 
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_recipients_updated_at BEFORE UPDATE ON recipients 
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- ============================================
+-- COMMENTS
+-- ============================================
 
-COMMENT ON TABLE users IS 'App users with their preferences and stats';
-COMMENT ON TABLE recipients IS 'Gift recipients with personality and preference data';
-COMMENT ON TABLE gift_sessions IS 'Individual gift-giving sessions with context and scoring';
 COMMENT ON TABLE gift_recommendations IS 'AI-generated and curated gift recommendations';
 COMMENT ON TABLE confidence_factors IS 'Detailed breakdown of confidence scoring factors';
 COMMENT ON TABLE gift_categories IS 'Predefined gift categories with matching criteria';
-
-COMMENT ON FUNCTION calculate_confidence_score IS 'Calculates overall confidence score based on user inputs';
-COMMENT ON FUNCTION get_recommended_categories IS 'Returns recommended gift categories based on personality and occasion';
+COMMENT ON FUNCTION calculate_gift_confidence_score IS 'Enhanced confidence scoring for gift recommendations';
+COMMENT ON FUNCTION get_recommended_categories IS 'Returns gift categories ranked by personality+occasion match';
