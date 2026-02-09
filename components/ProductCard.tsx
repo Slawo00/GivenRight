@@ -46,26 +46,35 @@ export function ProductCard({ product }: ProductCardProps) {
     return stars;
   };
 
+  const priceText = formatPrice(product.price, product.currency);
+  const ratingText = `${product.rating.toFixed(1)} out of 5 stars, ${product.reviewCount.toLocaleString()} reviews`;
+
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={handlePress}
       activeOpacity={0.7}
+      accessible={true}
+      accessibilityRole="button"
+      accessibilityLabel={`${product.title}, ${priceText}, ${ratingText}. Tap to view on Amazon.`}
+      accessibilityHint="Opens product page in browser"
     >
       <Image
         source={{ uri: product.imageUrl }}
         style={styles.image}
         resizeMode="cover"
+        accessible={true}
+        accessibilityLabel={`Product image: ${product.title}`}
       />
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={2}>
           {product.title}
         </Text>
-        <Text style={styles.price}>
-          {formatPrice(product.price, product.currency)}
+        <Text style={styles.price} accessibilityLabel={`Price: ${priceText}`}>
+          {priceText}
         </Text>
-        <View style={styles.ratingRow}>
-          <Text style={styles.stars}>{renderStars(product.rating)}</Text>
+        <View style={styles.ratingRow} accessibilityLabel={ratingText}>
+          <Text style={styles.stars} aria-hidden={true}>{renderStars(product.rating)}</Text>
           <Text style={styles.rating}>{product.rating.toFixed(1)}</Text>
           <Text style={styles.reviews}>({product.reviewCount.toLocaleString()})</Text>
         </View>
