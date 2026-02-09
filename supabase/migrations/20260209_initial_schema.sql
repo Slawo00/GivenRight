@@ -3,8 +3,8 @@
 -- Purpose: Core tables for gift recommendation system with confidence scoring
 
 -- Enable necessary extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA extensions;
 
 -- Users table for app users
 CREATE TABLE IF NOT EXISTS users (
