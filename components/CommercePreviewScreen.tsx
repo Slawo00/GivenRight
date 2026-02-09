@@ -56,7 +56,7 @@ export function CommercePreviewScreen() {
 
       if (result.success) {
         setProducts(result.products);
-        completeWithExecution();
+        // Don't auto-complete — let user browse products first
         
         if (relationshipMemoryActive && relationship && occasion && selectedDirection && selectedPattern) {
           recordDecision({
@@ -79,6 +79,7 @@ export function CommercePreviewScreen() {
   };
 
   const handleStartNew = () => {
+    completeWithExecution();
     resetDecision();
   };
 
