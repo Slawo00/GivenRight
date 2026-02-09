@@ -2,13 +2,12 @@
 -- Created: 2026-02-09
 -- Purpose: Core tables for gift recommendation system with confidence scoring
 
--- Enable necessary extensions
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
-CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA extensions;
+-- UUID functions are available by default in Supabase
+-- Using gen_random_uuid() instead of gen_random_uuid()
 
 -- Users table for app users
 CREATE TABLE IF NOT EXISTS users (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     email VARCHAR(255) UNIQUE,
     name VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -19,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Recipients table for gift recipients
 CREATE TABLE IF NOT EXISTS recipients (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     relationship VARCHAR(100),
@@ -35,7 +34,7 @@ CREATE TABLE IF NOT EXISTS recipients (
 
 -- Gift sessions table for each recommendation session
 CREATE TABLE IF NOT EXISTS gift_sessions (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     recipient_id UUID REFERENCES recipients(id) ON DELETE CASCADE,
     occasion VARCHAR(100) NOT NULL,
@@ -52,7 +51,7 @@ CREATE TABLE IF NOT EXISTS gift_sessions (
 
 -- Gift recommendations table
 CREATE TABLE IF NOT EXISTS gift_recommendations (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     session_id UUID REFERENCES gift_sessions(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -68,7 +67,7 @@ CREATE TABLE IF NOT EXISTS gift_recommendations (
 
 -- Confidence scoring factors table
 CREATE TABLE IF NOT EXISTS confidence_factors (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     session_id UUID REFERENCES gift_sessions(id) ON DELETE CASCADE,
     factor_type VARCHAR(100) NOT NULL, -- 'personality', 'relationship', 'budget', 'occasion', 'preference'
     factor_value VARCHAR(255),
@@ -80,7 +79,7 @@ CREATE TABLE IF NOT EXISTS confidence_factors (
 
 -- Gift categories lookup table
 CREATE TABLE IF NOT EXISTS gift_categories (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
     description TEXT,
     typical_price_range VARCHAR(50),
