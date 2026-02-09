@@ -10,6 +10,7 @@ import {
 import { useDecisionState } from "../store/useDecisionState";
 import { useGiftMemoryState } from "../store/useGiftMemoryState";
 import { ProductCard } from "./ProductCard";
+import { AIRecommendationSection } from "./AIRecommendationSection";
 import { resolveProducts } from "../services/productResolver";
 import { Product } from "../types/product";
 
@@ -128,6 +129,14 @@ export function CommercePreviewScreen() {
             <ProductCard key={product.id} product={product} />
           ))}
         </View>
+      )}
+
+      {/* AI-Enhanced Recommendations Section */}
+      {selectedPattern && selectedDirection && (
+        <AIRecommendationSection
+          patternKey={selectedPattern.patternKey}
+          direction={selectedDirection}
+        />
       )}
 
       <View style={styles.footer}>
