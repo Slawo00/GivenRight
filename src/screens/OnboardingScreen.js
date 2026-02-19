@@ -7,7 +7,8 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  Switch
+  Switch,
+  TextInput
 } from 'react-native';
 import { supabase } from '../services/DatabaseService';
 
@@ -485,7 +486,7 @@ export default function OnboardingScreen({ onComplete }) {
         return render536bCheck();
       case STEPS.PERMISSIONS:
         return renderPermissions();
-      case STEPS.DSGDO:
+      case STEPS.DSGVO:
         return renderDSGVO();
       case STEPS.AUTH:
         return renderAuth();
