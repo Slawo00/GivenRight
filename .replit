@@ -1,0 +1,14 @@
+run = "npx expo start"
+hidden = [".config"]
+modules = ["nodejs-18:v24-20240117-0bd73cd"]
+
+[nix]
+channel = "stable-23_11"
+
+[deployment]
+build = ["npm install"]
+run = ["npx", "expo", "start", "--web"]
+
+[[ports]]
+localPort = 8081
+externalPort = 80
