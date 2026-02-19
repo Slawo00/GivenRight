@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎤 Browser TTS Test</title>
+    <style>
+        body {
+            font-family: system-ui;
+            padding: 40px;
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+        }
+        
+        h1 { color: #4ecdc4; }
+        
+        button {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border: none;
+            padding: 15px 30px;
+            color: white;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover { transform: translateY(-2px); }
+        
+        .voice-list {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            text-align: left;
+        }
+        
+        .voice-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .voice-item:hover { background: rgba(78,205,196,0.2); }
+        
+        .selected { background: rgba(78,205,196,0.3) !important; }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            font-size: 1.1em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Browser TTS Test für Aegis</h1>
+        
+        <p>Teste verschiedene Browser-Stimmen für bessere deutsche Aussprache:</p>
+        
+        <div class="voice-list" id="voiceList">
+            Lade verfügbare Stimmen...
+        </div>
+        
+        <textarea id="testText" rows="4" placeholder="Text zum Testen...">
+Hallo Ironman! Das ist ein Test mit der Browser-TTS. Ich hoffe, diese Stimme klingt viel natürlicher und verständlicher als der alte chinesische Roboter von vorhin!
+        </textarea>
+        
+        <div>
+            <button onclick="speakText()">🔊 Text sprechen</button>
+            <button onclick="stopSpeaking()">⏹️ Stop</button>
+        </div>
+        
+        <div style="margin-top: 30px; opacity: 0.7;">
+            <p><strong>Anleitung:</strong></p>
+            <p>1. Wähle eine deutsche Stimme aus der Liste</p>
+            <p>2. Bearbeite den Text wenn gewünscht</p>
+            <p>3. Klicke "Text sprechen"</p>
+            <p>4. Finde die beste Stimme für Aegis!</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedVoice = null;
+        let voices = [];
+        
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            const voiceList = document.getElementById('voiceList');
+            
+            if (voices.length === 0) {
+                voiceList.innerHTML = '<p>Keine Stimmen gefunden. Versuche es in Chrome oder Edge.</p>';
+                return;
+            }
+            
+            // Filter for German voices or good quality voices
+            const germanVoices = voices.filter(voice => 
+                voice.lang.includes('de') || 
+                voice.name.includes('German') ||
+                voice.name.includes('Deutsch')
+            );
+            
+            const otherGoodVoices = voices.filter(voice => 
+                voice.name.includes('Google') ||
+                voice.name.includes('Microsoft') ||
+                voice.name.includes('Apple') ||
+                voice.name.includes('Enhanced')
+            );
+            
+            const allVoices = [...germanVoices, ...otherGoodVoices.slice(0, 5)];
+            
+            voiceList.innerHTML = '<h3>🇩🇪 Verfügbare Stimmen:</h3>';
+            
+            if (allVoices.length === 0) {
+                voiceList.innerHTML += '<p>Keine optimalen Stimmen gefunden. Zeige alle...</p>';
+                allVoices.push(...voices.slice(0, 10));
+            }
+            
+            allVoices.forEach((voice, index) => {
+                const div = document.createElement('div');
+                div.className = 'voice-item';
+                div.innerHTML = `
+                    <strong>${voice.name}</strong><br>
+                    <small>Sprache: ${voice.lang} | ${voice.localService ? 'Lokal' : 'Online'}</small>
+                `;
+                div.onclick = () => selectVoice(voice, div);
+                voiceList.appendChild(div);
+                
+                // Auto-select first German voice
+                if (index === 0 && germanVoices.length > 0) {
+                    selectVoice(voice, div);
+                }
+            });
+        }
+        
+        function selectVoice(voice, element) {
+            // Remove previous selection
+            document.querySelectorAll('.voice-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Select new voice
+            selectedVoice = voice;
+            element.classList.add('selected');
+            
+            console.log('Selected voice:', voice.name, voice.lang);
+        }
+        
+        function speakText() {
+            const text = document.getElementById('testText').value;
+            
+            if (!text.trim()) {
+                alert('Bitte gib Text ein!');
+                return;
+            }
+            
+            // Stop any current speech
+            speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            
+            // Optimize settings for German
+            utterance.rate = 0.85;  // Slightly slower
+            utterance.pitch = 0.9;  // Slightly lower
+            utterance.volume = 1.0; // Full volume
+            
+            // Set language preference
+            utterance.lang = selectedVoice ? selectedVoice.lang : 'de-DE';
+            
+            speechSynthesis.speak(utterance);
+            
+            utterance.onend = () => {
+                console.log('Speech finished');
+            };
+            
+            utterance.onerror = (event) => {
+                console.error('Speech error:', event);
+                alert('Fehler bei der Sprachausgabe: ' + event.error);
+            };
+        }
+        
+        function stopSpeaking() {
+            speechSynthesis.cancel();
+        }
+        
+        // Load voices when available
+        speechSynthesis.onvoiceschanged = loadVoices;
+        
+        // Load voices immediately if already available
+        if (speechSynthesis.getVoices().length > 0) {
+            loadVoices();
+        }
+        
+        // Fallback: load after a short delay
+        setTimeout(loadVoices, 1000);
+    </script>
+</body>
+</html>

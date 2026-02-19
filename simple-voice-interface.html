@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Aegis Voice Chat - Einfach</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .status {
+            font-size: 1.4em;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+        
+        .record-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border: none;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            color: white;
+            font-size: 3em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+            margin: 20px;
+        }
+        
+        .record-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .record-btn.recording {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        
+        .response-area {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .response-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        
+        .audio-player {
+            margin: 20px 0;
+        }
+        
+        audio {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            font-size: 1em;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        .error {
+            background: rgba(255, 107, 107, 0.3);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Aegis Voice Chat</h1>
+        
+        <div class="status" id="status">
+            Bereit für Gespräch mit Ironman
+        </div>
+        
+        <button class="record-btn" id="recordBtn">🎤</button>
+        
+        <div class="response-area" id="responseArea">
+            <div class="response-text">
+                Hallo Ironman! Drücke das Mikrofon und sprich mit mir. 
+                Ich verstehe dich und antworte mit deutscher Sprache!
+            </div>
+        </div>
+        
+        <div class="audio-player" id="audioPlayer" style="display: none;">
+            <audio id="responseAudio" controls autoplay></audio>
+        </div>
+        
+        <div class="instructions">
+            <strong>So geht's:</strong><br>
+            🎤 Mikrofon drücken → Sprechen → Loslassen<br>
+            🔊 Meine Antwort kommt als Audio<br>
+            💬 Natürliche Unterhaltung möglich!
+        </div>
+    </div>
+
+    <script>
+        const recordBtn = document.getElementById('recordBtn');
+        const status = document.getElementById('status');
+        const responseArea = document.getElementById('responseArea');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const responseAudio = document.getElementById('responseAudio');
+        
+        let mediaRecorder;
+        let isRecording = false;
+        let audioChunks = [];
+        
+        recordBtn.addEventListener('click', toggleRecording);
+        
+        async function toggleRecording() {
+            if (!isRecording) {
+                await startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+        
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        channelCount: 1,
+                        sampleRate: 16000,
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    }
+                });
+                
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks);
+                    processAudio(audioBlob);
+                    stream.getTracks().forEach(track => track.stop());
+                };
+                
+                mediaRecorder.start();
+                isRecording = true;
+                recordBtn.classList.add('recording');
+                recordBtn.textContent = '⏹️';
+                status.textContent = '🎤 Spreche jetzt...';
+                
+            } catch (error) {
+                showError('Mikrofon-Zugriff verweigert: ' + error.message);
+            }
+        }
+        
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.classList.remove('recording');
+                recordBtn.textContent = '🎤';
+                status.textContent = 'Verarbeite deine Nachricht...';
+            }
+        }
+        
+        async function processAudio(audioBlob) {
+            // Simulate processing - in real implementation, this would call the backend
+            
+            // Mock transcription
+            const mockTranscriptions = [
+                "Hallo Aegis, wie geht es dir?",
+                "Was kannst du für mich tun?",
+                "Erzähl mir etwas Interessantes.",
+                "Wie ist das Wetter heute?",
+                "Kannst du mir helfen?"
+            ];
+            
+            const transcription = mockTranscriptions[Math.floor(Math.random() * mockTranscriptions.length)];
+            
+            // Mock AI response
+            const responses = [
+                "Hallo Ironman! Mir geht es sehr gut, danke der Nachfrage. Ich bin bereit für unsere Unterhaltung!",
+                "Ich kann dir bei vielen Dingen helfen - von technischen Fragen bis hin zu kreativen Projekten. Was beschäftigt dich?",
+                "Interessant ist, dass wir jetzt endlich per Sprache kommunizieren können. Das macht unsere Gespräche viel natürlicher!",
+                "Das Wetter kann ich nicht direkt prüfen, aber ich kann dir helfen, eine Wetter-App zu entwickeln!",
+                "Aber natürlich! Ich helfe dir gerne bei allem was ansteht. Woran arbeitest du gerade?"
+            ];
+            
+            const aiResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            // Update UI
+            responseArea.innerHTML = `
+                <div class="response-text">
+                    <strong>Du:</strong> ${transcription}<br><br>
+                    <strong>🛡️ Aegis:</strong> ${aiResponse}
+                </div>
+            `;
+            
+            // Generate speech (mock - would use real TTS)
+            generateSpeech(aiResponse);
+            
+            status.textContent = 'Bereit für nächste Nachricht';
+        }
+        
+        function generateSpeech(text) {
+            // Mock audio generation - in reality this would call the TTS system
+            // For now, we'll use the browser's built-in speech synthesis
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'de-DE';
+                utterance.rate = 0.9;
+                utterance.pitch = 0.8;
+                
+                // Find German voice if available
+                const voices = speechSynthesis.getVoices();
+                const germanVoice = voices.find(voice => voice.lang.includes('de'));
+                if (germanVoice) {
+                    utterance.voice = germanVoice;
+                }
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            document.querySelector('.container').appendChild(errorDiv);
+            
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+        
+        // Load voices when available
+        if ('speechSynthesis' in window) {
+            speechSynthesis.onvoiceschanged = () => {
+                console.log('Available voices loaded');
+            };
+        }
+    </script>
+</body>
+</html>

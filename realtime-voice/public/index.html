@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ Aegis Realtime Voice Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .chat-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .talk-button {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border: none;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            color: white;
+            font-size: 3em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+            margin: 20px auto;
+        }
+        
+        .talk-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.6);
+        }
+        
+        .talk-button.active {
+            background: linear-gradient(45deg, #ff4757, #ff3742);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .conversation {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            text-align: left;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+        
+        .user-msg {
+            background: rgba(255, 255, 255, 0.2);
+            margin-left: 20px;
+        }
+        
+        .ai-msg {
+            background: rgba(255, 255, 255, 0.1);
+            margin-right: 20px;
+        }
+        
+        .error {
+            background: rgba(255, 107, 107, 0.3);
+            border: 1px solid rgba(255, 107, 107, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            font-size: 0.9em;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>🛡️ Aegis Realtime Voice</h1>
+        <div class="subtitle">Kontinuierlicher Dialog • Echtes Gespräch</div>
+        
+        <div class="status" id="status">
+            Bereit für natürliche Unterhaltung
+        </div>
+        
+        <button class="talk-button" id="talkBtn">🎤</button>
+        
+        <div class="instructions">
+            <strong>So funktioniert es:</strong><br>
+            • Mikrofon einmal aktivieren<br>
+            • Einfach sprechen - ich höre kontinuierlich zu<br>
+            • Ich antworte sofort mit Sprache<br>
+            • Natürlicher Dialog ohne Unterbrechungen
+        </div>
+        
+        <div class="conversation" id="conversation" style="display: none;">
+            <!-- Conversation history -->
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const talkBtn = document.getElementById('talkBtn');
+        const status = document.getElementById('status');
+        const conversation = document.getElementById('conversation');
+        
+        let mediaRecorder;
+        let audioContext;
+        let isListening = false;
+        let stream;
+        
+        // Check browser support
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showError('Browser unterstützt Audioaufnahme nicht');
+        }
+        
+        talkBtn.addEventListener('click', toggleListening);
+        
+        async function toggleListening() {
+            if (!isListening) {
+                await startContinuousListening();
+            } else {
+                stopListening();
+            }
+        }
+        
+        async function startContinuousListening() {
+            try {
+                status.textContent = 'Aktiviere Mikrofon...';
+                
+                // Get audio stream
+                stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        channelCount: 1,
+                        sampleRate: 16000,
+                        echoCancellation: true,
+                        noiseSuppression: true
+                    }
+                });
+                
+                // Set up audio context for continuous processing
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                
+                // Set up Web Audio API for real-time processing
+                await audioContext.audioWorklet.addModule(createAudioProcessorURL());
+                const processorNode = new AudioWorkletNode(audioContext, 'audio-processor');
+                
+                source.connect(processorNode);
+                processorNode.connect(audioContext.destination);
+                
+                // Handle audio data from processor
+                processorNode.port.onmessage = (event) => {
+                    if (event.data.type === 'audio') {
+                        // Send audio chunk to server
+                        const audioData = arrayBufferToBase64(event.data.buffer);
+                        socket.emit('audio-chunk', audioData);
+                    }
+                };
+                
+                // Update UI
+                isListening = true;
+                talkBtn.classList.add('active');
+                talkBtn.textContent = '⏹️';
+                status.textContent = '🎤 Höre zu... Sprich einfach!';
+                
+                // Notify server
+                socket.emit('start-listening');
+                
+            } catch (error) {
+                showError('Mikrofon-Zugriff verweigert: ' + error.message);
+            }
+        }
+        
+        function stopListening() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            isListening = false;
+            talkBtn.classList.remove('active');
+            talkBtn.textContent = '🎤';
+            status.textContent = 'Bereit für natürliche Unterhaltung';
+            
+            socket.emit('stop-listening');
+        }
+        
+        // Create audio processor worklet
+        function createAudioProcessorURL() {
+            const processorCode = `
+                class AudioProcessor extends AudioWorkletProcessor {
+                    constructor() {
+                        super();
+                        this.bufferSize = 2048;
+                        this.buffer = new Float32Array(this.bufferSize);
+                        this.bufferIndex = 0;
+                    }
+                    
+                    process(inputs, outputs, parameters) {
+                        const input = inputs[0];
+                        if (input.length > 0) {
+                            const inputChannel = input[0];
+                            
+                            for (let i = 0; i < inputChannel.length; i++) {
+                                this.buffer[this.bufferIndex++] = inputChannel[i];
+                                
+                                if (this.bufferIndex >= this.bufferSize) {
+                                    // Convert to Int16 and send
+                                    const int16Buffer = new Int16Array(this.bufferSize);
+                                    for (let j = 0; j < this.bufferSize; j++) {
+                                        int16Buffer[j] = Math.max(-1, Math.min(1, this.buffer[j])) * 32767;
+                                    }
+                                    
+                                    this.port.postMessage({
+                                        type: 'audio',
+                                        buffer: int16Buffer.buffer
+                                    });
+                                    
+                                    this.bufferIndex = 0;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                
+                registerProcessor('audio-processor', AudioProcessor);
+            `;
+            
+            const blob = new Blob([processorCode], { type: 'application/javascript' });
+            return URL.createObjectURL(blob);
+        }
+        
+        function arrayBufferToBase64(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+        
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+        
+        function addMessage(type, text) {
+            conversation.style.display = 'block';
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${type}-msg`;
+            msgDiv.innerHTML = `<strong>${type === 'user' ? 'Du' : 'Aegis'}:</strong> ${text}`;
+            conversation.appendChild(msgDiv);
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+        
+        function playAudioResponse(base64Audio) {
+            try {
+                const audioBuffer = base64ToArrayBuffer(base64Audio);
+                const blob = new Blob([audioBuffer], { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(blob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            } catch (error) {
+                console.error('Error playing audio:', error);
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            document.querySelector('.chat-container').appendChild(errorDiv);
+        }
+        
+        // Socket event handlers
+        socket.on('ai-response', (data) => {
+            addMessage('user', data.transcription);
+            addMessage('ai', data.response);
+            playAudioResponse(data.audioData);
+            
+            status.textContent = '🎤 Höre zu... Sprich weiter!';
+        });
+        
+        socket.on('error', (data) => {
+            showError(data.message);
+        });
+        
+        socket.on('listening-started', () => {
+            console.log('Server confirmed: listening started');
+        });
+        
+        socket.on('listening-stopped', () => {
+            console.log('Server confirmed: listening stopped');
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (isListening) {
+                stopListening();
+            }
+        });
+    </script>
+</body>
+</html>

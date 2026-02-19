@@ -1,0 +1,42 @@
+{
+  "name": "given-right",
+  "version": "1.0.0",
+  "description": "AI-powered gift recommendation app with confidence scoring",
+  "main": "App.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.72.6",
+    "expo": "~49.0.15",
+    "expo-status-bar": "~1.6.0",
+    "@expo/vector-icons": "^13.0.0",
+    "react-native-reanimated": "~3.3.0",
+    "react-native-gesture-handler": "~2.12.0",
+    "react-native-screens": "~3.22.0",
+    "react-native-safe-area-context": "4.6.3",
+    "@react-native-async-storage/async-storage": "1.18.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "jest": "^29.2.1",
+    "metro-react-native-babel-preset": "0.76.8"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "gift-recommendations",
+    "ai",
+    "confidence-scoring"
+  ],
+  "author": "Ironman",
+  "license": "MIT",
+  "private": true
+}
