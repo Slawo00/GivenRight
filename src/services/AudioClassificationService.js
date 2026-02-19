@@ -1,8 +1,5 @@
-import * as FileSystem from 'expo-file-system';
-import { Platform } from 'react-native';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-react-native';
-import * as Speech from 'expo-speech';
 
 /**
  * AudioClassificationService
@@ -137,7 +134,7 @@ class AudioClassificationService {
       await this.init();
     }
 
-    const { freqBands, avgDecibel, maxDecibel, duration } = eventData;
+    const { freqBands, avgDecibel, duration } = eventData;
     
     if (!freqBands || avgDecibel < 30) {
       return {
@@ -271,7 +268,6 @@ class AudioClassificationService {
     
     // Kinderlärm hat oft hohe Pitch + variable Lautstärke
     const highPitchScore = (highFreq2k + highFreq4k) / 2;
-    const midRangeScore = midFreq1k;
     
     // Kinderlärm-Indikatoren
     const isHighPitch = highPitchScore > 50;

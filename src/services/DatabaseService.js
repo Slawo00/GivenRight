@@ -1,5 +1,3 @@
-import * as FileSystem from 'expo-file-system';
-import { Platform } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
 import * as SQLite from 'expo-sqlite';
 
@@ -11,7 +9,6 @@ const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // SQLite für lokale Speicherung
-let db = null;
 
 /**
  * DatabaseService - Lokale SQLite + Supabase Sync

@@ -1,8 +1,10 @@
 import { Audio } from 'expo-av';
-import * as Permissions from 'expo-permissions';
-import { Platform } from 'react-native';
 import AudioClassificationService from './AudioClassificationService';
 import DatabaseService from './DatabaseService';
+
+// setInterval/clearInterval für React Native
+const _setInterval = global.setInterval || setInterval;
+const _clearInterval = global.clearInterval || clearInterval;
 
 /**
  * AudioMonitorService
@@ -102,7 +104,7 @@ class AudioMonitorService {
       this.isMonitoring = true;
       
       // Starte Metering-Loop (alle 2 Sekunden)
-      this.meteringInterval = setInterval(() => {
+      this.meteringInterval = _setInterval(() => {
         this._processAudioSample();
       }, 2000);
       
@@ -121,14 +123,14 @@ class AudioMonitorService {
     this.isMonitoring = false;
     
     if (this.meteringInterval) {
-      clearInterval(this.meteringInterval);
+      _clearInterval(this.meteringInterval);
       this.meteringInterval = null;
     }
     
     if (this.recording) {
       try {
         await this.recording.stopAndUnloadAsync();
-      } catch (e) {
+      } catch (_error) {
         // Ignoriere Fehler beim Stoppen
       }
       this.recording = null;
